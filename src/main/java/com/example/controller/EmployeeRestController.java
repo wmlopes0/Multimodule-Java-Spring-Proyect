@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/employees")
 public class EmployeeRestController {
-    EmployeeRepository employeeRepository;
+    private EmployeeRepository employeeRepository;
 
     public EmployeeRestController(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
@@ -64,7 +64,7 @@ public class EmployeeRestController {
     @ApiResponse(responseCode = "200", description = "Successful operation")
     @ApiResponse(responseCode = "400", description = "Bad request due to id not found")
     @PutMapping("/")
-    public ResponseEntity<Employee> updateEmployeeById(@RequestParam(value = "id", required = true) Long id, @RequestParam(value = "name", required = true) String name) {
+    public ResponseEntity<Employee> updateEmployeeById(@RequestParam(value = "id") Long id, @RequestParam(value = "name") String name) {
         Employee employee = employeeRepository.findById(id)
                 .map(emp -> {
                             emp.setName(name);
