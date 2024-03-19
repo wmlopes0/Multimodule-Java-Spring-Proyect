@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
-    private EmployeeRepository repository;
+    private final EmployeeRepository repository;
 
     public EmployeeServiceImpl(EmployeeRepository repository) {
         this.repository = repository;

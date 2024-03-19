@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/employees")
 public class EmployeeRestController {
-    private EmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
 
     public EmployeeRestController(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
