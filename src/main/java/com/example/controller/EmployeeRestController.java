@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.model.Employee;
+import com.example.model.EmployeeDTO;
 import com.example.repository.EmployeeRepository;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,21 +53,21 @@ public class EmployeeRestController {
 
     @Operation(summary = "More information...", description = "This endpoint gets adds an employee to the database")
     @ApiResponse(responseCode = "200", description = "Successful operation")
-    @PostMapping("/name/{name}")
-    public ResponseEntity<Employee> newEmployee(@PathVariable("name") String name) {
+    @PostMapping("/")
+    public ResponseEntity<Employee> newEmployee(@RequestBody EmployeeDTO employeeRequest) {
         Employee newEmployee = new Employee();
-        newEmployee.setName(name);
+        newEmployee.setName(employeeRequest.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(employeeRepository.save(newEmployee));
     }
 
     @Operation(summary = "More information...", description = "This endpoint updates information for a given employee")
     @ApiResponse(responseCode = "200", description = "Successful operation")
     @ApiResponse(responseCode = "400", description = "Bad request due to id not found")
-    @PutMapping("/")
-    public ResponseEntity<Employee> updateEmployeeById(@RequestParam(value = "id") Long id, @RequestParam(value = "name") String name) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Employee> updateEmployeeById(@PathVariable("id") Long id, @RequestBody EmployeeDTO employeeUpdate) {
         Employee employee = employeeRepository.findById(id)
                 .map(emp -> {
-                            emp.setName(name);
+                            emp.setName(employeeUpdate.getName());
                             return employeeRepository.save(emp);
                         }
                 ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empleado no encontrado con ID: " + id));
