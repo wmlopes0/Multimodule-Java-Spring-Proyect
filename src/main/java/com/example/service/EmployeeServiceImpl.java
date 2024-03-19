@@ -2,17 +2,17 @@ package com.example.service;
 
 import com.example.model.Employee;
 import com.example.repository.EmployeeRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
+    
     private final EmployeeRepository repository;
 
-    public EmployeeServiceImpl(EmployeeRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public List<Employee> listAllEmployees() {

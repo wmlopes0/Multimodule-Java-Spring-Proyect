@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,14 +15,12 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @OpenAPIDefinition(info = @Info(title = "Employees API", version = "1.0", description = "This is my first API with Spring Boot, a simple example with crud operations and documentation with Swagger"))
+@AllArgsConstructor
 @RestController
 @RequestMapping("/employees")
 public class EmployeeRestController {
-    private final EmployeeRepository employeeRepository;
 
-    public EmployeeRestController(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
-    }
+    private final EmployeeRepository employeeRepository;
 
     @Operation(summary = "More information...", description = "This endpoint lists all employees in the database")
     @ApiResponse(responseCode = "200", description = "Successful operation")
