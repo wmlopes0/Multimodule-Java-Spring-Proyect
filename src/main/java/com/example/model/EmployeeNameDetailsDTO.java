@@ -5,9 +5,9 @@ import lombok.Getter;
 @Getter
 public class EmployeeNameDetailsDTO {
 
-    private Long number;
-    private String name;
-    private int nameLength;
+    private final Long number;
+    private final String name;
+    private final int nameLength;
 
     public EmployeeNameDetailsDTO(Employee employee) {
         this.number = employee.getNumber();

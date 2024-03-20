@@ -2,6 +2,7 @@ package com.example.controller;
 
 import com.example.model.Employee;
 import com.example.model.EmployeeDTO;
+import com.example.model.EmployeeNameDetailsDTO;
 import com.example.repository.EmployeeRepository;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,8 +27,10 @@ public class EmployeeRestController {
     @Operation(summary = "More information...", description = "This endpoint lists all employees in the database")
     @ApiResponse(responseCode = "200", description = "Successful operation")
     @GetMapping("/")
-    public ResponseEntity<List<Employee>> listEmployees() {
-        List<Employee> result = employeeRepository.findAll();
+    public ResponseEntity<List<EmployeeNameDetailsDTO>> listEmployees() {
+        List<EmployeeNameDetailsDTO> result = employeeRepository.findAll().stream()
+                .map(EmployeeNameDetailsDTO::new)
+                .toList();
         return ResponseEntity.ok(result);
     }
 
@@ -35,8 +38,9 @@ public class EmployeeRestController {
     @ApiResponse(responseCode = "200", description = "Successful operation")
     @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
     @GetMapping("/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable("id") Long id) {
+    public ResponseEntity<EmployeeNameDetailsDTO> getEmployeeById(@PathVariable("id") Long id) {
         return employeeRepository.findById(id)
+                .map(EmployeeNameDetailsDTO::new)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -45,8 +49,9 @@ public class EmployeeRestController {
     @ApiResponse(responseCode = "200", description = "Successful operation")
     @ApiResponse(responseCode = "404", description = "Bad request due to no match found")
     @GetMapping("/name/{name}")
-    public ResponseEntity<Employee> getEmployeeByName(@PathVariable("name") String name) {
+    public ResponseEntity<EmployeeNameDetailsDTO> getEmployeeByName(@PathVariable("name") String name) {
         return employeeRepository.findFirstByNameContainingIgnoreCase(name)
+                .map(EmployeeNameDetailsDTO::new)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
