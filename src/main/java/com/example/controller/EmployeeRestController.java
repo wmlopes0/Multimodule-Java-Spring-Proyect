@@ -33,7 +33,7 @@ public class EmployeeRestController {
 
     @Operation(summary = "More information...", description = "This endpoint obtains information about an employee by their ID")
     @ApiResponse(responseCode = "200", description = "Successful operation")
-    @ApiResponse(responseCode = "400", description = "Bad request due to id not found")
+    @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
     @GetMapping("/{id}")
     public ResponseEntity<Employee> getEmployeeById(@PathVariable("id") Long id) {
         return employeeRepository.findById(id)
@@ -43,7 +43,7 @@ public class EmployeeRestController {
 
     @Operation(summary = "More information...", description = "This endpoint gets information about an employee that contains that string in their name")
     @ApiResponse(responseCode = "200", description = "Successful operation")
-    @ApiResponse(responseCode = "400", description = "Bad request due to no match found")
+    @ApiResponse(responseCode = "404", description = "Bad request due to no match found")
     @GetMapping("/name/{name}")
     public ResponseEntity<Employee> getEmployeeByName(@PathVariable("name") String name) {
         return employeeRepository.findFirstByNameContainingIgnoreCase(name)
@@ -52,7 +52,7 @@ public class EmployeeRestController {
     }
 
     @Operation(summary = "More information...", description = "This endpoint gets adds an employee to the database")
-    @ApiResponse(responseCode = "200", description = "Successful operation")
+    @ApiResponse(responseCode = "201", description = "Successful operation")
     @PostMapping("/")
     public ResponseEntity<Employee> newEmployee(@RequestBody EmployeeDTO employeeRequest) {
         Employee newEmployee = new Employee();
@@ -62,7 +62,7 @@ public class EmployeeRestController {
 
     @Operation(summary = "More information...", description = "This endpoint updates information for a given employee")
     @ApiResponse(responseCode = "200", description = "Successful operation")
-    @ApiResponse(responseCode = "400", description = "Bad request due to id not found")
+    @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
     @PutMapping("/{id}")
     public ResponseEntity<Employee> updateEmployeeById(@PathVariable("id") Long id, @RequestBody EmployeeDTO employeeUpdate) {
         Employee employee = employeeRepository.findById(id)
@@ -76,7 +76,7 @@ public class EmployeeRestController {
 
     @Operation(summary = "More information...", description = "This endpoint removes a given employee from the database by their id")
     @ApiResponse(responseCode = "200", description = "Successful operation")
-    @ApiResponse(responseCode = "400", description = "Bad request due to id not found")
+    @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletedEmployeeById(@PathVariable("id") Long id) {
         return employeeRepository.findById(id)
