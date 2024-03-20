@@ -29,7 +29,7 @@ public class EmployeeRestController {
     @GetMapping("/")
     public ResponseEntity<List<EmployeeNameDetailsDTO>> listEmployees() {
         List<EmployeeNameDetailsDTO> result = employeeRepository.findAll().stream()
-                .map(EmployeeNameDetailsDTO::new)
+                .map(e -> new EmployeeNameDetailsDTO(e.getNumber(), e.getName().toUpperCase(),e.getName().length()))
                 .toList();
         return ResponseEntity.ok(result);
     }
@@ -40,7 +40,7 @@ public class EmployeeRestController {
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeNameDetailsDTO> getEmployeeById(@PathVariable("id") Long id) {
         return employeeRepository.findById(id)
-                .map(EmployeeNameDetailsDTO::new)
+                .map(e -> new EmployeeNameDetailsDTO(e.getNumber(), e.getName().toUpperCase(),e.getName().length()))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -51,7 +51,7 @@ public class EmployeeRestController {
     @GetMapping("/name/{name}")
     public ResponseEntity<EmployeeNameDetailsDTO> getEmployeeByName(@PathVariable("name") String name) {
         return employeeRepository.findFirstByNameContainingIgnoreCase(name)
-                .map(EmployeeNameDetailsDTO::new)
+                .map(e -> new EmployeeNameDetailsDTO(e.getNumber(), e.getName().toUpperCase(),e.getName().length()))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
