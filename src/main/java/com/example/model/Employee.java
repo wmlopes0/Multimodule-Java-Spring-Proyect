@@ -10,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 @Entity
 public class Employee {
 
