@@ -109,7 +109,6 @@ class EmployeeRestControllerTest {
     @Test
     @DisplayName("Get employee by name not found returns 404 response")
     void getEmployeeByNameNotFoundTest() {
-        //TODO Implementar tarea
         String name = "Wal";
 
         Mockito.when(repository.findFirstByNameContainingIgnoreCase(name)).thenReturn(Optional.empty());
