@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @OpenAPIDefinition(info = @Info(title = "Employees API", version = "1.0", description = "This is my first API with Spring Boot, a simple example with crud operations and documentation with Swagger"))
 @AllArgsConstructor
@@ -29,7 +30,13 @@ public class EmployeeRestController {
     @GetMapping("/")
     public ResponseEntity<List<EmployeeNameDetailsDTO>> listEmployees() {
         List<EmployeeNameDetailsDTO> result = employeeRepository.findAll().stream()
-                .map(e -> new EmployeeNameDetailsDTO(e.getNumber(), e.getName().toUpperCase(),e.getName().length()))
+                .map(e -> new EmployeeNameDetailsDTO(e.getNumber(),
+                        Optional.ofNullable(e.getName())
+                                .map(String::toUpperCase)
+                                .orElse(null),
+                        Optional.ofNullable(e.getName())
+                                .map(String::length)
+                                .orElse(0)))
                 .toList();
         return ResponseEntity.ok(result);
     }
@@ -40,7 +47,13 @@ public class EmployeeRestController {
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeNameDetailsDTO> getEmployeeById(@PathVariable("id") Long id) {
         return employeeRepository.findById(id)
-                .map(e -> new EmployeeNameDetailsDTO(e.getNumber(), e.getName().toUpperCase(),e.getName().length()))
+                .map(e -> new EmployeeNameDetailsDTO(e.getNumber(),
+                        Optional.ofNullable(e.getName())
+                                .map(String::toUpperCase)
+                                .orElse(null),
+                        Optional.ofNullable(e.getName())
+                                .map(String::length)
+                                .orElse(0)))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -51,7 +64,7 @@ public class EmployeeRestController {
     @GetMapping("/name/{name}")
     public ResponseEntity<EmployeeNameDetailsDTO> getEmployeeByName(@PathVariable("name") String name) {
         return employeeRepository.findFirstByNameContainingIgnoreCase(name)
-                .map(e -> new EmployeeNameDetailsDTO(e.getNumber(), e.getName().toUpperCase(),e.getName().length()))
+                .map(e -> new EmployeeNameDetailsDTO(e.getNumber(), e.getName().toUpperCase(), e.getName().length()))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
