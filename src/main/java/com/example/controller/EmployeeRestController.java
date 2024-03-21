@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.example.mapper.EmployeeMapper;
 import com.example.model.Employee;
 import com.example.model.EmployeeDTO;
 import com.example.model.EmployeeNameDetailsDTO;
@@ -8,35 +9,29 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @OpenAPIDefinition(info = @Info(title = "Employees API", version = "1.0", description = "This is my first API with Spring Boot, a simple example with crud operations and documentation with Swagger"))
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/employees")
 public class EmployeeRestController {
 
     private final EmployeeRepository employeeRepository;
+    private final EmployeeMapper employeeMapper;
 
     @Operation(summary = "More information...", description = "This endpoint lists all employees in the database")
     @ApiResponse(responseCode = "200", description = "Successful operation")
     @GetMapping("/")
     public ResponseEntity<List<EmployeeNameDetailsDTO>> listEmployees() {
         List<EmployeeNameDetailsDTO> result = employeeRepository.findAll().stream()
-                .map(e -> new EmployeeNameDetailsDTO(e.getNumber(),
-                        Optional.ofNullable(e.getName())
-                                .map(String::toUpperCase)
-                                .orElse(null),
-                        Optional.ofNullable(e.getName())
-                                .map(String::length)
-                                .orElse(0)))
+                .map(employeeMapper::toDetailsDTO)
                 .toList();
         return ResponseEntity.ok(result);
     }
@@ -47,14 +42,10 @@ public class EmployeeRestController {
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeNameDetailsDTO> getEmployeeById(@PathVariable("id") Long id) {
         return employeeRepository.findById(id)
-                .map(e -> new EmployeeNameDetailsDTO(e.getNumber(),
-                        Optional.ofNullable(e.getName())
-                                .map(String::toUpperCase)
-                                .orElse(null),
-                        Optional.ofNullable(e.getName())
-                                .map(String::length)
-                                .orElse(0)))
+//                .stream()
+                .map(employeeMapper::toDetailsDTO)
                 .map(ResponseEntity::ok)
+//                .findFirst()
                 .orElse(ResponseEntity.notFound().build());
     }
 
