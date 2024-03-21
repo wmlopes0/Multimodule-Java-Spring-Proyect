@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class EmployeeMapperImplTest {
 
-    private EmployeeMapperImpl employeeMapper = new EmployeeMapperImpl();
+    private final EmployeeMapperImpl employeeMapper = new EmployeeMapperImpl();
 
     @Test
     @DisplayName("Mapping Employee to EmployeeNameDetailsDTO correctly")
