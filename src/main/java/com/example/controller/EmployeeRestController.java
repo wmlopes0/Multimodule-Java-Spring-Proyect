@@ -1,13 +1,15 @@
 package com.example.controller;
 
+import com.example.mapper.EmployeeMapper;
 import com.example.model.Employee;
 import com.example.model.EmployeeDTO;
+import com.example.model.EmployeeNameDetailsDTO;
 import com.example.repository.EmployeeRepository;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,18 +18,21 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @OpenAPIDefinition(info = @Info(title = "Employees API", version = "1.0", description = "This is my first API with Spring Boot, a simple example with crud operations and documentation with Swagger"))
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/employees")
 public class EmployeeRestController {
 
     private final EmployeeRepository employeeRepository;
+    private final EmployeeMapper employeeMapper;
 
     @Operation(summary = "More information...", description = "This endpoint lists all employees in the database")
     @ApiResponse(responseCode = "200", description = "Successful operation")
     @GetMapping("/")
-    public ResponseEntity<List<Employee>> listEmployees() {
-        List<Employee> result = employeeRepository.findAll();
+    public ResponseEntity<List<EmployeeNameDetailsDTO>> listEmployees() {
+        List<EmployeeNameDetailsDTO> result = employeeRepository.findAll().stream()
+                .map(employeeMapper::toDetailsDTO)
+                .toList();
         return ResponseEntity.ok(result);
     }
 
@@ -35,9 +40,12 @@ public class EmployeeRestController {
     @ApiResponse(responseCode = "200", description = "Successful operation")
     @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
     @GetMapping("/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable("id") Long id) {
+    public ResponseEntity<EmployeeNameDetailsDTO> getEmployeeById(@PathVariable("id") Long id) {
         return employeeRepository.findById(id)
+//                .stream()
+                .map(employeeMapper::toDetailsDTO)
                 .map(ResponseEntity::ok)
+//                .findFirst()
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -45,8 +53,9 @@ public class EmployeeRestController {
     @ApiResponse(responseCode = "200", description = "Successful operation")
     @ApiResponse(responseCode = "404", description = "Bad request due to no match found")
     @GetMapping("/name/{name}")
-    public ResponseEntity<Employee> getEmployeeByName(@PathVariable("name") String name) {
+    public ResponseEntity<EmployeeNameDetailsDTO> getEmployeeByName(@PathVariable("name") String name) {
         return employeeRepository.findFirstByNameContainingIgnoreCase(name)
+                .map(e -> new EmployeeNameDetailsDTO(e.getNumber(), e.getName().toUpperCase(), e.getName().length()))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
