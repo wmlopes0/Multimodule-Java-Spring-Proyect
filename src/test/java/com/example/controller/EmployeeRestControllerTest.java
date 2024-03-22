@@ -42,12 +42,14 @@ class EmployeeRestControllerTest {
         EmployeeNameDetailsDTO employeeDTO2 = new EmployeeNameDetailsDTO(employee2.getNumber(), employee2.getName().toUpperCase(), employee2.getName().length());
 
         Mockito.when(repository.findAll()).thenReturn(List.of(employee1, employee2));
-        //Mockito.when(employeeMapper.toDetailsDTO(employee1)).thenReturn(employeeDTO1);
-        //Mockito.when(employeeMapper.toDetailsDTO(employee2)).thenReturn(employeeDTO2);
+        Mockito.when(employeeMapper.toDetailsDTO(employee1)).thenReturn(employeeDTO1);
+        Mockito.when(employeeMapper.toDetailsDTO(employee2)).thenReturn(employeeDTO2);
+
         ResponseEntity<List<EmployeeNameDetailsDTO>> result = controller.listEmployees();
         ResponseEntity<List<EmployeeNameDetailsDTO>> expected = ResponseEntity.ok(List.of(employeeDTO1, employeeDTO2));
 
         Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
+        Assertions.assertEquals(expected.getBody(), result.getBody());
         Mockito.verify(repository, times(1)).findAll();
     }
 
@@ -84,6 +86,7 @@ class EmployeeRestControllerTest {
         ResponseEntity<EmployeeNameDetailsDTO> expected = ResponseEntity.ok(employeeDTO);
 
         Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
+        Assertions.assertEquals(expected.getBody(), result.getBody());
         Mockito.verify(repository, times(1)).findById(id);
     }
 
@@ -113,6 +116,7 @@ class EmployeeRestControllerTest {
         ResponseEntity<EmployeeNameDetailsDTO> expected = ResponseEntity.ok(employeeDTO);
 
         Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
+        Assertions.assertEquals(expected.getBody(), result.getBody());
         Mockito.verify(repository, times(1)).findFirstByNameContainingIgnoreCase(name);
     }
 
