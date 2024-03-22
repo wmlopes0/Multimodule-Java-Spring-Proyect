@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.mapper.EmployeeMapper;
+import com.example.mapper.EmployeeMapperImpl;
 import com.example.model.Employee;
 import com.example.model.EmployeeDTO;
 import com.example.model.EmployeeNameDetailsDTO;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
