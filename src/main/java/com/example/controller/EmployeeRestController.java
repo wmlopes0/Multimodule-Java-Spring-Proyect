@@ -1,9 +1,11 @@
 package com.example.controller;
 
 import com.example.mapper.EmployeeMapper;
+import com.example.mapper.EmployeeResponseMapper;
 import com.example.model.Employee;
 import com.example.model.EmployeeDTO;
 import com.example.model.EmployeeNameDetailsDTO;
+import com.example.model.EmployeeResponseDTO;
 import com.example.repository.EmployeeRepository;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +27,7 @@ public class EmployeeRestController {
 
     private final EmployeeRepository employeeRepository;
     private final EmployeeMapper employeeMapper;
+    private final EmployeeResponseMapper employeeResponseMapper;
 
     @Operation(summary = "More information...", description = "This endpoint lists all employees in the database")
     @ApiResponse(responseCode = "200", description = "Successful operation")
@@ -63,24 +66,37 @@ public class EmployeeRestController {
     @Operation(summary = "More information...", description = "This endpoint gets adds an employee to the database")
     @ApiResponse(responseCode = "201", description = "Successful operation")
     @PostMapping("/")
-    public ResponseEntity<Employee> newEmployee(@RequestBody EmployeeDTO employeeRequest) {
-        Employee newEmployee = new Employee();
-        newEmployee.setName(employeeRequest.getName());
-        return ResponseEntity.status(HttpStatus.CREATED).body(employeeRepository.save(newEmployee));
+    public ResponseEntity<EmployeeResponseDTO> newEmployee(@RequestBody EmployeeDTO employeeRequest) {
+        Employee newEmployee = new Employee()
+                .setName(employeeRequest.getName());
+
+        employeeRepository.save(newEmployee);
+
+        EmployeeResponseDTO employeeResponse = new EmployeeResponseDTO()
+                .setNumber(newEmployee.getNumber())
+                .setName(newEmployee.getName());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(employeeResponse);
     }
 
     @Operation(summary = "More information...", description = "This endpoint updates information for a given employee")
     @ApiResponse(responseCode = "200", description = "Successful operation")
     @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
     @PutMapping("/{id}")
-    public ResponseEntity<Employee> updateEmployeeById(@PathVariable("id") Long id, @RequestBody EmployeeDTO employeeUpdate) {
+    public ResponseEntity<EmployeeResponseDTO> updateEmployeeById(@PathVariable("id") Long id, @RequestBody EmployeeDTO employeeUpdate) {
         Employee employee = employeeRepository.findById(id)
                 .map(emp -> {
                             emp.setName(employeeUpdate.getName());
-                            return employeeRepository.save(emp);
+                            employeeRepository.save(emp);
+                            return emp;
                         }
                 ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empleado no encontrado con ID: " + id));
-        return ResponseEntity.ok(employee);
+
+        EmployeeResponseDTO response = new EmployeeResponseDTO()
+                .setNumber(employee.getNumber())
+                .setName(employee.getName());
+
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "More information...", description = "This endpoint removes a given employee from the database by their id")
