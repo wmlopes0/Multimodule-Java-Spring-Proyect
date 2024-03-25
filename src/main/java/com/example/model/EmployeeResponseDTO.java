@@ -1,21 +1,16 @@
 package com.example.model;
 
-import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 @Getter
 @Setter
-@Accessors(chain = true)
 @EqualsAndHashCode
-@Entity
-public class Employee {
+public class EmployeeResponseDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long number;
-
     private String name;
 }
