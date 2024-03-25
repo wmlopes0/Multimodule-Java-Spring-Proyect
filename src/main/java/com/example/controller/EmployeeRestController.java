@@ -58,7 +58,7 @@ public class EmployeeRestController {
     @GetMapping("/name/{name}")
     public ResponseEntity<EmployeeNameDetailsDTO> getEmployeeByName(@PathVariable("name") String name) {
         return employeeRepository.findFirstByNameContainingIgnoreCase(name)
-                .map(e -> new EmployeeNameDetailsDTO(e.getNumber(), e.getName().toUpperCase(), e.getName().length()))
+                .map(employeeMapper::toDetailsDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -72,9 +72,7 @@ public class EmployeeRestController {
 
         employeeRepository.save(newEmployee);
 
-        EmployeeResponseDTO employeeResponse = new EmployeeResponseDTO()
-                .setNumber(newEmployee.getNumber())
-                .setName(newEmployee.getName());
+        EmployeeResponseDTO employeeResponse = employeeResponseMapper.toResponseDTO(newEmployee);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(employeeResponse);
     }
@@ -92,11 +90,9 @@ public class EmployeeRestController {
                         }
                 ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empleado no encontrado con ID: " + id));
 
-        EmployeeResponseDTO response = new EmployeeResponseDTO()
-                .setNumber(employee.getNumber())
-                .setName(employee.getName());
+        EmployeeResponseDTO employeeResponse = employeeResponseMapper.toResponseDTO(employee);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(employeeResponse);
     }
 
     @Operation(summary = "More information...", description = "This endpoint removes a given employee from the database by their id")

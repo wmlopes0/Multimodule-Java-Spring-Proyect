@@ -2,9 +2,11 @@ package com.example.controller;
 
 import com.example.mapper.EmployeeMapper;
 import com.example.mapper.EmployeeMapperImpl;
+import com.example.mapper.EmployeeResponseMapper;
 import com.example.model.Employee;
 import com.example.model.EmployeeDTO;
 import com.example.model.EmployeeNameDetailsDTO;
+import com.example.model.EmployeeResponseDTO;
 import com.example.repository.EmployeeRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class EmployeeRestControllerTest {
@@ -32,6 +34,8 @@ class EmployeeRestControllerTest {
     private EmployeeRepository repository;
     @Mock
     private EmployeeMapper employeeMapper;
+    @Mock
+    private EmployeeResponseMapper employeeResponseMapper;
     @InjectMocks
     private EmployeeRestController controller;
 
@@ -53,18 +57,21 @@ class EmployeeRestControllerTest {
         Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
         Assertions.assertEquals(expected.getBody(), result.getBody());
         Mockito.verify(repository, times(1)).findAll();
+        Mockito.verify(employeeMapper, atLeastOnce()).toDetailsDTO(any(Employee.class));
     }
 
     @Test
     @DisplayName("When list employees is empty return correctly list")
     void listEmployeesEmptyTest() {
         Mockito.when(repository.findAll()).thenReturn(List.of());
+
         ResponseEntity<List<EmployeeNameDetailsDTO>> result = controller.listEmployees();
         ResponseEntity<List<EmployeeNameDetailsDTO>> expected = ResponseEntity.ok(List.of());
 
         Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
         Assertions.assertEquals(expected.getBody(), result.getBody());
         Mockito.verify(repository, times(1)).findAll();
+        Mockito.verify(employeeMapper, never()).toDetailsDTO(any(Employee.class));
     }
 
     @Test
@@ -80,7 +87,10 @@ class EmployeeRestControllerTest {
     void getEmployeeByIdTest() {
         Long id = 1L;
         Employee employee = new Employee(1L, "Walter");
-        EmployeeNameDetailsDTO employeeDTO = new EmployeeNameDetailsDTO(employee.getNumber(), employee.getName().toUpperCase(), employee.getName().length());
+        EmployeeNameDetailsDTO employeeDTO = new EmployeeNameDetailsDTO()
+                .setNumber(employee.getNumber())
+                .setName(employee.getName().toUpperCase())
+                .setNameLength(employee.getName().length());
 
         Mockito.when(repository.findById(id)).thenReturn(Optional.of(employee));
         Mockito.when(employeeMapper.toDetailsDTO(employee)).thenReturn(employeeDTO);
@@ -90,6 +100,7 @@ class EmployeeRestControllerTest {
         Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
         Assertions.assertEquals(expected.getBody(), result.getBody());
         Mockito.verify(repository, times(1)).findById(id);
+        Mockito.verify(employeeMapper, times(1)).toDetailsDTO(employee);
     }
 
     @Test
@@ -104,6 +115,7 @@ class EmployeeRestControllerTest {
         Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
         Assertions.assertEquals(expected.getBody(), result.getBody());
         Mockito.verify(repository, times(1)).findById(id);
+        Mockito.verify(employeeMapper, never()).toDetailsDTO(any(Employee.class));
     }
 
     @Test
@@ -111,15 +123,20 @@ class EmployeeRestControllerTest {
     void getEmployeeByNameTest() {
         String name = "Wal";
         Employee employee = new Employee(1L, "Walter");
-        EmployeeNameDetailsDTO employeeDTO = new EmployeeNameDetailsDTO(employee.getNumber(), employee.getName().toUpperCase(), employee.getName().length());
+        EmployeeNameDetailsDTO employeeDTO = new EmployeeNameDetailsDTO()
+                .setNumber(employee.getNumber())
+                .setName(employee.getName().toUpperCase())
+                .setNameLength(employee.getName().length());
 
         Mockito.when(repository.findFirstByNameContainingIgnoreCase(name)).thenReturn(Optional.of(employee));
+        Mockito.when(employeeMapper.toDetailsDTO(employee)).thenReturn(employeeDTO);
         ResponseEntity<EmployeeNameDetailsDTO> result = controller.getEmployeeByName(name);
         ResponseEntity<EmployeeNameDetailsDTO> expected = ResponseEntity.ok(employeeDTO);
 
         Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
         Assertions.assertEquals(expected.getBody(), result.getBody());
         Mockito.verify(repository, times(1)).findFirstByNameContainingIgnoreCase(name);
+        Mockito.verify(employeeMapper, times(1)).toDetailsDTO(employee);
     }
 
     @Test
@@ -134,23 +151,29 @@ class EmployeeRestControllerTest {
         Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
         Assertions.assertEquals(expected.getBody(), result.getBody());
         Mockito.verify(repository, times(1)).findFirstByNameContainingIgnoreCase(name);
+        Mockito.verify(employeeMapper, never()).toDetailsDTO(any(Employee.class));
     }
 
     @Test
     @DisplayName("Add new employee returns 201 response")
     void newEmployeeTest() {
         EmployeeDTO requestBody = new EmployeeDTO("Walter");
-        Employee newEmployee = new Employee();
-        newEmployee.setName(requestBody.getName());
-        Employee employeeResult = new Employee(1L, newEmployee.getName());
+        Employee newEmployee = new Employee()
+                .setName(requestBody.getName());
+        EmployeeResponseDTO employeeResponse = new EmployeeResponseDTO()
+                .setNumber(newEmployee.getNumber())
+                .setName(newEmployee.getName());
 
-        Mockito.when(repository.save(newEmployee)).thenReturn(employeeResult);
-        ResponseEntity<Employee> result = controller.newEmployee(requestBody);
-        ResponseEntity<Employee> expected = ResponseEntity.status(HttpStatus.CREATED).body(employeeResult);
+        Mockito.when(repository.save(newEmployee)).thenReturn(newEmployee);
+        Mockito.when(employeeResponseMapper.toResponseDTO(newEmployee)).thenReturn(employeeResponse);
+
+        ResponseEntity<EmployeeResponseDTO> result = controller.newEmployee(requestBody);
+        ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.status(HttpStatus.CREATED).body(employeeResponse);
 
         Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
         Assertions.assertEquals(expected.getBody(), result.getBody());
         Mockito.verify(repository, times(1)).save(newEmployee);
+        Mockito.verify(employeeResponseMapper, times(1)).toResponseDTO(any(Employee.class));
     }
 
     @Test
@@ -160,16 +183,22 @@ class EmployeeRestControllerTest {
         EmployeeDTO requestBody = new EmployeeDTO("Walter");
         Employee existingEmployee = new Employee(id, "Quique");
         Employee updatedEmployee = new Employee(id, requestBody.getName());
+        EmployeeResponseDTO employeeResponse = new EmployeeResponseDTO()
+                .setNumber(updatedEmployee.getNumber())
+                .setName(updatedEmployee.getName());
 
         Mockito.when(repository.findById(id)).thenReturn(Optional.of(existingEmployee));
         Mockito.when(repository.save(updatedEmployee)).thenReturn(updatedEmployee);
-        ResponseEntity<Employee> result = controller.updateEmployeeById(id, requestBody);
-        ResponseEntity<Employee> expected = ResponseEntity.ok(updatedEmployee);
+        Mockito.when(employeeResponseMapper.toResponseDTO(updatedEmployee)).thenReturn(employeeResponse);
+
+        ResponseEntity<EmployeeResponseDTO> result = controller.updateEmployeeById(id, requestBody);
+        ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.ok(employeeResponse);
 
         Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
         Assertions.assertEquals(expected.getBody(), result.getBody());
         Mockito.verify(repository, times(1)).findById(id);
         Mockito.verify(repository, times(1)).save(updatedEmployee);
+        Mockito.verify(employeeResponseMapper, times(1)).toResponseDTO(any(Employee.class));
     }
 
     @Test
@@ -184,6 +213,7 @@ class EmployeeRestControllerTest {
         Assertions.assertTrue(exception.getMessage().contains("Empleado no encontrado con ID: " + id));
         Mockito.verify(repository, times(1)).findById(id);
         Mockito.verify(repository, times(0)).save(any(Employee.class));
+        Mockito.verify(employeeResponseMapper, never()).toResponseDTO(any(Employee.class));
     }
 
     @Test
@@ -205,6 +235,7 @@ class EmployeeRestControllerTest {
     @DisplayName("Delete employee by ID failed returns 404 code response")
     void deletedEmployeeByIdNotFoundTest() {
         Long id = 1L;
+
         Mockito.when(repository.findById(id)).thenReturn(Optional.empty());
         ResponseEntity<Object> result = controller.deletedEmployeeById(id);
         ResponseEntity<Object> expected = ResponseEntity.notFound().build();
@@ -213,4 +244,5 @@ class EmployeeRestControllerTest {
         Mockito.verify(repository, times(1)).findById(id);
         Mockito.verify(repository, times(0)).deleteById(any(Long.class));
     }
+
 }
