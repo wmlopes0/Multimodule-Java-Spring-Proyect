@@ -5,6 +5,6 @@ import com.example.entity.EmployeeEntity;
 
 public interface EmployeeMapper {
 
-  EmployeeNameDetailsDTO toDetailsDTO(EmployeeEntity employeeEntity);
+  EmployeeNameDetailsDTO mapToDetailsDTO(EmployeeEntity employeeEntity);
 
 }

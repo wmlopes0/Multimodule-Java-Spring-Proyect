@@ -25,7 +25,7 @@ class EmployeeEntityMapperImplTest {
     EmployeeEntity employeeEntity = new EmployeeEntity(1L, name);
     EmployeeNameDetailsDTO expected = new EmployeeNameDetailsDTO(1L, expectedName, expectedLength);
 
-    EmployeeNameDetailsDTO result = employeeMapper.toDetailsDTO(employeeEntity);
+    EmployeeNameDetailsDTO result = employeeMapper.mapToDetailsDTO(employeeEntity);
     Assertions.assertEquals(expected, result);
   }
 
@@ -33,7 +33,7 @@ class EmployeeEntityMapperImplTest {
   @MethodSource("parameters")
   @DisplayName("Mapping Employee to EmployeeNameDetailsDTO correctly")
   void toDetailsDTOParametized(EmployeeEntity employeeEntity, EmployeeNameDetailsDTO expected) {
-    EmployeeNameDetailsDTO result = employeeMapper.toDetailsDTO(employeeEntity);
+    EmployeeNameDetailsDTO result = employeeMapper.mapToDetailsDTO(employeeEntity);
     Assertions.assertEquals(expected, result);
   }
 

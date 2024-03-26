@@ -21,7 +21,7 @@ class EmployeeServiceMapperImplTest {
   @DisplayName("Mapping EmployeeEntity to Employee correctly")
   void mapToDomainTest(String name) {
     EmployeeEntity employeeEntity = new EmployeeEntity(1L, name);
-    Employee expected = new Employee(name);
+    Employee expected = new Employee(1L, name);
     Employee result = employeeServiceMapper.mapToDomain(employeeEntity);
     Assertions.assertEquals(expected, result);
   }

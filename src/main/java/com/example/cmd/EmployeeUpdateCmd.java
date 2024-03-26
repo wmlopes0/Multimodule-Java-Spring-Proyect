@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class EmployeeUpdateCmd {
 
-  private Long id;
+  private Long number;
 
   private String name;
 }

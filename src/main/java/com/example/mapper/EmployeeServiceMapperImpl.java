@@ -10,6 +10,7 @@ public class EmployeeServiceMapperImpl implements EmployeeServiceMapper {
   @Override
   public Employee mapToDomain(EmployeeEntity employeeEntity) {
     return new Employee()
+        .setNumber(employeeEntity.getNumber())
         .setName(employeeEntity.getName());
   }
 
@@ -22,7 +23,7 @@ public class EmployeeServiceMapperImpl implements EmployeeServiceMapper {
   @Override
   public EmployeeEntity mapToEntity(EmployeeUpdateCmd employeeUpdateCmd) {
     return new EmployeeEntity()
-        .setNumber(employeeUpdateCmd.getId())
+        .setNumber(employeeUpdateCmd.getNumber())
         .setName(employeeUpdateCmd.getName());
   }
 }

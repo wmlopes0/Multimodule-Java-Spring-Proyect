@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class EmployeeMapperImpl implements EmployeeMapper {
 
   @Override
-  public EmployeeNameDetailsDTO toDetailsDTO(EmployeeEntity e) {
+  public EmployeeNameDetailsDTO mapToDetailsDTO(EmployeeEntity e) {
     return new EmployeeNameDetailsDTO(e.getNumber(),
         Optional.ofNullable(e.getName())
             .map(String::toUpperCase)

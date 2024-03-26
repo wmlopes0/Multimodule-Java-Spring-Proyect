@@ -2,7 +2,7 @@ package com.example.controller;
 
 import java.util.List;
 
-import com.example.dto.EmployeeDTO;
+import com.example.dto.EmployeeNameDTO;
 import com.example.dto.EmployeeNameDetailsDTO;
 import com.example.dto.EmployeeResponseDTO;
 import com.example.entity.EmployeeEntity;
@@ -44,7 +44,7 @@ public class EmployeeRestController {
   @GetMapping("/")
   public ResponseEntity<List<EmployeeNameDetailsDTO>> listEmployees() {
     List<EmployeeNameDetailsDTO> result = employeeRepository.findAll().stream()
-        .map(employeeMapper::toDetailsDTO)
+        .map(employeeMapper::mapToDetailsDTO)
         .toList();
     return ResponseEntity.ok(result);
   }
@@ -56,7 +56,7 @@ public class EmployeeRestController {
   public ResponseEntity<EmployeeNameDetailsDTO> getEmployeeById(@PathVariable("id") Long id) {
     return employeeRepository.findById(id)
         //                .stream()
-        .map(employeeMapper::toDetailsDTO)
+        .map(employeeMapper::mapToDetailsDTO)
         .map(ResponseEntity::ok)
         //                .findFirst()
         .orElse(ResponseEntity.notFound().build());
@@ -69,7 +69,7 @@ public class EmployeeRestController {
   @GetMapping("/name/{name}")
   public ResponseEntity<EmployeeNameDetailsDTO> getEmployeeByName(@PathVariable("name") String name) {
     return employeeRepository.findFirstByNameContainingIgnoreCase(name)
-        .map(employeeMapper::toDetailsDTO)
+        .map(employeeMapper::mapToDetailsDTO)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }
@@ -77,7 +77,7 @@ public class EmployeeRestController {
   @Operation(summary = "More information...", description = "This endpoint gets adds an employee to the database")
   @ApiResponse(responseCode = "201", description = "Successful operation")
   @PostMapping("/")
-  public ResponseEntity<EmployeeResponseDTO> newEmployee(@RequestBody EmployeeDTO employeeRequest) {
+  public ResponseEntity<EmployeeResponseDTO> newEmployee(@RequestBody EmployeeNameDTO employeeRequest) {
     EmployeeEntity newEmployeeEntity = new EmployeeEntity()
         .setName(employeeRequest.getName());
 
@@ -92,7 +92,7 @@ public class EmployeeRestController {
   @ApiResponse(responseCode = "200", description = "Successful operation")
   @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
   @PutMapping("/{id}")
-  public ResponseEntity<EmployeeResponseDTO> updateEmployeeById(@PathVariable("id") Long id, @RequestBody EmployeeDTO employeeUpdate) {
+  public ResponseEntity<EmployeeResponseDTO> updateEmployeeById(@PathVariable("id") Long id, @RequestBody EmployeeNameDTO employeeUpdate) {
     EmployeeEntity employeeEntity = employeeRepository.findById(id)
         .map(emp -> {
               emp.setName(employeeUpdate.getName());
