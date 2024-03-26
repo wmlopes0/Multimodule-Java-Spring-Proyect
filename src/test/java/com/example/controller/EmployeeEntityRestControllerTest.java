@@ -82,7 +82,7 @@ class EmployeeEntityRestControllerTest {
   @Test
   @DisplayName("ListEmployees Throws RuntimeException on Repository Error")
   void listEmployeesErrorTest() {
-    Mockito.when(repository.findAll()).thenThrow(new RuntimeException("An error ocurred"));
+    Mockito.when(repository.findAll()).thenThrow(new RuntimeException("An error occurred"));
     Assertions.assertThrows(RuntimeException.class, () -> controller.listEmployees());
     Mockito.verify(repository, times(1)).findAll();
   }

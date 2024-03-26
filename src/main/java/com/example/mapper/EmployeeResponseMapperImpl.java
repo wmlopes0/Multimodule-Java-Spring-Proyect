@@ -2,9 +2,9 @@ package com.example.mapper;
 
 import com.example.dto.EmployeeResponseDTO;
 import com.example.entity.EmployeeEntity;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class EmployeeResponseMapperImpl implements EmployeeResponseMapper {
 
   @Override
