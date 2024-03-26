@@ -39,6 +39,7 @@ public class EmployeeRestController {
         return ResponseEntity.ok(result);
     }
 
+
     @Operation(summary = "More information...", description = "This endpoint obtains information about an employee by their ID")
     @ApiResponse(responseCode = "200", description = "Successful operation")
     @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
