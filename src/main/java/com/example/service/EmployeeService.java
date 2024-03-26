@@ -1,22 +1,23 @@
 package com.example.service;
 
-import com.example.model.EmployeeDTO;
-import com.example.model.EmployeeNameDetailsDTO;
-import com.example.model.EmployeeResponseDTO;
-import org.springframework.http.ResponseEntity;
-
 import java.util.List;
 
+import com.example.cmd.EmployeeCreateCmd;
+import com.example.cmd.EmployeeUpdateCmd;
+import com.example.domain.Employee;
+import com.example.query.EmployeeByNameQuery;
+
 public interface EmployeeService {
-    ResponseEntity<List<EmployeeNameDetailsDTO>> listEmployees();
 
-    ResponseEntity<EmployeeNameDetailsDTO> getEmployeeById(Long id);
+  List<Employee> listEmployees();
 
-    ResponseEntity<EmployeeNameDetailsDTO> getEmployeeByName(String name);
+  Employee getEmployeeById(Long id);
 
-    ResponseEntity<EmployeeResponseDTO> addEmployee(EmployeeDTO employeeRequest);
+  Employee getEmployeeByName(EmployeeByNameQuery employeeByNameQuery);
 
-    ResponseEntity<EmployeeResponseDTO> updateEmployeeById(Long id, EmployeeDTO employeeUpdate);
+  Employee addEmployee(EmployeeCreateCmd employeeCreateCmd);
 
-    ResponseEntity<Object> deletedEmployeeById(Long id);
+  Employee updateEmployeeById(EmployeeUpdateCmd employeeUpdateCmd);
+
+  boolean deletedEmployeeById(Long id);
 }

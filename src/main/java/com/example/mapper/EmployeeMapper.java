@@ -1,10 +1,10 @@
 package com.example.mapper;
 
-import com.example.model.Employee;
-import com.example.model.EmployeeNameDetailsDTO;
+import com.example.dto.EmployeeNameDetailsDTO;
+import com.example.entity.EmployeeEntity;
 
 public interface EmployeeMapper {
 
-    EmployeeNameDetailsDTO toDetailsDTO(Employee employee);
+  EmployeeNameDetailsDTO toDetailsDTO(EmployeeEntity employeeEntity);
 
 }

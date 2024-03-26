@@ -1,16 +1,16 @@
 package com.example.mapper;
 
-import com.example.model.Employee;
-import com.example.model.EmployeeResponseDTO;
+import com.example.dto.EmployeeResponseDTO;
+import com.example.entity.EmployeeEntity;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmployeeResponseMapperImpl implements EmployeeResponseMapper{
+public class EmployeeResponseMapperImpl implements EmployeeResponseMapper {
 
-    @Override
-    public EmployeeResponseDTO toResponseDTO(Employee employee) {
-        return new EmployeeResponseDTO()
-                .setNumber(employee.getNumber())
-                .setName(employee.getName());
-    }
+  @Override
+  public EmployeeResponseDTO toResponseDTO(EmployeeEntity employeeEntity) {
+    return new EmployeeResponseDTO()
+        .setNumber(employeeEntity.getNumber())
+        .setName(employeeEntity.getName());
+  }
 }

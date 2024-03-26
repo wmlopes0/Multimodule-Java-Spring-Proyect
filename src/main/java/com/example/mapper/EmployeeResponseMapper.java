@@ -1,9 +1,9 @@
 package com.example.mapper;
 
-import com.example.model.Employee;
-import com.example.model.EmployeeResponseDTO;
+import com.example.dto.EmployeeResponseDTO;
+import com.example.entity.EmployeeEntity;
 
 public interface EmployeeResponseMapper {
 
-    EmployeeResponseDTO toResponseDTO (Employee employee);
+  EmployeeResponseDTO toResponseDTO(EmployeeEntity employeeEntity);
 }

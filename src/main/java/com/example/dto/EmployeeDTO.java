@@ -1,4 +1,4 @@
-package com.example.model;
+package com.example.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,5 +11,5 @@ import lombok.Setter;
 @Setter
 public class EmployeeDTO {
 
-    private String name;
+  private String name;
 }
