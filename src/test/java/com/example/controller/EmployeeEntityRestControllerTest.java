@@ -12,8 +12,6 @@ import com.example.dto.EmployeeNameDTO;
 import com.example.dto.EmployeeNameDetailsDTO;
 import com.example.dto.EmployeeResponseDTO;
 import com.example.entity.EmployeeEntity;
-import com.example.mapper.EmployeeMapper;
-import com.example.mapper.EmployeeResponseMapper;
 import com.example.repository.EmployeeRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

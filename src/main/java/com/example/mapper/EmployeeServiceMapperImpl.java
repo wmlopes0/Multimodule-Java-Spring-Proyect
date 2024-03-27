@@ -4,7 +4,9 @@ import com.example.cmd.EmployeeCreateCmd;
 import com.example.cmd.EmployeeUpdateCmd;
 import com.example.domain.Employee;
 import com.example.entity.EmployeeEntity;
+import org.springframework.stereotype.Component;
 
+@Component
 public class EmployeeServiceMapperImpl implements EmployeeServiceMapper {
 
   @Override

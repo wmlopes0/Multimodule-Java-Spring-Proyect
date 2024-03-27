@@ -1,6 +1,8 @@
 package com.example.mapper;
 
+import com.example.cmd.EmployeeCreateCmd;
 import com.example.domain.Employee;
+import com.example.dto.EmployeeNameDTO;
 import com.example.dto.EmployeeNameDetailsDTO;
 import com.example.dto.EmployeeResponseDTO;
 import org.junit.jupiter.api.Assertions;
@@ -33,9 +35,23 @@ class EmployeeControllerMapperImplTest {
   }, nullValues = {"null"})
   @DisplayName("Mapping Employee to EmployeeResponseDTO correctly")
   void toResponseDTO(Long number, String name) {
-    Employee employee = new Employee(1L, name);
+    Employee employee = new Employee(number, name);
     EmployeeResponseDTO expected = new EmployeeResponseDTO(number, name);
     EmployeeResponseDTO result = employeeControllerMapper.mapToResponseDTO(employee);
+
+    Assertions.assertEquals(expected, result);
+  }
+
+  @ParameterizedTest
+  @CsvSource(value = {
+      "Walter",
+      "null"
+  }, nullValues = {"null"})
+  @DisplayName("Mapping Employee to EmployeeResponseDTO correctly")
+  void toEmployeeCreateCmd(String name) {
+    EmployeeNameDTO employeeNameDTO = new EmployeeNameDTO(name);
+    EmployeeCreateCmd expected = new EmployeeCreateCmd(name);
+    EmployeeCreateCmd result = employeeControllerMapper.mapToEmployeeCreateCmd(employeeNameDTO);
 
     Assertions.assertEquals(expected, result);
   }

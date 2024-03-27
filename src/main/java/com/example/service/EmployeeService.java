@@ -19,5 +19,5 @@ public interface EmployeeService {
 
   Employee updateEmployeeById(EmployeeUpdateCmd employeeUpdateCmd);
 
-  boolean deletedEmployeeById(Long id);
+  boolean deleteEmployeeById(Long id);
 }
