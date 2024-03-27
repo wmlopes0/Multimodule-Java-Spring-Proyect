@@ -1,6 +1,7 @@
 package com.example.mapper;
 
 import com.example.cmd.EmployeeCreateCmd;
+import com.example.cmd.EmployeeUpdateCmd;
 import com.example.domain.Employee;
 import com.example.dto.EmployeeNameDTO;
 import com.example.dto.EmployeeNameDetailsDTO;
@@ -47,11 +48,25 @@ class EmployeeControllerMapperImplTest {
       "Walter",
       "null"
   }, nullValues = {"null"})
-  @DisplayName("Mapping Employee to EmployeeResponseDTO correctly")
+  @DisplayName("Mapping EmployeeNameDTO to EmployeeCreateCmd correctly")
   void toEmployeeCreateCmd(String name) {
     EmployeeNameDTO employeeNameDTO = new EmployeeNameDTO(name);
     EmployeeCreateCmd expected = new EmployeeCreateCmd(name);
     EmployeeCreateCmd result = employeeControllerMapper.mapToEmployeeCreateCmd(employeeNameDTO);
+
+    Assertions.assertEquals(expected, result);
+  }
+
+  @ParameterizedTest
+  @CsvSource(value = {
+      "1,Walter",
+      "2,null"
+  }, nullValues = {"null"})
+  @DisplayName("Mapping id and EmployeeNameDTO to EmployeeUpdateCmd correctly")
+  void mapToEmployeeUpdateCmd(Long id, String name) {
+    EmployeeNameDTO employeeNameDTO = new EmployeeNameDTO(name);
+    EmployeeUpdateCmd expected = new EmployeeUpdateCmd(id, name);
+    EmployeeUpdateCmd result = employeeControllerMapper.mapToEmployeeUpdateCmd(id, employeeNameDTO);
 
     Assertions.assertEquals(expected, result);
   }
