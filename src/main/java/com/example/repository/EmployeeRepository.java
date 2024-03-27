@@ -1,12 +1,13 @@
 package com.example.repository;
 
-import com.example.model.Employee;
+import java.util.Optional;
+
+import com.example.entity.EmployeeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
-public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-    Optional<Employee> findFirstByNameContainingIgnoreCase(String namePart);
+public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> {
+
+  Optional<EmployeeEntity> findFirstByNameContainingIgnoreCase(String namePart);
 }

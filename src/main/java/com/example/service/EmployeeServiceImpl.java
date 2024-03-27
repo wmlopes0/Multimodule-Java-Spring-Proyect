@@ -1,36 +1,66 @@
 package com.example.service;
 
-import com.example.model.Employee;
-import com.example.repository.EmployeeRepository;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 
-@AllArgsConstructor
+import com.example.cmd.EmployeeCreateCmd;
+import com.example.cmd.EmployeeUpdateCmd;
+import com.example.domain.Employee;
+import com.example.mapper.EmployeeServiceMapper;
+import com.example.query.EmployeeByNameQuery;
+import com.example.repository.EmployeeRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 @Service
+@RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
-    
-    private final EmployeeRepository repository;
 
+  private final EmployeeRepository employeeRepository;
 
-    @Override
-    public List<Employee> listAllEmployees() {
-        return repository.findAll();
+  private final EmployeeServiceMapper serviceMapper;
+
+  @Override
+  public List<Employee> listEmployees() {
+    return employeeRepository.findAll().stream()
+        .map(serviceMapper::mapToDomain)
+        .toList();
+  }
+
+  @Override
+  public Employee getEmployeeById(Long id) {
+    return employeeRepository.findById(id)
+        .map(serviceMapper::mapToDomain)
+        .orElse(null);
+  }
+
+  @Override
+  public Employee getEmployeeByName(EmployeeByNameQuery employeeQuery) {
+    return employeeRepository.findFirstByNameContainingIgnoreCase(employeeQuery.getName())
+        .map(serviceMapper::mapToDomain)
+        .orElse(null);
+  }
+
+  @Override
+  public Employee addEmployee(EmployeeCreateCmd employeeCreateCmd) {
+    return serviceMapper.mapToDomain(
+        employeeRepository.save(serviceMapper.mapToEntity(employeeCreateCmd)));
+  }
+
+  @Override
+  public Employee updateEmployeeById(EmployeeUpdateCmd employeeUpdateCmd) {
+    if (employeeRepository.existsById(employeeUpdateCmd.getNumber())) {
+      return serviceMapper.mapToDomain(
+          employeeRepository.save(serviceMapper.mapToEntity(employeeUpdateCmd)));
     }
+    return null;
+  }
 
-    @Override
-    public void addEmployee(Employee emp) {
-        repository.save(emp);
+  @Override
+  public boolean deleteEmployeeById(Long id) {
+    if (employeeRepository.existsById(id)) {
+      employeeRepository.deleteById(id);
+      return true;
     }
-
-    @Override
-    public void deleteEmployeeById(Long id) {
-        repository.deleteById(id);
-    }
-
-    @Override
-    public Employee firstEmployeeContainsName(String namePart) {
-        return repository.findFirstByNameContainingIgnoreCase(namePart).orElse(null);
-    }
+    return false;
+  }
 }
