@@ -5,7 +5,7 @@ import lombok.Value;
 
 @Builder
 @Value
-public class EmployeeVO {
+public class EmployeeUpdateVO {
 
   Long number;
 

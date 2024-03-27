@@ -3,7 +3,8 @@ package com.example.domain.service;
 import java.util.List;
 
 import com.example.domain.entity.Employee;
-import com.example.domain.vo.EmployeeVO;
+import com.example.domain.vo.EmployeeNameVO;
+import com.example.domain.vo.EmployeeUpdateVO;
 
 public interface EmployeeService {
 
@@ -11,11 +12,11 @@ public interface EmployeeService {
 
   Employee getEmployeeById(Long id);
 
-  Employee getEmployeeByName(EmployeeVO employee);
+  Employee getEmployeeByName(EmployeeNameVO employee);
 
-  Employee addEmployee(EmployeeVO employee);
+  Employee addEmployee(EmployeeNameVO employee);
 
-  Employee updateEmployeeById(EmployeeVO employeeUpdate);
+  Employee updateEmployeeById(EmployeeUpdateVO employeeUpdate);
 
   boolean deleteEmployeeById(Long id);
 }
