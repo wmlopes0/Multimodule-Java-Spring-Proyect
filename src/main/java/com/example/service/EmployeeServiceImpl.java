@@ -5,7 +5,7 @@ import java.util.List;
 import com.example.cmd.EmployeeCreateCmd;
 import com.example.cmd.EmployeeUpdateCmd;
 import com.example.domain.Employee;
-import com.example.mapper.EmployeeServiceMapperImpl;
+import com.example.mapper.EmployeeServiceMapper;
 import com.example.query.EmployeeByNameQuery;
 import com.example.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   private final EmployeeRepository employeeRepository;
 
-  private final EmployeeServiceMapperImpl serviceMapper;
+  private final EmployeeServiceMapper serviceMapper;
 
   @Override
   public List<Employee> listEmployees() {

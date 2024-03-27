@@ -12,7 +12,7 @@ import com.example.cmd.EmployeeCreateCmd;
 import com.example.cmd.EmployeeUpdateCmd;
 import com.example.domain.Employee;
 import com.example.entity.EmployeeEntity;
-import com.example.mapper.EmployeeServiceMapperImpl;
+import com.example.mapper.EmployeeServiceMapper;
 import com.example.query.EmployeeByNameQuery;
 import com.example.repository.EmployeeRepository;
 import org.junit.jupiter.api.Assertions;
@@ -31,10 +31,10 @@ class EmployeeServiceImplTest {
   private EmployeeRepository repository;
 
   @Mock
-  private EmployeeServiceMapperImpl serviceMapper;
+  private EmployeeServiceMapper serviceMapper;
 
   @InjectMocks
-  private EmployeeServiceImpl service;
+  private EmployeeService service;
 
   @Test
   @DisplayName("Retrieve Employee list successfully")

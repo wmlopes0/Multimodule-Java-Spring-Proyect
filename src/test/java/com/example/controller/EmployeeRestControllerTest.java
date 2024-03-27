@@ -13,9 +13,9 @@ import com.example.domain.Employee;
 import com.example.dto.EmployeeNameDTO;
 import com.example.dto.EmployeeNameDetailsDTO;
 import com.example.dto.EmployeeResponseDTO;
-import com.example.mapper.EmployeeControllerMapperImpl;
+import com.example.mapper.EmployeeControllerMapper;
 import com.example.query.EmployeeByNameQuery;
-import com.example.service.EmployeeServiceImpl;
+import com.example.service.EmployeeService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,10 +32,10 @@ import org.springframework.web.server.ResponseStatusException;
 class EmployeeRestControllerTest {
 
   @Mock
-  private EmployeeServiceImpl service;
+  private EmployeeService service;
 
   @Mock
-  private EmployeeControllerMapperImpl controllerMapper;
+  private EmployeeControllerMapper controllerMapper;
 
   @InjectMocks
   private EmployeeRestController controller;

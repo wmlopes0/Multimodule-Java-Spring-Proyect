@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class EmployeeServiceMapperImplTest {
 
-  private final EmployeeServiceMapperImpl employeeServiceMapper = new EmployeeServiceMapperImpl();
+  private final EmployeeServiceMapper employeeServiceMapper = new EmployeeServiceMapperImpl();
 
   @ParameterizedTest
   @CsvSource(value = {

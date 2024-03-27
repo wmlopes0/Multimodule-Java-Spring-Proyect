@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class EmployeeControllerMapperImplTest {
 
-  private final EmployeeControllerMapperImpl employeeControllerMapper = new EmployeeControllerMapperImpl();
+  private final EmployeeControllerMapper employeeControllerMapper = new EmployeeControllerMapperImpl();
 
   @ParameterizedTest
   @CsvSource(value = {

@@ -8,9 +8,9 @@ import com.example.domain.Employee;
 import com.example.dto.EmployeeNameDTO;
 import com.example.dto.EmployeeNameDetailsDTO;
 import com.example.dto.EmployeeResponseDTO;
-import com.example.mapper.EmployeeControllerMapperImpl;
+import com.example.mapper.EmployeeControllerMapper;
 import com.example.query.EmployeeByNameQuery;
-import com.example.service.EmployeeServiceImpl;
+import com.example.service.EmployeeService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -35,9 +35,9 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/employees")
 public class EmployeeRestController {
 
-  private final EmployeeServiceImpl employeeService;
+  private final EmployeeService employeeService;
 
-  private final EmployeeControllerMapperImpl employeeControllerMapper;
+  private final EmployeeControllerMapper employeeControllerMapper;
 
   @Operation(summary = "More information...", description = "This endpoint lists all employees in the database")
   @ApiResponse(responseCode = "200", description = "Successful operation")
