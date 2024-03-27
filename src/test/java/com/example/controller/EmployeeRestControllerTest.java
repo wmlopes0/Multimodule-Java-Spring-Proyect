@@ -13,7 +13,6 @@ import com.example.domain.Employee;
 import com.example.dto.EmployeeNameDTO;
 import com.example.dto.EmployeeNameDetailsDTO;
 import com.example.dto.EmployeeResponseDTO;
-import com.example.entity.EmployeeEntity;
 import com.example.mapper.EmployeeControllerMapperImpl;
 import com.example.query.EmployeeByNameQuery;
 import com.example.service.EmployeeServiceImpl;
@@ -232,7 +231,6 @@ class EmployeeRestControllerTest {
   @DisplayName("Deleted employee by ID successfully returns 200 code response")
   void deleteEmployeeByIdTest() {
     Long id = 1L;
-    EmployeeEntity existingEmployeeEntity = new EmployeeEntity(id, "Walter");
 
     Mockito.when(service.deleteEmployeeById(id)).thenReturn(true);
     ResponseEntity<Object> result = controller.deleteEmployeeById(id);

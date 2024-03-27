@@ -79,9 +79,8 @@ class EmployeeServiceImplTest {
     Mockito.when(repository.findById(id)).thenReturn(Optional.of(employeeEntity));
     Mockito.when(serviceMapper.mapToDomain(employeeEntity)).thenReturn(employee);
     Employee result = service.getEmployeeById(id);
-    Employee expected = employee;
 
-    Assertions.assertEquals(expected, result);
+    Assertions.assertEquals(employee, result);
     Mockito.verify(repository, times(1)).findById(id);
     Mockito.verify(serviceMapper, times(1)).mapToDomain(employeeEntity);
   }
@@ -94,7 +93,7 @@ class EmployeeServiceImplTest {
     Mockito.when(repository.findById(id)).thenReturn(Optional.empty());
     Employee result = service.getEmployeeById(id);
 
-    Assertions.assertEquals(null, result);
+    Assertions.assertNull(result);
     Mockito.verify(repository, times(1)).findById(id);
     Mockito.verify(serviceMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }
@@ -109,9 +108,8 @@ class EmployeeServiceImplTest {
     Mockito.when(repository.findFirstByNameContainingIgnoreCase(employeeByNameQuery.getName())).thenReturn(Optional.of(employeeEntity));
     Mockito.when(serviceMapper.mapToDomain(employeeEntity)).thenReturn(employee);
     Employee result = service.getEmployeeByName(employeeByNameQuery);
-    Employee expected = employee;
 
-    Assertions.assertEquals(expected, result);
+    Assertions.assertEquals(employee, result);
     Mockito.verify(repository, times(1)).findFirstByNameContainingIgnoreCase(employeeByNameQuery.getName());
     Mockito.verify(serviceMapper, times(1)).mapToDomain(employeeEntity);
   }
@@ -124,7 +122,7 @@ class EmployeeServiceImplTest {
     Mockito.when(repository.findFirstByNameContainingIgnoreCase(employeeByNameQuery.getName())).thenReturn(Optional.empty());
     Employee result = service.getEmployeeByName(employeeByNameQuery);
 
-    Assertions.assertEquals(null, result);
+    Assertions.assertNull(result);
     Mockito.verify(repository, times(1)).findFirstByNameContainingIgnoreCase(employeeByNameQuery.getName());
     Mockito.verify(serviceMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }
@@ -140,9 +138,8 @@ class EmployeeServiceImplTest {
     Mockito.when(repository.save(employeeEntity)).thenReturn(employeeEntity);
     Mockito.when(serviceMapper.mapToDomain(employeeEntity)).thenReturn(employee);
     Employee result = service.addEmployee(employeeCreateCmd);
-    Employee expected = employee;
 
-    Assertions.assertEquals(expected, result);
+    Assertions.assertEquals(employee, result);
     Mockito.verify(serviceMapper, times(1)).mapToEntity(employeeCreateCmd);
     Mockito.verify(repository, times(1)).save(employeeEntity);
     Mockito.verify(serviceMapper, times(1)).mapToDomain(employeeEntity);
@@ -160,9 +157,8 @@ class EmployeeServiceImplTest {
     Mockito.when(repository.save(employeeEntity)).thenReturn(employeeEntity);
     Mockito.when(serviceMapper.mapToDomain(employeeEntity)).thenReturn(employee);
     Employee result = service.updateEmployeeById(employeeUpdateCmd);
-    Employee expected = employee;
 
-    Assertions.assertEquals(expected, result);
+    Assertions.assertEquals(employee, result);
     Mockito.verify(repository, times(1)).existsById(employeeUpdateCmd.getNumber());
     Mockito.verify(serviceMapper, times(1)).mapToEntity(employeeUpdateCmd);
     Mockito.verify(repository, times(1)).save(employeeEntity);
@@ -177,7 +173,7 @@ class EmployeeServiceImplTest {
     Mockito.when(repository.existsById(employeeUpdateCmd.getNumber())).thenReturn(false);
     Employee result = service.updateEmployeeById(employeeUpdateCmd);
 
-    Assertions.assertEquals(null, result);
+    Assertions.assertNull(result);
     Mockito.verify(repository, times(1)).existsById(employeeUpdateCmd.getNumber());
     Mockito.verify(serviceMapper, never()).mapToEntity(employeeUpdateCmd);
     Mockito.verify(repository, never()).save(any(EmployeeEntity.class));
@@ -193,7 +189,7 @@ class EmployeeServiceImplTest {
 
     boolean result = service.deleteEmployeeById(id);
 
-    Assertions.assertEquals(true, result);
+    Assertions.assertTrue(result);
     Mockito.verify(repository, times(1)).existsById(id);
     Mockito.verify(repository, times(1)).deleteById(id);
   }
@@ -207,7 +203,7 @@ class EmployeeServiceImplTest {
 
     boolean result = service.deleteEmployeeById(id);
 
-    Assertions.assertEquals(false, result);
+    Assertions.assertFalse(result);
     Mockito.verify(repository, times(1)).existsById(id);
     Mockito.verify(repository, never()).deleteById(any(Long.class));
   }
