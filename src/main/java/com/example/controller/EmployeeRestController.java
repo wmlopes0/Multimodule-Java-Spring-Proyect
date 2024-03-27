@@ -98,7 +98,7 @@ public class EmployeeRestController {
   @ApiResponse(responseCode = "200", description = "Successful operation")
   @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
   @DeleteMapping("/{id}")
-  public ResponseEntity<Object> deletedEmployeeById(@PathVariable("id") Long id) {
+  public ResponseEntity<Object> deleteEmployeeById(@PathVariable("id") Long id) {
     return employeeService.deleteEmployeeById(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
   }
 }

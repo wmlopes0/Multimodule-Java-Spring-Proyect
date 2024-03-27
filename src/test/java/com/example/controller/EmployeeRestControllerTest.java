@@ -230,12 +230,12 @@ class EmployeeRestControllerTest {
 
   @Test
   @DisplayName("Deleted employee by ID successfully returns 200 code response")
-  void deletedEmployeeByIdTest() {
+  void deleteEmployeeByIdTest() {
     Long id = 1L;
     EmployeeEntity existingEmployeeEntity = new EmployeeEntity(id, "Walter");
 
     Mockito.when(service.deleteEmployeeById(id)).thenReturn(true);
-    ResponseEntity<Object> result = controller.deletedEmployeeById(id);
+    ResponseEntity<Object> result = controller.deleteEmployeeById(id);
     ResponseEntity<Object> expected = ResponseEntity.ok().build();
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
@@ -244,11 +244,11 @@ class EmployeeRestControllerTest {
 
   @Test
   @DisplayName("Delete employee by ID failed returns 404 code response")
-  void deletedEmployeeByIdNotFoundTest() {
+  void deleteEmployeeByIdNotFoundTest() {
     Long id = 1L;
 
     Mockito.when(service.deleteEmployeeById(id)).thenReturn(false);
-    ResponseEntity<Object> result = controller.deletedEmployeeById(id);
+    ResponseEntity<Object> result = controller.deleteEmployeeById(id);
     ResponseEntity<Object> expected = ResponseEntity.notFound().build();
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());

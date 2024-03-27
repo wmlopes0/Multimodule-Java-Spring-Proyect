@@ -1,239 +1,214 @@
 package com.example.service;
 
-import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 
+import java.util.List;
+import java.util.Optional;
+
+import com.example.cmd.EmployeeCreateCmd;
+import com.example.cmd.EmployeeUpdateCmd;
+import com.example.domain.Employee;
+import com.example.entity.EmployeeEntity;
+import com.example.mapper.EmployeeServiceMapperImpl;
+import com.example.query.EmployeeByNameQuery;
+import com.example.repository.EmployeeRepository;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
 class EmployeeServiceImplTest {
 
-  //TODO Generate Test
+  @Mock
+  private EmployeeRepository repository;
+
+  @Mock
+  private EmployeeServiceMapperImpl serviceMapper;
+
+  @InjectMocks
+  private EmployeeServiceImpl service;
+
   @Test
-  void listEmployees() {
+  @DisplayName("Retrieve Employee list successfully")
+  void listEmployeesTest() {
+    EmployeeEntity employeeEntity1 = new EmployeeEntity(1L, "Walter");
+    EmployeeEntity employeeEntity2 = new EmployeeEntity(2L, "Quique");
+    Employee employee1 = new Employee(1L, "Walter");
+    Employee employee2 = new Employee(2L, "Quique");
+
+    Mockito.when(repository.findAll()).thenReturn(List.of(employeeEntity1, employeeEntity2));
+    Mockito.when(serviceMapper.mapToDomain(employeeEntity1)).thenReturn(employee1);
+    Mockito.when(serviceMapper.mapToDomain(employeeEntity2)).thenReturn(employee2);
+
+    List<Employee> result = service.listEmployees();
+    List<Employee> expected = List.of(employee1, employee2);
+
+    Assertions.assertEquals(expected, result);
+    Mockito.verify(repository, times(1)).findAll();
+    Mockito.verify(serviceMapper, atLeastOnce()).mapToDomain(any(EmployeeEntity.class));
   }
 
   @Test
-  void getEmployeeById() {
+  @DisplayName("Retrieve empty Employee list when no employees present")
+  void emptyListEmployeesTest() {
+    Mockito.when(repository.findAll()).thenReturn(List.of());
+
+    List<Employee> result = service.listEmployees();
+    List<Employee> expected = List.of();
+
+    Assertions.assertEquals(expected, result);
+    Mockito.verify(repository, times(1)).findAll();
+    Mockito.verify(serviceMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }
 
   @Test
-  void getEmployeeByName() {
+  @DisplayName("Retrieve Employee by ID successfully")
+  void getEmployeeByIdTest() {
+    Long id = 1L;
+    EmployeeEntity employeeEntity = new EmployeeEntity(1L, "Walter");
+    Employee employee = new Employee(1L, "Walter");
+
+    Mockito.when(repository.findById(id)).thenReturn(Optional.of(employeeEntity));
+    Mockito.when(serviceMapper.mapToDomain(employeeEntity)).thenReturn(employee);
+    Employee result = service.getEmployeeById(id);
+    Employee expected = employee;
+
+    Assertions.assertEquals(expected, result);
+    Mockito.verify(repository, times(1)).findById(id);
+    Mockito.verify(serviceMapper, times(1)).mapToDomain(employeeEntity);
   }
 
   @Test
-  void addEmployee() {
+  @DisplayName("Employee Not Found by ID")
+  void getEmployeeByIdNotFoundTest() {
+    Long id = 1L;
+
+    Mockito.when(repository.findById(id)).thenReturn(Optional.empty());
+    Employee result = service.getEmployeeById(id);
+
+    Assertions.assertEquals(null, result);
+    Mockito.verify(repository, times(1)).findById(id);
+    Mockito.verify(serviceMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }
 
   @Test
-  void updateEmployeeById() {
+  @DisplayName("Retrieve Employee by name successfully")
+  void getEmployeeByNameTest() {
+    EmployeeByNameQuery employeeByNameQuery = new EmployeeByNameQuery("Walter");
+    EmployeeEntity employeeEntity = new EmployeeEntity(1L, "Walter");
+    Employee employee = new Employee(1L, "Walter");
+
+    Mockito.when(repository.findFirstByNameContainingIgnoreCase(employeeByNameQuery.getName())).thenReturn(Optional.of(employeeEntity));
+    Mockito.when(serviceMapper.mapToDomain(employeeEntity)).thenReturn(employee);
+    Employee result = service.getEmployeeByName(employeeByNameQuery);
+    Employee expected = employee;
+
+    Assertions.assertEquals(expected, result);
+    Mockito.verify(repository, times(1)).findFirstByNameContainingIgnoreCase(employeeByNameQuery.getName());
+    Mockito.verify(serviceMapper, times(1)).mapToDomain(employeeEntity);
   }
 
   @Test
-  void deleteEmployeeById() {
+  @DisplayName("Employee Not Found by name")
+  void getEmployeeByNameNotFoundTest() {
+    EmployeeByNameQuery employeeByNameQuery = new EmployeeByNameQuery("Walter");
+
+    Mockito.when(repository.findFirstByNameContainingIgnoreCase(employeeByNameQuery.getName())).thenReturn(Optional.empty());
+    Employee result = service.getEmployeeByName(employeeByNameQuery);
+
+    Assertions.assertEquals(null, result);
+    Mockito.verify(repository, times(1)).findFirstByNameContainingIgnoreCase(employeeByNameQuery.getName());
+    Mockito.verify(serviceMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }
 
-//  @Test
-//  @DisplayName("List employees return correctly list")
-//  void listEmployeesTest() {
-//    EmployeeEntity employeeEntity1 = new EmployeeEntity(1L, "Walter");
-//    EmployeeEntity employeeEntity2 = new EmployeeEntity(2L, "Quique");
-//    EmployeeNameDetailsDTO employeeDTO1 = new EmployeeNameDetailsDTO(employeeEntity1.getNumber(), employeeEntity1.getName().toUpperCase(),
-//        employeeEntity1.getName().length());
-//    EmployeeNameDetailsDTO employeeDTO2 = new EmployeeNameDetailsDTO(employeeEntity2.getNumber(), employeeEntity2.getName().toUpperCase(),
-//        employeeEntity2.getName().length());
-//
-//    Mockito.when(repository.findAll()).thenReturn(List.of(employeeEntity1, employeeEntity2));
-//    Mockito.when(employeeMapper.mapToDetailsDTO(employeeEntity1)).thenReturn(employeeDTO1);
-//    Mockito.when(employeeMapper.mapToDetailsDTO(employeeEntity2)).thenReturn(employeeDTO2);
-//
-//    ResponseEntity<List<EmployeeNameDetailsDTO>> result = controller.listEmployees();
-//    ResponseEntity<List<EmployeeNameDetailsDTO>> expected = ResponseEntity.ok(List.of(employeeDTO1, employeeDTO2));
-//
-//    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
-//    Assertions.assertEquals(expected.getBody(), result.getBody());
-//    Mockito.verify(repository, times(1)).findAll();
-//    Mockito.verify(employeeMapper, atLeastOnce()).mapToDetailsDTO(any(EmployeeEntity.class));
-//  }
-//
-//  @Test
-//  @DisplayName("When list employees is empty return correctly list")
-//  void listEmployeesEmptyTest() {
-//    Mockito.when(repository.findAll()).thenReturn(List.of());
-//
-//    ResponseEntity<List<EmployeeNameDetailsDTO>> result = controller.listEmployees();
-//    ResponseEntity<List<EmployeeNameDetailsDTO>> expected = ResponseEntity.ok(List.of());
-//
-//    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
-//    Assertions.assertEquals(expected.getBody(), result.getBody());
-//    Mockito.verify(repository, times(1)).findAll();
-//    Mockito.verify(employeeMapper, never()).mapToDetailsDTO(any(EmployeeEntity.class));
-//  }
-//
-//  @Test
-//  @DisplayName("ListEmployees Throws RuntimeException on Repository Error")
-//  void listEmployeesErrorTest() {
-//    Mockito.when(repository.findAll()).thenThrow(new RuntimeException("An error occurred"));
-//    Assertions.assertThrows(RuntimeException.class, () -> controller.listEmployees());
-//    Mockito.verify(repository, times(1)).findAll();
-//  }
-//
-//  @Test
-//  @DisplayName("Get employee by ID returns employee and 200 response correctly")
-//  void getEmployeeByIdTest() {
-//    Long id = 1L;
-//    EmployeeEntity employeeEntity = new EmployeeEntity(1L, "Walter");
-//    EmployeeNameDetailsDTO employeeDTO = new EmployeeNameDetailsDTO()
-//        .setNumber(employeeEntity.getNumber())
-//        .setName(employeeEntity.getName().toUpperCase())
-//        .setNameLength(employeeEntity.getName().length());
-//
-//    Mockito.when(repository.findById(id)).thenReturn(Optional.of(employeeEntity));
-//    Mockito.when(employeeMapper.mapToDetailsDTO(employeeEntity)).thenReturn(employeeDTO);
-//    ResponseEntity<EmployeeNameDetailsDTO> result = controller.getEmployeeById(id);
-//    ResponseEntity<EmployeeNameDetailsDTO> expected = ResponseEntity.ok(employeeDTO);
-//
-//    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
-//    Assertions.assertEquals(expected.getBody(), result.getBody());
-//    Mockito.verify(repository, times(1)).findById(id);
-//    Mockito.verify(employeeMapper, times(1)).mapToDetailsDTO(employeeEntity);
-//  }
-//
-//  @Test
-//  @DisplayName("Get employee by ID not found returns 404 response")
-//  void getEmployeeByIdNotFoundTest() {
-//    Long id = 1L;
-//
-//    Mockito.when(repository.findById(id)).thenReturn(Optional.empty());
-//    ResponseEntity<EmployeeNameDetailsDTO> result = controller.getEmployeeById(id);
-//    ResponseEntity<EmployeeNameDetailsDTO> expected = ResponseEntity.notFound().build();
-//
-//    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
-//    Assertions.assertEquals(expected.getBody(), result.getBody());
-//    Mockito.verify(repository, times(1)).findById(id);
-//    Mockito.verify(employeeMapper, never()).mapToDetailsDTO(any(EmployeeEntity.class));
-//  }
-//
-//  @Test
-//  @DisplayName("Get employee by name returns employee and 200 response correctly")
-//  void getEmployeeByNameTest() {
-//    String name = "Wal";
-//    EmployeeEntity employeeEntity = new EmployeeEntity(1L, "Walter");
-//    EmployeeNameDetailsDTO employeeDTO = new EmployeeNameDetailsDTO()
-//        .setNumber(employeeEntity.getNumber())
-//        .setName(employeeEntity.getName().toUpperCase())
-//        .setNameLength(employeeEntity.getName().length());
-//
-//    Mockito.when(repository.findFirstByNameContainingIgnoreCase(name)).thenReturn(Optional.of(employeeEntity));
-//    Mockito.when(employeeMapper.mapToDetailsDTO(employeeEntity)).thenReturn(employeeDTO);
-//    ResponseEntity<EmployeeNameDetailsDTO> result = controller.getEmployeeByName(name);
-//    ResponseEntity<EmployeeNameDetailsDTO> expected = ResponseEntity.ok(employeeDTO);
-//
-//    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
-//    Assertions.assertEquals(expected.getBody(), result.getBody());
-//    Mockito.verify(repository, times(1)).findFirstByNameContainingIgnoreCase(name);
-//    Mockito.verify(employeeMapper, times(1)).mapToDetailsDTO(employeeEntity);
-//  }
-//
-//  @Test
-//  @DisplayName("Get employee by name not found returns 404 response")
-//  void getEmployeeByNameNotFoundTest() {
-//    String name = "Wal";
-//
-//    Mockito.when(repository.findFirstByNameContainingIgnoreCase(name)).thenReturn(Optional.empty());
-//    ResponseEntity<EmployeeNameDetailsDTO> result = controller.getEmployeeByName(name);
-//    ResponseEntity<EmployeeNameDetailsDTO> expected = ResponseEntity.notFound().build();
-//
-//    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
-//    Assertions.assertEquals(expected.getBody(), result.getBody());
-//    Mockito.verify(repository, times(1)).findFirstByNameContainingIgnoreCase(name);
-//    Mockito.verify(employeeMapper, never()).mapToDetailsDTO(any(EmployeeEntity.class));
-//  }
-//
-//  @Test
-//  @DisplayName("Add new employee returns 201 response")
-//  void newEmployeeTest() {
-//    EmployeeNameDTO requestBody = new EmployeeNameDTO("Walter");
-//    EmployeeEntity newEmployeeEntity = new EmployeeEntity()
-//        .setName(requestBody.getName());
-//    EmployeeResponseDTO employeeResponse = new EmployeeResponseDTO()
-//        .setNumber(newEmployeeEntity.getNumber())
-//        .setName(newEmployeeEntity.getName());
-//
-//    Mockito.when(repository.save(newEmployeeEntity)).thenReturn(newEmployeeEntity);
-//    Mockito.when(employeeResponseMapper.toResponseDTO(newEmployeeEntity)).thenReturn(employeeResponse);
-//
-//    ResponseEntity<EmployeeResponseDTO> result = controller.newEmployee(requestBody);
-//    ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.status(HttpStatus.CREATED).body(employeeResponse);
-//
-//    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
-//    Assertions.assertEquals(expected.getBody(), result.getBody());
-//    Mockito.verify(repository, times(1)).save(newEmployeeEntity);
-//    Mockito.verify(employeeResponseMapper, times(1)).toResponseDTO(any(EmployeeEntity.class));
-//  }
-//
-//  @Test
-//  @DisplayName("Update employee by ID successfully returns 200 code response")
-//  void updateEmployeeByIdTest() {
-//    Long id = 1L;
-//    EmployeeNameDTO requestBody = new EmployeeNameDTO("Walter");
-//    EmployeeEntity existingEmployeeEntity = new EmployeeEntity(id, "Quique");
-//    EmployeeEntity updatedEmployeeEntity = new EmployeeEntity(id, requestBody.getName());
-//    EmployeeResponseDTO employeeResponse = new EmployeeResponseDTO()
-//        .setNumber(updatedEmployeeEntity.getNumber())
-//        .setName(updatedEmployeeEntity.getName());
-//
-//    Mockito.when(repository.findById(id)).thenReturn(Optional.of(existingEmployeeEntity));
-//    Mockito.when(repository.save(updatedEmployeeEntity)).thenReturn(updatedEmployeeEntity);
-//    Mockito.when(employeeResponseMapper.toResponseDTO(updatedEmployeeEntity)).thenReturn(employeeResponse);
-//
-//    ResponseEntity<EmployeeResponseDTO> result = controller.updateEmployeeById(id, requestBody);
-//    ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.ok(employeeResponse);
-//
-//    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
-//    Assertions.assertEquals(expected.getBody(), result.getBody());
-//    Mockito.verify(repository, times(1)).findById(id);
-//    Mockito.verify(repository, times(1)).save(updatedEmployeeEntity);
-//    Mockito.verify(employeeResponseMapper, times(1)).toResponseDTO(any(EmployeeEntity.class));
-//  }
-//
-//  @Test
-//  @DisplayName("Update employee by ID not found returns 404 code response")
-//  void updateEmployeeByIdNotFoundTest() {
-//    Long id = 1L;
-//    EmployeeNameDTO requestBody = new EmployeeNameDTO("Walter");
-//
-//    Mockito.when(repository.findById(id)).thenReturn(Optional.empty());
-//
-//    Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> controller.updateEmployeeById(id, requestBody));
-//    Assertions.assertTrue(exception.getMessage().contains("Empleado no encontrado con ID: " + id));
-//    Mockito.verify(repository, times(1)).findById(id);
-//    Mockito.verify(repository, times(0)).save(any(EmployeeEntity.class));
-//    Mockito.verify(employeeResponseMapper, never()).toResponseDTO(any(EmployeeEntity.class));
-//  }
-//
-//  @Test
-//  @DisplayName("Deleted employee by ID successfully returns 200 code response")
-//  void deletedEmployeeByIdTest() {
-//    Long id = 1L;
-//    EmployeeEntity existingEmployeeEntity = new EmployeeEntity(id, "Walter");
-//
-//    Mockito.when(repository.findById(id)).thenReturn(Optional.of(existingEmployeeEntity));
-//    ResponseEntity<Object> result = controller.deletedEmployeeById(id);
-//    ResponseEntity<Object> expected = ResponseEntity.ok().build();
-//
-//    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
-//    Mockito.verify(repository, times(1)).findById(id);
-//    Mockito.verify(repository, times(1)).deleteById(id);
-//  }
-//
-//  @Test
-//  @DisplayName("Delete employee by ID failed returns 404 code response")
-//  void deletedEmployeeByIdNotFoundTest() {
-//    Long id = 1L;
-//
-//    Mockito.when(repository.findById(id)).thenReturn(Optional.empty());
-//    ResponseEntity<Object> result = controller.deletedEmployeeById(id);
-//    ResponseEntity<Object> expected = ResponseEntity.notFound().build();
-//
-//    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
-//    Mockito.verify(repository, times(1)).findById(id);
-//    Mockito.verify(repository, times(0)).deleteById(any(Long.class));
-//  }
+  @Test
+  @DisplayName("Add new Employee successfully")
+  void addEmployeeTest() {
+    EmployeeCreateCmd employeeCreateCmd = new EmployeeCreateCmd("Walter");
+    EmployeeEntity employeeEntity = new EmployeeEntity(1L, "Walter");
+    Employee employee = new Employee(1L, "Walter");
+
+    Mockito.when(serviceMapper.mapToEntity(employeeCreateCmd)).thenReturn(employeeEntity);
+    Mockito.when(repository.save(employeeEntity)).thenReturn(employeeEntity);
+    Mockito.when(serviceMapper.mapToDomain(employeeEntity)).thenReturn(employee);
+    Employee result = service.addEmployee(employeeCreateCmd);
+    Employee expected = employee;
+
+    Assertions.assertEquals(expected, result);
+    Mockito.verify(serviceMapper, times(1)).mapToEntity(employeeCreateCmd);
+    Mockito.verify(repository, times(1)).save(employeeEntity);
+    Mockito.verify(serviceMapper, times(1)).mapToDomain(employeeEntity);
+  }
+
+  @Test
+  @DisplayName("Update Employee information successfully")
+  void updateEmployeeByIdTest() {
+    EmployeeUpdateCmd employeeUpdateCmd = new EmployeeUpdateCmd(1L, "Walter");
+    EmployeeEntity employeeEntity = new EmployeeEntity(1L, "Walter");
+    Employee employee = new Employee(1L, "Walter");
+
+    Mockito.when(repository.existsById(employeeUpdateCmd.getNumber())).thenReturn(true);
+    Mockito.when(serviceMapper.mapToEntity(employeeUpdateCmd)).thenReturn(employeeEntity);
+    Mockito.when(repository.save(employeeEntity)).thenReturn(employeeEntity);
+    Mockito.when(serviceMapper.mapToDomain(employeeEntity)).thenReturn(employee);
+    Employee result = service.updateEmployeeById(employeeUpdateCmd);
+    Employee expected = employee;
+
+    Assertions.assertEquals(expected, result);
+    Mockito.verify(repository, times(1)).existsById(employeeUpdateCmd.getNumber());
+    Mockito.verify(serviceMapper, times(1)).mapToEntity(employeeUpdateCmd);
+    Mockito.verify(repository, times(1)).save(employeeEntity);
+    Mockito.verify(serviceMapper, times(1)).mapToDomain(employeeEntity);
+  }
+
+  @Test
+  @DisplayName("Fail to update non-existent Employee")
+  void updateEmployeeByIdNotFoundTest() {
+    EmployeeUpdateCmd employeeUpdateCmd = new EmployeeUpdateCmd(1L, "Walter");
+
+    Mockito.when(repository.existsById(employeeUpdateCmd.getNumber())).thenReturn(false);
+    Employee result = service.updateEmployeeById(employeeUpdateCmd);
+
+    Assertions.assertEquals(null, result);
+    Mockito.verify(repository, times(1)).existsById(employeeUpdateCmd.getNumber());
+    Mockito.verify(serviceMapper, never()).mapToEntity(employeeUpdateCmd);
+    Mockito.verify(repository, never()).save(any(EmployeeEntity.class));
+    Mockito.verify(serviceMapper, never()).mapToDomain(any(EmployeeEntity.class));
+  }
+
+  @Test
+  @DisplayName("Delete Employee by ID successfully")
+  void deleteEmployeeByIdTest() {
+    Long id = 1L;
+
+    Mockito.when(repository.existsById(id)).thenReturn(true);
+
+    boolean result = service.deleteEmployeeById(id);
+
+    Assertions.assertEquals(true, result);
+    Mockito.verify(repository, times(1)).existsById(id);
+    Mockito.verify(repository, times(1)).deleteById(id);
+  }
+
+  @Test
+  @DisplayName("Employee deletion fails for non-existent ID")
+  void deleteEmployeeByIdNotFoundTest() {
+    Long id = 1L;
+
+    Mockito.when(repository.existsById(id)).thenReturn(false);
+
+    boolean result = service.deleteEmployeeById(id);
+
+    Assertions.assertEquals(false, result);
+    Mockito.verify(repository, times(1)).existsById(id);
+    Mockito.verify(repository, never()).deleteById(any(Long.class));
+  }
 }
