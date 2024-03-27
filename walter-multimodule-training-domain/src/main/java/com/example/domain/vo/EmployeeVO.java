@@ -5,8 +5,9 @@ import lombok.Value;
 
 @Builder
 @Value
-public class EmployeeNameVO {
+public class EmployeeVO {
+
+  Long number;
 
   String name;
-
 }
