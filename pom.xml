@@ -79,6 +79,42 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.2.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>9.3</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <configLocation>${project.parent.relativePath}/src/main/config/checkstyle-java-google-style.xml</configLocation>
+                    <suppressionsLocation>${project.parent.relativePath}/src/main/config/checkstyle-suppressions.xml</suppressionsLocation>
+                    <failOnViolation>true</failOnViolation>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    <resourceIncludes>**/*.json, **/*.properties, **/*.proto, **/*.sql, **/*.xml, **/*.wsdl, **/*.yaml, **/*.yml</resourceIncludes>
+                    <resourceExcludes>db2/**/*, ibmmq/**/*, influxdb/**/*, kafka/**/*, mongodb/**/*, schema_registry/**/*, trafficparrot_mappings/**/*, zookeeper/**/*</resourceExcludes>
+                    <sourceDirectories>
+                        <sourceDirectory>src/main/java</sourceDirectory>
+                    </sourceDirectories>
+                    <testSourceDirectories>
+                        <testSourceDirectory>src/it/java</testSourceDirectory>
+                        <testSourceDirectory>src/test/java</testSourceDirectory>
+                    </testSourceDirectories>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>quality-metric-checkstyle</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

@@ -1,15 +1,23 @@
 package com.example.service;
 
-import com.example.model.Employee;
-
 import java.util.List;
 
+import com.example.cmd.EmployeeCreateCmd;
+import com.example.cmd.EmployeeUpdateCmd;
+import com.example.domain.Employee;
+import com.example.query.EmployeeByNameQuery;
+
 public interface EmployeeService {
-    List<Employee> listAllEmployees();
 
-    void addEmployee(Employee emp);
+  List<Employee> listEmployees();
 
-    void deleteEmployeeById(Long id);
+  Employee getEmployeeById(Long id);
 
-    Employee firstEmployeeContainsName(String namePart);
+  Employee getEmployeeByName(EmployeeByNameQuery employeeByNameQuery);
+
+  Employee addEmployee(EmployeeCreateCmd employeeCreateCmd);
+
+  Employee updateEmployeeById(EmployeeUpdateCmd employeeUpdateCmd);
+
+  boolean deleteEmployeeById(Long id);
 }

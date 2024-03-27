@@ -6,11 +6,12 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SpringDocConfig {
-    @Bean
-    public GroupedOpenApi publicApi() {
-        return GroupedOpenApi.builder()
-                .group("springdoc")
-                .packagesToScan("com.example")
-                .build();
-    }
+
+  @Bean
+  public GroupedOpenApi publicApi() {
+    return GroupedOpenApi.builder()
+        .group("springdoc")
+        .packagesToScan("com.example")
+        .build();
+  }
 }
