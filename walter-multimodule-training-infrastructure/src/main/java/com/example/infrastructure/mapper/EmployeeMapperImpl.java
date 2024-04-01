@@ -10,45 +10,22 @@ import org.springframework.stereotype.Component;
 public class EmployeeMapperImpl implements EmployeeMapper {
 
   @Override
-  public Employee mapToEmployee(EmployeeEntity employeeEntity) {
-    return null;
+  public Employee mapToDomain(EmployeeEntity employeeEntity) {
+    return new Employee()
+        .setNumber(employeeEntity.getNumber())
+        .setName(employeeEntity.getName());
   }
 
   @Override
-  public EmployeeEntity mapToEmployeeEntity(EmployeeNameVO employeeNameVO) {
-    return null;
+  public EmployeeEntity mapToEntity(EmployeeNameVO employeeNameVO) {
+    return new EmployeeEntity()
+        .setName(employeeNameVO.getName());
   }
 
   @Override
-  public EmployeeEntity mapToEmployeeEntity(EmployeeUpdateVO employeeUpdateVO) {
-    return null;
+  public EmployeeEntity mapToEntity(EmployeeUpdateVO employeeUpdateVO) {
+    return new EmployeeEntity()
+        .setNumber(employeeUpdateVO.getNumber())
+        .setName(employeeUpdateVO.getName());
   }
-
-  //  @Override
-  //  public EmployeeCreateCmd mapToEmployeeCreateCmd(EmployeeNameDTO employeeNameDTO) {
-  //    return new EmployeeCreateCmd(employeeNameDTO.getName());
-  //  }
-  //
-  //  @Override
-  //  public EmployeeUpdateCmd mapToEmployeeUpdateCmd(Long id, EmployeeNameDTO employeeNameDTO) {
-  //    return new EmployeeUpdateCmd(id, employeeNameDTO.getName());
-  //  }
-  //
-  //  @Override
-  //  public EmployeeNameDetailsDTO mapToDetailsDTO(Employee employee) {
-  //    return new EmployeeNameDetailsDTO(employee.getNumber(),
-  //        Optional.ofNullable(employee.getName())
-  //            .map(String::toUpperCase)
-  //            .orElse(null),
-  //        Optional.ofNullable(employee.getName())
-  //            .map(String::length)
-  //            .orElse(0));
-  //  }
-  //
-  //  @Override
-  //  public EmployeeResponseDTO mapToResponseDTO(Employee employee) {
-  //    return new EmployeeResponseDTO()
-  //        .setNumber(employee.getNumber())
-  //        .setName(employee.getName());
-  //  }
 }

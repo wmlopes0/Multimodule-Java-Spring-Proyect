@@ -7,9 +7,9 @@ import com.example.infrastructure.entity.EmployeeEntity;
 
 public interface EmployeeMapper {
 
-  Employee mapToEmployee(EmployeeEntity employeeEntity);
+  Employee mapToDomain(EmployeeEntity employeeEntity);
 
-  EmployeeEntity mapToEmployeeEntity(EmployeeNameVO employeeNameVO);
+  EmployeeEntity mapToEntity(EmployeeNameVO employeeNameVO);
 
-  EmployeeEntity mapToEmployeeEntity(EmployeeUpdateVO employeeUpdateVO);
+  EmployeeEntity mapToEntity(EmployeeUpdateVO employeeUpdateVO);
 }
