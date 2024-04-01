@@ -34,7 +34,7 @@ class EmployeeServiceImplTest {
   private EmployeeServiceMapper serviceMapper;
 
   @InjectMocks
-  private EmployeeService service;
+  private EmployeeServiceImpl service;
 
   @Test
   @DisplayName("Retrieve Employee list successfully")
