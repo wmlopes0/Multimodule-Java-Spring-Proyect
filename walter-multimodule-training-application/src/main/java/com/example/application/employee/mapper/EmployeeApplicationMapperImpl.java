@@ -1,33 +1,34 @@
 package com.example.application.employee.mapper;
 
-//@Component
-//public class EmployeeApplicationMapperImpl implements EmployeeApplicationMapper {
+import com.example.application.employee.cmd.EmployeeCreateCmd;
+import com.example.application.employee.cmd.EmployeeUpdateCmd;
+import com.example.application.employee.query.EmployeeByNameQuery;
+import com.example.domain.vo.EmployeeNameVO;
+import com.example.domain.vo.EmployeeUpdateVO;
+import org.springframework.stereotype.Component;
 
-//  @Override
-//  public EmployeeCreateCmd mapToEmployeeCreateCmd(EmployeeNameDTO employeeNameDTO) {
-//    return new EmployeeCreateCmd(employeeNameDTO.getName());
-//  }
-//
-//  @Override
-//  public EmployeeUpdateCmd mapToEmployeeUpdateCmd(Long id, EmployeeNameDTO employeeNameDTO) {
-//    return new EmployeeUpdateCmd(id, employeeNameDTO.getName());
-//  }
-//
-//  @Override
-//  public EmployeeNameDetailsDTO mapToDetailsDTO(Employee employee) {
-//    return new EmployeeNameDetailsDTO(employee.getNumber(),
-//        Optional.ofNullable(employee.getName())
-//            .map(String::toUpperCase)
-//            .orElse(null),
-//        Optional.ofNullable(employee.getName())
-//            .map(String::length)
-//            .orElse(0));
-//  }
-//
-//  @Override
-//  public EmployeeResponseDTO mapToResponseDTO(Employee employee) {
-//    return new EmployeeResponseDTO()
-//        .setNumber(employee.getNumber())
-//        .setName(employee.getName());
-//  }
-//}
+@Component
+public class EmployeeApplicationMapperImpl implements EmployeeApplicationMapper {
+
+  @Override
+  public EmployeeNameVO mapToEmployeeNameVO(EmployeeCreateCmd employeeCreateCmd) {
+    return EmployeeNameVO.builder()
+        .name(employeeCreateCmd.getName())
+        .build();
+  }
+
+  @Override
+  public EmployeeNameVO mapToEmployeeNameVO(EmployeeByNameQuery employeeByNameQuery) {
+    return EmployeeNameVO.builder()
+        .name(employeeByNameQuery.getName())
+        .build();
+  }
+
+  @Override
+  public EmployeeUpdateVO mapToEmployeeUpdateVO(EmployeeUpdateCmd employeeUpdateCmd) {
+    return EmployeeUpdateVO.builder()
+        .number(employeeUpdateCmd.getNumber())
+        .name(employeeUpdateCmd.getName())
+        .build();
+  }
+}
