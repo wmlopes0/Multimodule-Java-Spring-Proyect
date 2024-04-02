@@ -10,6 +10,7 @@
   </parent>
   <modules>
     <module>walter-multimodule-training-domain</module>
+    <module>walter-multimodule-training-infrastructure</module>
   </modules>
   <groupId>com.example</groupId>
   <artifactId>walter-multimodule-training</artifactId>
@@ -23,6 +24,11 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>com.example</groupId>
+        <artifactId>walter-multimodule-training-domain</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-web</artifactId>
