@@ -7,7 +7,7 @@ import com.example.infrastructure.entity.EmployeeEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EmployeeMapperImpl implements EmployeeMapper {
+public class EmployeeInfrastructureMapperImpl implements EmployeeInfrastructureMapper {
 
   @Override
   public Employee mapToDomain(EmployeeEntity employeeEntity) {

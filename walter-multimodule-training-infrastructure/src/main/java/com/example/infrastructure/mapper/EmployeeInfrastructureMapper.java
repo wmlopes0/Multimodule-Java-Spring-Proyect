@@ -5,7 +5,7 @@ import com.example.domain.vo.EmployeeNameVO;
 import com.example.domain.vo.EmployeeUpdateVO;
 import com.example.infrastructure.entity.EmployeeEntity;
 
-public interface EmployeeMapper {
+public interface EmployeeInfrastructureMapper {
 
   Employee mapToDomain(EmployeeEntity employeeEntity);
 
