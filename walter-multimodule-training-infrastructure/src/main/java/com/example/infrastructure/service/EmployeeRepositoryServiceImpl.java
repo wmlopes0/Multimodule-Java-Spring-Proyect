@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class EmployeeServiceImpl implements EmployeeService {
+public class EmployeeRepositoryServiceImpl implements EmployeeService {
 
   private final EmployeeRepository employeeRepository;
 

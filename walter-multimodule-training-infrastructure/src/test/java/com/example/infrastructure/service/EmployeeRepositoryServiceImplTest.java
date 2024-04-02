@@ -24,7 +24,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class EmployeeServiceImplTest {
+class EmployeeRepositoryServiceImplTest {
 
   @Mock
   private EmployeeRepository repository;
@@ -33,7 +33,7 @@ class EmployeeServiceImplTest {
   private EmployeeMapper employeeMapper;
 
   @InjectMocks
-  private EmployeeServiceImpl service;
+  private EmployeeRepositoryServiceImpl service;
 
   @Test
   @DisplayName("Retrieve Employee list successfully")
