@@ -12,7 +12,7 @@ import com.example.domain.entity.Employee;
 import com.example.domain.vo.EmployeeNameVO;
 import com.example.domain.vo.EmployeeUpdateVO;
 import com.example.infrastructure.entity.EmployeeEntity;
-import com.example.infrastructure.mapper.EmployeeMapper;
+import com.example.infrastructure.mapper.EmployeeInfrastructureMapper;
 import com.example.infrastructure.repository.EmployeeRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -24,16 +24,16 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class EmployeeServiceImplTest {
+class EmployeeRepositoryServiceImplTest {
 
   @Mock
   private EmployeeRepository repository;
 
   @Mock
-  private EmployeeMapper employeeMapper;
+  private EmployeeInfrastructureMapper employeeInfrastructureMapper;
 
   @InjectMocks
-  private EmployeeServiceImpl service;
+  private EmployeeRepositoryServiceImpl service;
 
   @Test
   @DisplayName("Retrieve Employee list successfully")
@@ -44,15 +44,15 @@ class EmployeeServiceImplTest {
     Employee employee2 = new Employee(2L, "Quique");
 
     Mockito.when(repository.findAll()).thenReturn(List.of(employeeEntity1, employeeEntity2));
-    Mockito.when(employeeMapper.mapToDomain(employeeEntity1)).thenReturn(employee1);
-    Mockito.when(employeeMapper.mapToDomain(employeeEntity2)).thenReturn(employee2);
+    Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity1)).thenReturn(employee1);
+    Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity2)).thenReturn(employee2);
 
     List<Employee> result = service.listEmployees();
     List<Employee> expected = List.of(employee1, employee2);
 
     Assertions.assertEquals(expected, result);
     Mockito.verify(repository, times(1)).findAll();
-    Mockito.verify(employeeMapper, atLeastOnce()).mapToDomain(any(EmployeeEntity.class));
+    Mockito.verify(employeeInfrastructureMapper, atLeastOnce()).mapToDomain(any(EmployeeEntity.class));
   }
 
   @Test
@@ -65,7 +65,7 @@ class EmployeeServiceImplTest {
 
     Assertions.assertEquals(expected, result);
     Mockito.verify(repository, times(1)).findAll();
-    Mockito.verify(employeeMapper, never()).mapToDomain(any(EmployeeEntity.class));
+    Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }
 
   @Test
@@ -76,12 +76,12 @@ class EmployeeServiceImplTest {
     Employee employee = new Employee(1L, "Walter");
 
     Mockito.when(repository.findById(id)).thenReturn(Optional.of(employeeEntity));
-    Mockito.when(employeeMapper.mapToDomain(employeeEntity)).thenReturn(employee);
+    Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity)).thenReturn(employee);
     Employee result = service.getEmployeeById(id);
 
     Assertions.assertEquals(employee, result);
     Mockito.verify(repository, times(1)).findById(id);
-    Mockito.verify(employeeMapper, times(1)).mapToDomain(employeeEntity);
+    Mockito.verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
   }
 
   @Test
@@ -94,7 +94,7 @@ class EmployeeServiceImplTest {
 
     Assertions.assertNull(result);
     Mockito.verify(repository, times(1)).findById(id);
-    Mockito.verify(employeeMapper, never()).mapToDomain(any(EmployeeEntity.class));
+    Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }
 
   @Test
@@ -105,12 +105,12 @@ class EmployeeServiceImplTest {
     Employee employee = new Employee(1L, "Walter");
 
     Mockito.when(repository.findFirstByNameContainingIgnoreCase(employeeNameVO.getName())).thenReturn(Optional.of(employeeEntity));
-    Mockito.when(employeeMapper.mapToDomain(employeeEntity)).thenReturn(employee);
+    Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity)).thenReturn(employee);
     Employee result = service.getEmployeeByName(employeeNameVO);
 
     Assertions.assertEquals(employee, result);
     Mockito.verify(repository, times(1)).findFirstByNameContainingIgnoreCase(employeeNameVO.getName());
-    Mockito.verify(employeeMapper, times(1)).mapToDomain(employeeEntity);
+    Mockito.verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
   }
 
   @Test
@@ -123,7 +123,7 @@ class EmployeeServiceImplTest {
 
     Assertions.assertNull(result);
     Mockito.verify(repository, times(1)).findFirstByNameContainingIgnoreCase(employeeNameVO.getName());
-    Mockito.verify(employeeMapper, never()).mapToDomain(any(EmployeeEntity.class));
+    Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }
 
   @Test
@@ -133,15 +133,15 @@ class EmployeeServiceImplTest {
     EmployeeEntity employeeEntity = new EmployeeEntity(1L, "Walter");
     Employee employee = new Employee(1L, "Walter");
 
-    Mockito.when(employeeMapper.mapToEntity(employeeNameVO)).thenReturn(employeeEntity);
+    Mockito.when(employeeInfrastructureMapper.mapToEntity(employeeNameVO)).thenReturn(employeeEntity);
     Mockito.when(repository.save(employeeEntity)).thenReturn(employeeEntity);
-    Mockito.when(employeeMapper.mapToDomain(employeeEntity)).thenReturn(employee);
+    Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity)).thenReturn(employee);
     Employee result = service.addEmployee(employeeNameVO);
 
     Assertions.assertEquals(employee, result);
-    Mockito.verify(employeeMapper, times(1)).mapToEntity(employeeNameVO);
+    Mockito.verify(employeeInfrastructureMapper, times(1)).mapToEntity(employeeNameVO);
     Mockito.verify(repository, times(1)).save(employeeEntity);
-    Mockito.verify(employeeMapper, times(1)).mapToDomain(employeeEntity);
+    Mockito.verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
   }
 
   @Test
@@ -152,16 +152,16 @@ class EmployeeServiceImplTest {
     Employee employee = new Employee(1L, "Walter");
 
     Mockito.when(repository.existsById(employeeUpdateVO.getNumber())).thenReturn(true);
-    Mockito.when(employeeMapper.mapToEntity(employeeUpdateVO)).thenReturn(employeeEntity);
+    Mockito.when(employeeInfrastructureMapper.mapToEntity(employeeUpdateVO)).thenReturn(employeeEntity);
     Mockito.when(repository.save(employeeEntity)).thenReturn(employeeEntity);
-    Mockito.when(employeeMapper.mapToDomain(employeeEntity)).thenReturn(employee);
+    Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity)).thenReturn(employee);
     Employee result = service.updateEmployeeById(employeeUpdateVO);
 
     Assertions.assertEquals(employee, result);
     Mockito.verify(repository, times(1)).existsById(employeeUpdateVO.getNumber());
-    Mockito.verify(employeeMapper, times(1)).mapToEntity(employeeUpdateVO);
+    Mockito.verify(employeeInfrastructureMapper, times(1)).mapToEntity(employeeUpdateVO);
     Mockito.verify(repository, times(1)).save(employeeEntity);
-    Mockito.verify(employeeMapper, times(1)).mapToDomain(employeeEntity);
+    Mockito.verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
   }
 
   @Test
@@ -174,9 +174,9 @@ class EmployeeServiceImplTest {
 
     Assertions.assertNull(result);
     Mockito.verify(repository, times(1)).existsById(employeeUpdateVO.getNumber());
-    Mockito.verify(employeeMapper, never()).mapToEntity(employeeUpdateVO);
+    Mockito.verify(employeeInfrastructureMapper, never()).mapToEntity(employeeUpdateVO);
     Mockito.verify(repository, never()).save(any(EmployeeEntity.class));
-    Mockito.verify(employeeMapper, never()).mapToDomain(any(EmployeeEntity.class));
+    Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }
 
   @Test

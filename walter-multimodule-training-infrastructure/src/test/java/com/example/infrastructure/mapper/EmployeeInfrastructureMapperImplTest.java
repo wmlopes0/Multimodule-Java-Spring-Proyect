@@ -13,9 +13,9 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class EmployeeMapperImplTest {
+class EmployeeInfrastructureMapperImplTest {
 
-  private final EmployeeMapper employeeMapper = new EmployeeMapperImpl();
+  private final EmployeeInfrastructureMapper employeeInfrastructureMapper = new EmployeeInfrastructureMapperImpl();
 
   @ParameterizedTest
   @CsvSource(value = {
@@ -26,7 +26,7 @@ class EmployeeMapperImplTest {
   void mapToDomainTest(String name) {
     EmployeeEntity employeeEntity = new EmployeeEntity(1L, name);
     Employee expected = new Employee(1L, name);
-    Employee result = employeeMapper.mapToDomain(employeeEntity);
+    Employee result = employeeInfrastructureMapper.mapToDomain(employeeEntity);
     Assertions.assertEquals(expected, result);
   }
 
@@ -39,7 +39,7 @@ class EmployeeMapperImplTest {
   void mapToEntityTest(String name) {
     EmployeeNameVO employeeNameVO = EmployeeNameVO.builder().name(name).build();
     EmployeeEntity expected = new EmployeeEntity().setName(name);
-    EmployeeEntity result = employeeMapper.mapToEntity(employeeNameVO);
+    EmployeeEntity result = employeeInfrastructureMapper.mapToEntity(employeeNameVO);
     Assertions.assertEquals(expected, result);
   }
 
@@ -47,7 +47,7 @@ class EmployeeMapperImplTest {
   @MethodSource("parameters")
   @DisplayName("Mapping EmployeeUpdateVO to EmployeeEntity correctly")
   void mapToEntityTest(EmployeeEntity expected, EmployeeUpdateVO employeeUpdateVO) {
-    EmployeeEntity result = employeeMapper.mapToEntity(employeeUpdateVO);
+    EmployeeEntity result = employeeInfrastructureMapper.mapToEntity(employeeUpdateVO);
     Assertions.assertEquals(expected, result);
   }
 
