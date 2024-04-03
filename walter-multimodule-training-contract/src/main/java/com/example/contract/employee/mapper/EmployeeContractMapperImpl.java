@@ -11,7 +11,9 @@ import com.example.contract.employee.dto.EmployeeNameDTO;
 import com.example.contract.employee.dto.EmployeeNameDetailsDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
 import com.example.domain.entity.Employee;
+import org.springframework.stereotype.Component;
 
+@Component
 public class EmployeeContractMapperImpl implements EmployeeContractMapper {
 
   @Override
