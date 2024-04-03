@@ -1,6 +1,6 @@
-package com.example.application.employee.cmd.handler;
+package com.example.application.employee.query.handler;
 
-import com.example.application.employee.cmd.EmployeeUpdateCmd;
+import com.example.application.employee.query.query.EmployeeByNameQuery;
 import com.example.application.employee.mapper.EmployeeApplicationMapper;
 import com.example.domain.entity.Employee;
 import com.example.domain.service.EmployeeService;
@@ -9,16 +9,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class EmployeeUpdateImpl implements EmployeeUpdate {
+public class EmployeeGetByNameHandlerImpl implements EmployeeGetByNameHandler {
 
   private final EmployeeApplicationMapper mapper;
 
   private final EmployeeService repositoryService;
 
   @Override
-  public Employee updateEmployee(EmployeeUpdateCmd employeeUpdateCmd) {
-    return repositoryService.updateEmployeeById(
-        mapper.mapToEmployeeUpdateVO(employeeUpdateCmd)
-    );
+  public Employee getEmployeeByName(EmployeeByNameQuery employeeByNameQuery) {
+    return repositoryService.getEmployeeByName(
+        mapper.mapToEmployeeNameVO(employeeByNameQuery));
   }
 }

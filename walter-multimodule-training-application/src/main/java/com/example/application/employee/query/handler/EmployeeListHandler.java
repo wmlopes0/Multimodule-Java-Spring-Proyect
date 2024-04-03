@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.example.domain.entity.Employee;
 
-public interface EmployeeList {
+public interface EmployeeListHandler {
 
   List<Employee> listEmployees();
 }

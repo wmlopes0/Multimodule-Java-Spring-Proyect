@@ -1,11 +1,11 @@
-package com.example.application.employee.cmd;
+package com.example.application.employee.query.query;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class EmployeeCreateCmd {
+public class EmployeeByNameQuery {
 
   private String name;
 }

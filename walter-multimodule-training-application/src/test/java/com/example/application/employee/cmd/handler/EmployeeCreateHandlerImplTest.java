@@ -2,7 +2,7 @@ package com.example.application.employee.cmd.handler;
 
 import static org.mockito.Mockito.times;
 
-import com.example.application.employee.cmd.EmployeeCreateCmd;
+import com.example.application.employee.cmd.cmd.EmployeeCreateCmd;
 import com.example.application.employee.mapper.EmployeeApplicationMapper;
 import com.example.domain.entity.Employee;
 import com.example.domain.service.EmployeeService;
@@ -17,7 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class EmployeeCreateImplTest {
+class EmployeeCreateHandlerImplTest {
 
   @Mock
   private EmployeeService repositoryService;
@@ -26,7 +26,7 @@ class EmployeeCreateImplTest {
   private EmployeeApplicationMapper mapper;
 
   @InjectMocks
-  private EmployeeCreateImpl employeeCreateImpl;
+  private EmployeeCreateHandlerImpl employeeCreateImpl;
 
   @Test
   @DisplayName("Add new Employee successfully")

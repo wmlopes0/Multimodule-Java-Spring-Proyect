@@ -2,7 +2,7 @@ package com.example.application.employee.cmd.handler;
 
 import static org.mockito.Mockito.times;
 
-import com.example.application.employee.cmd.EmployeeUpdateCmd;
+import com.example.application.employee.cmd.cmd.EmployeeUpdateCmd;
 import com.example.application.employee.mapper.EmployeeApplicationMapper;
 import com.example.domain.entity.Employee;
 import com.example.domain.service.EmployeeService;
@@ -18,7 +18,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class EmployeeUpdateImplTest {
+class EmployeeUpdateHandlerImplTest {
 
   @Mock
   private EmployeeService repositoryService;
@@ -27,7 +27,7 @@ class EmployeeUpdateImplTest {
   private EmployeeApplicationMapper mapper;
 
   @InjectMocks
-  private EmployeeUpdateImpl employeeCreateImpl;
+  private EmployeeUpdateHandlerImpl employeeCreateImpl;
 
   @ParameterizedTest
   @CsvSource(value = {

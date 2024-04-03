@@ -16,13 +16,13 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class EmployeeListImplTest {
+class EmployeeListHandlerImplTest {
 
   @Mock
   private EmployeeService repositoryService;
 
   @InjectMocks
-  private EmployeeListImpl employeeListImpl;
+  private EmployeeListHandlerImpl employeeListImpl;
 
   @Test
   @DisplayName("Retrieve Employee list successfully")

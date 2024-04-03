@@ -2,9 +2,9 @@ package com.example.application.employee.mapper;
 
 import java.util.stream.Stream;
 
-import com.example.application.employee.cmd.EmployeeCreateCmd;
-import com.example.application.employee.cmd.EmployeeUpdateCmd;
-import com.example.application.employee.query.EmployeeByNameQuery;
+import com.example.application.employee.cmd.cmd.EmployeeCreateCmd;
+import com.example.application.employee.cmd.cmd.EmployeeUpdateCmd;
+import com.example.application.employee.query.query.EmployeeByNameQuery;
 import com.example.domain.vo.EmployeeNameVO;
 import com.example.domain.vo.EmployeeUpdateVO;
 import org.junit.jupiter.api.Assertions;

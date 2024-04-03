@@ -2,7 +2,7 @@ package com.example.application.employee.query.handler;
 
 import static org.mockito.Mockito.times;
 
-import com.example.application.employee.query.EmployeeByIdQuery;
+import com.example.application.employee.query.query.EmployeeByIdQuery;
 import com.example.domain.entity.Employee;
 import com.example.domain.service.EmployeeService;
 import org.junit.jupiter.api.Assertions;
@@ -15,13 +15,13 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class EmployeeGetByIdImplTest {
+class EmployeeGetByIdHandlerImplTest {
 
   @Mock
   private EmployeeService repositoryService;
 
   @InjectMocks
-  private EmployeeGetByIdImpl employeeGetById;
+  private EmployeeGetByIdHandlerImpl employeeGetById;
 
   @Test
   @DisplayName("Retrieve Employee by ID successfully")

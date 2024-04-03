@@ -2,7 +2,7 @@ package com.example.application.employee.cmd.handler;
 
 import static org.mockito.Mockito.times;
 
-import com.example.application.employee.cmd.EmployeeDeleteCmd;
+import com.example.application.employee.cmd.cmd.EmployeeDeleteCmd;
 import com.example.domain.service.EmployeeService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -14,13 +14,13 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class EmployeeDeleteImplTest {
+class EmployeeDeleteHandlerImplTest {
 
   @Mock
   private EmployeeService repositoryService;
 
   @InjectMocks
-  private EmployeeDeleteImpl employeeDeleteImpl;
+  private EmployeeDeleteHandlerImpl employeeDeleteImpl;
 
   @Test
   @DisplayName("Delete Employee by ID successfully")

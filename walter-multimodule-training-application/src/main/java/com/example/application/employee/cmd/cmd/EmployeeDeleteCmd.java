@@ -1,4 +1,4 @@
-package com.example.application.employee.cmd;
+package com.example.application.employee.cmd.cmd;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

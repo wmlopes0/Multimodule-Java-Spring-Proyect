@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class EmployeeListImpl implements EmployeeList {
+public class EmployeeListHandlerImpl implements EmployeeListHandler {
 
   private final EmployeeService repositoryService;
 

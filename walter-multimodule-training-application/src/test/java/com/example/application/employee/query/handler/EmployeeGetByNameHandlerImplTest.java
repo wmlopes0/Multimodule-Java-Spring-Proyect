@@ -3,7 +3,7 @@ package com.example.application.employee.query.handler;
 import static org.mockito.Mockito.times;
 
 import com.example.application.employee.mapper.EmployeeApplicationMapper;
-import com.example.application.employee.query.EmployeeByNameQuery;
+import com.example.application.employee.query.query.EmployeeByNameQuery;
 import com.example.domain.entity.Employee;
 import com.example.domain.service.EmployeeService;
 import com.example.domain.vo.EmployeeNameVO;
@@ -17,7 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class EmployeeGetByNameImplTest {
+class EmployeeGetByNameHandlerImplTest {
 
   @Mock
   private EmployeeService repositoryService;
@@ -26,7 +26,7 @@ class EmployeeGetByNameImplTest {
   private EmployeeApplicationMapper mapper;
 
   @InjectMocks
-  private EmployeeGetByNameImpl employeeGetByNameImpl;
+  private EmployeeGetByNameHandlerImpl employeeGetByNameImpl;
 
   @Test
   @DisplayName("Retrieve Employee by name successfully")
