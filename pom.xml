@@ -12,6 +12,7 @@
     <module>walter-multimodule-training-domain</module>
     <module>walter-multimodule-training-infrastructure</module>
     <module>walter-multimodule-training-application</module>
+    <module>walter-multimodule-training-contract</module>
   </modules>
   <groupId>com.example</groupId>
   <artifactId>walter-multimodule-training</artifactId>
@@ -29,6 +30,11 @@
         <groupId>com.example</groupId>
         <artifactId>walter-multimodule-training-domain</artifactId>
         <version>1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.example</groupId>
+        <artifactId>walter-multimodule-training-application</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
