@@ -1,6 +1,6 @@
 package com.example.application.employee.cmd.handler;
 
-import com.example.application.employee.cmd.cmd.EmployeeDeleteCmd;
+import com.example.application.employee.cmd.dto.EmployeeDeleteCmd;
 import com.example.domain.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

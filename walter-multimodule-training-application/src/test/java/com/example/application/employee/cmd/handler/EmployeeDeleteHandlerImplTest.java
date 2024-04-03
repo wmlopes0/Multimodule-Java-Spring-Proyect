@@ -2,7 +2,7 @@ package com.example.application.employee.cmd.handler;
 
 import static org.mockito.Mockito.times;
 
-import com.example.application.employee.cmd.cmd.EmployeeDeleteCmd;
+import com.example.application.employee.cmd.dto.EmployeeDeleteCmd;
 import com.example.domain.service.EmployeeService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

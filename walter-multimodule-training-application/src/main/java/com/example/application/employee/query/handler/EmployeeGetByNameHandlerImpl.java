@@ -1,7 +1,7 @@
 package com.example.application.employee.query.handler;
 
 import com.example.application.employee.mapper.EmployeeApplicationMapper;
-import com.example.application.employee.query.query.EmployeeByNameQuery;
+import com.example.application.employee.query.dto.EmployeeByNameQuery;
 import com.example.domain.entity.Employee;
 import com.example.domain.service.EmployeeService;
 import lombok.RequiredArgsConstructor;

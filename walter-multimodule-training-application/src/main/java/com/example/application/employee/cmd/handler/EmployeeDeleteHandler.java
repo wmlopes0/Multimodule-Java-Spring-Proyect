@@ -1,6 +1,6 @@
 package com.example.application.employee.cmd.handler;
 
-import com.example.application.employee.cmd.cmd.EmployeeDeleteCmd;
+import com.example.application.employee.cmd.dto.EmployeeDeleteCmd;
 
 public interface EmployeeDeleteHandler {
 

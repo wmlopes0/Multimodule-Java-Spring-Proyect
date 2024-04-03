@@ -2,7 +2,7 @@ package com.example.application.employee.query.handler;
 
 import static org.mockito.Mockito.times;
 
-import com.example.application.employee.query.query.EmployeeByIdQuery;
+import com.example.application.employee.query.dto.EmployeeByIdQuery;
 import com.example.domain.entity.Employee;
 import com.example.domain.service.EmployeeService;
 import org.junit.jupiter.api.Assertions;

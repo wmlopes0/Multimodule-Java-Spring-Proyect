@@ -2,7 +2,7 @@ package com.example.application.employee.cmd.handler;
 
 import static org.mockito.Mockito.times;
 
-import com.example.application.employee.cmd.cmd.EmployeeUpdateCmd;
+import com.example.application.employee.cmd.dto.EmployeeUpdateCmd;
 import com.example.application.employee.mapper.EmployeeApplicationMapper;
 import com.example.domain.entity.Employee;
 import com.example.domain.service.EmployeeService;

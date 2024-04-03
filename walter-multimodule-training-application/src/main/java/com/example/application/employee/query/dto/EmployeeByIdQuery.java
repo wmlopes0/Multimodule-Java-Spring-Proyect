@@ -1,4 +1,4 @@
-package com.example.application.employee.query.query;
+package com.example.application.employee.query.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
