@@ -11,6 +11,7 @@
   <modules>
     <module>walter-multimodule-training-domain</module>
     <module>walter-multimodule-training-infrastructure</module>
+    <module>walter-multimodule-training-application</module>
   </modules>
   <groupId>com.example</groupId>
   <artifactId>walter-multimodule-training</artifactId>
