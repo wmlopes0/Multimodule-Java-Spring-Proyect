@@ -9,7 +9,6 @@
     <artifactId>walter-multimodule-training</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>com.example</groupId>
   <artifactId>walter-multimodule-training-domain</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
