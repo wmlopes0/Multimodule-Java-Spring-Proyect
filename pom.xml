@@ -13,6 +13,7 @@
     <module>walter-multimodule-training-infrastructure</module>
     <module>walter-multimodule-training-application</module>
     <module>walter-multimodule-training-contract</module>
+    <module>walter-multimodule-training-boot</module>
   </modules>
   <groupId>com.example</groupId>
   <artifactId>walter-multimodule-training</artifactId>
@@ -34,6 +35,16 @@
       <dependency>
         <groupId>org.example</groupId>
         <artifactId>walter-multimodule-training-application</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.example</groupId>
+        <artifactId>walter-multimodule-training-contract</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.example</groupId>
+        <artifactId>walter-multimodule-training-infrastructure</artifactId>
         <version>0.0.1-SNAPSHOT</version>
       </dependency>
       <dependency>

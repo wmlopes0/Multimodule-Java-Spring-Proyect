@@ -10,25 +10,17 @@
   </parent>
 
   <groupId>org.example</groupId>
-  <artifactId>walter-multimodule-training-infrastructure</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-
+  <artifactId>walter-multimodule-training-boot</artifactId>
   <dependencies>
     <dependency>
-      <groupId>com.example</groupId>
-      <artifactId>walter-multimodule-training-domain</artifactId>
+      <groupId>org.example</groupId>
+      <artifactId>walter-multimodule-training-contract</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <scope>runtime</scope>
+      <groupId>org.example</groupId>
+      <artifactId>walter-multimodule-training-infrastructure</artifactId>
     </dependency>
   </dependencies>
-
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
