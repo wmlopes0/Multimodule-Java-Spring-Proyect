@@ -1,4 +1,4 @@
-package com.example.contract.employee.config;
+package com.example.boot.config;
 
 import org.springdoc.core.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
