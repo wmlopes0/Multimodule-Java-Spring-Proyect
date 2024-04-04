@@ -9,9 +9,8 @@
     <artifactId>walter-multimodule-training</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>com.example</groupId>
   <artifactId>walter-multimodule-training-domain</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.0.1-SNAPSHOT</version>
 
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
