@@ -27,6 +27,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -175,10 +177,13 @@ class EmployeeRestControllerTest {
     Mockito.verify(mapper, times(1)).mapToDetailsDTO(employee);
   }
 
-  @Test
+  @ParameterizedTest
+  @CsvSource(value = {
+      "Walter",
+      "null"
+  }, nullValues = {"null"})
   @DisplayName("Get employee by name not found returns 404 response")
-  void getEmployeeByNameNotFoundTest() {
-    String name = "Wal";
+  void getEmployeeByNameNotFoundTest(String name) {
     EmployeeByNameQuery employeeByNameQuery = new EmployeeByNameQuery(name);
 
     Mockito.when(mapper.mapToEmployeeByNameQuery(name)).thenReturn(employeeByNameQuery);
@@ -193,10 +198,14 @@ class EmployeeRestControllerTest {
     Mockito.verify(mapper, never()).mapToDetailsDTO(any(Employee.class));
   }
 
-  @Test
+  @ParameterizedTest
+  @CsvSource(value = {
+      "Walter",
+      "null"
+  }, nullValues = {"null"})
   @DisplayName("Add new employee returns 201 response")
-  void newEmployeeTest() {
-    EmployeeNameDTO requestBody = new EmployeeNameDTO("Walter");
+  void newEmployeeTest(String name) {
+    EmployeeNameDTO requestBody = new EmployeeNameDTO(name);
     EmployeeCreateCmd employeeCreateCmd = new EmployeeCreateCmd(requestBody.getName());
     Employee newEmployee = new Employee()
         .setName(requestBody.getName());
@@ -218,11 +227,15 @@ class EmployeeRestControllerTest {
     Mockito.verify(mapper, times(1)).mapToEmployeeCreateCmd(any(EmployeeNameDTO.class));
   }
 
-  @Test
+  @ParameterizedTest
+  @CsvSource(value = {
+      "Walter",
+      "null"
+  }, nullValues = {"null"})
   @DisplayName("Update employee by ID successfully returns 200 code response")
-  void updateEmployeeByIdTest() {
+  void updateEmployeeByIdTest(String name) {
     Long id = 1L;
-    EmployeeNameDTO requestBody = new EmployeeNameDTO("Walter");
+    EmployeeNameDTO requestBody = new EmployeeNameDTO(name);
     EmployeeUpdateCmd employeeUpdateCmd = new EmployeeUpdateCmd(id, requestBody.getName());
     Employee updatedEmployee = new Employee(id, requestBody.getName());
     EmployeeResponseDTO employeeResponse = new EmployeeResponseDTO()
@@ -260,10 +273,13 @@ class EmployeeRestControllerTest {
     Mockito.verify(mapper, never()).mapToResponseDTO(any(Employee.class));
   }
 
-  @Test
+  @ParameterizedTest
+  @CsvSource(value = {
+      "1",
+      "null"
+  }, nullValues = {"null"})
   @DisplayName("Deleted employee by ID successfully returns 200 code response")
-  void deleteEmployeeByIdTest() {
-    Long id = 1L;
+  void deleteEmployeeByIdTest(Long id) {
     EmployeeDeleteCmd employeeDeleteCmd = new EmployeeDeleteCmd(id);
 
     Mockito.when(mapper.mapToEmployeeDeleteCmd(id)).thenReturn(employeeDeleteCmd);
