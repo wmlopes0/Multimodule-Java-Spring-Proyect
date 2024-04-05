@@ -58,4 +58,18 @@ class EmployeeGetByNameHandlerImplTest {
     Mockito.verify(mapper, times(1)).mapToEmployeeNameVO(employeeByNameQuery);
     Mockito.verify(repositoryService, times(1)).getEmployeeByName(employeeNameVO);
   }
+
+  @Test
+  @DisplayName("GetEmployeeByName Throws RuntimeException on Error")
+  void getEmployeeByNameErrorTest() {
+    EmployeeByNameQuery employeeByNameQuery = new EmployeeByNameQuery("Walter");
+    EmployeeNameVO employeeNameVO = EmployeeNameVO.builder().name("Walter").build();
+
+    Mockito.when(mapper.mapToEmployeeNameVO(employeeByNameQuery)).thenReturn(employeeNameVO);
+    Mockito.when(repositoryService.getEmployeeByName(employeeNameVO)).thenThrow(new RuntimeException("An error occurred"));
+
+    Assertions.assertThrows(RuntimeException.class, () -> employeeGetByNameImpl.getEmployeeByName(employeeByNameQuery));
+    Mockito.verify(mapper, times(1)).mapToEmployeeNameVO(employeeByNameQuery);
+    Mockito.verify(repositoryService, times(1)).getEmployeeByName(employeeNameVO);
+  }
 }

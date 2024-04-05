@@ -3,7 +3,9 @@ package com.example.application.employee.cmd.handler;
 import static org.mockito.Mockito.times;
 
 import com.example.application.employee.cmd.dto.EmployeeDeleteCmd;
+import com.example.application.employee.cmd.dto.EmployeeUpdateCmd;
 import com.example.domain.service.EmployeeService;
+import com.example.domain.vo.EmployeeUpdateVO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,6 +43,17 @@ class EmployeeDeleteHandlerImplTest {
     Mockito.when(repositoryService.deleteEmployeeById(employeeDeleteCmd.getNumber())).thenReturn(false);
 
     Assertions.assertFalse(employeeDeleteImpl.deleteEmployee(employeeDeleteCmd));
+    Mockito.verify(repositoryService, times(1)).deleteEmployeeById(employeeDeleteCmd.getNumber());
+  }
+
+  @Test
+  @DisplayName("DeleteEmployee Throws RuntimeException on Error")
+  void deleteEmployeeErrorTest() {
+    EmployeeDeleteCmd employeeDeleteCmd = new EmployeeDeleteCmd(1L);
+
+    Mockito.when(repositoryService.deleteEmployeeById(employeeDeleteCmd.getNumber())).thenThrow(new RuntimeException("An error occurred"));
+
+    Assertions.assertThrows(RuntimeException.class, () -> employeeDeleteImpl.deleteEmployee(employeeDeleteCmd));
     Mockito.verify(repositoryService, times(1)).deleteEmployeeById(employeeDeleteCmd.getNumber());
   }
 }

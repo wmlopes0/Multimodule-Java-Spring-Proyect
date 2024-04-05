@@ -47,4 +47,15 @@ class EmployeeGetByIdHandlerImplTest {
     Assertions.assertNull(result);
     Mockito.verify(repositoryService, times(1)).getEmployeeById(employeeByIdQuery.getNumber());
   }
+
+  @Test
+  @DisplayName("GetEmployeeById Throws RuntimeException on Error")
+  void getEmployeeByIdErrorTest() {
+    EmployeeByIdQuery employeeByIdQuery = new EmployeeByIdQuery(1L);
+
+    Mockito.when(repositoryService.getEmployeeById(employeeByIdQuery.getNumber())).thenThrow(new RuntimeException("An error occurred"));
+
+    Assertions.assertThrows(RuntimeException.class, () -> employeeGetById.getEmployeeById(employeeByIdQuery));
+    Mockito.verify(repositoryService, times(1)).getEmployeeById(employeeByIdQuery.getNumber());
+  }
 }
