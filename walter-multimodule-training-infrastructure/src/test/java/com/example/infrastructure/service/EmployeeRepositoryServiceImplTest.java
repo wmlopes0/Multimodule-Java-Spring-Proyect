@@ -69,6 +69,15 @@ class EmployeeRepositoryServiceImplTest {
   }
 
   @Test
+  @DisplayName("ListEmployees Throws RuntimeException on Error")
+  void listEmployeesErrorTest() {
+    Mockito.when(repository.findAll()).thenThrow(new RuntimeException("An error occurred"));
+    Assertions.assertThrows(RuntimeException.class, () -> service.listEmployees());
+    Mockito.verify(repository, times(1)).findAll();
+    Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
+  }
+
+  @Test
   @DisplayName("Retrieve Employee by ID successfully")
   void getEmployeeByIdTest() {
     Long id = 1L;
@@ -93,6 +102,16 @@ class EmployeeRepositoryServiceImplTest {
     Employee result = service.getEmployeeById(id);
 
     Assertions.assertNull(result);
+    Mockito.verify(repository, times(1)).findById(id);
+    Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
+  }
+
+  @Test
+  @DisplayName("GetEmployeeById Throws RuntimeException on Error")
+  void getEmployeeByIdErrorTest() {
+    Long id = 1L;
+    Mockito.when(repository.findById(id)).thenThrow(new RuntimeException("An error occurred"));
+    Assertions.assertThrows(RuntimeException.class, () -> service.getEmployeeById(id));
     Mockito.verify(repository, times(1)).findById(id);
     Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }
@@ -127,6 +146,18 @@ class EmployeeRepositoryServiceImplTest {
   }
 
   @Test
+  @DisplayName("GetEmployeeByName Throws RuntimeException on Error")
+  void getEmployeeByNameErrorTest() {
+    EmployeeNameVO employeeNameVO = EmployeeNameVO.builder().name("Walter").build();
+
+    Mockito.when(repository.findFirstByNameContainingIgnoreCase(employeeNameVO.getName()))
+        .thenThrow(new RuntimeException("An error occurred"));
+    Assertions.assertThrows(RuntimeException.class, () -> service.getEmployeeByName(employeeNameVO));
+    Mockito.verify(repository, times(1)).findFirstByNameContainingIgnoreCase(employeeNameVO.getName());
+    Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
+  }
+
+  @Test
   @DisplayName("Add new Employee successfully")
   void addEmployeeTest() {
     EmployeeNameVO employeeNameVO = EmployeeNameVO.builder().name("Walter").build();
@@ -142,6 +173,21 @@ class EmployeeRepositoryServiceImplTest {
     Mockito.verify(employeeInfrastructureMapper, times(1)).mapToEntity(employeeNameVO);
     Mockito.verify(repository, times(1)).save(employeeEntity);
     Mockito.verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
+  }
+
+  @Test
+  @DisplayName("AddEmployee Throws RuntimeException on Error")
+  void addEmployeeErrorTest() {
+    EmployeeNameVO employeeNameVO = EmployeeNameVO.builder().name("Walter").build();
+    EmployeeEntity employeeEntity = new EmployeeEntity(1L, "Walter");
+
+    Mockito.when(employeeInfrastructureMapper.mapToEntity(employeeNameVO)).thenReturn(employeeEntity);
+    Mockito.when(repository.save(employeeEntity)).thenThrow(new RuntimeException("An error occurred"));
+
+    Assertions.assertThrows(RuntimeException.class, () -> service.addEmployee(employeeNameVO));
+    Mockito.verify(employeeInfrastructureMapper, times(1)).mapToEntity(employeeNameVO);
+    Mockito.verify(repository, times(1)).save(employeeEntity);
+    Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(employeeEntity);
   }
 
   @Test
@@ -162,6 +208,24 @@ class EmployeeRepositoryServiceImplTest {
     Mockito.verify(employeeInfrastructureMapper, times(1)).mapToEntity(employeeUpdateVO);
     Mockito.verify(repository, times(1)).save(employeeEntity);
     Mockito.verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
+  }
+
+  @Test
+  @DisplayName("UpdateEmployee Throws RuntimeException on Error")
+  void updateEmployeeErrorTest() {
+    EmployeeUpdateVO employeeUpdateVO = EmployeeUpdateVO.builder().number(1L).name("Walter").build();
+    EmployeeEntity employeeEntity = new EmployeeEntity(1L, "Walter");
+
+    Mockito.when(repository.existsById(employeeUpdateVO.getNumber())).thenReturn(true);
+    Mockito.when(employeeInfrastructureMapper.mapToEntity(employeeUpdateVO)).thenReturn(employeeEntity);
+    Mockito.when(repository.save(employeeEntity)).thenThrow(new RuntimeException("An error occurred"));
+
+    Assertions.assertThrows(RuntimeException.class, () -> service.updateEmployeeById(employeeUpdateVO));
+
+    Mockito.verify(repository, times(1)).existsById(employeeUpdateVO.getNumber());
+    Mockito.verify(employeeInfrastructureMapper, times(1)).mapToEntity(employeeUpdateVO);
+    Mockito.verify(repository, times(1)).save(employeeEntity);
+    Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(employeeEntity);
   }
 
   @Test
@@ -194,6 +258,20 @@ class EmployeeRepositoryServiceImplTest {
   }
 
   @Test
+  @DisplayName("DeleteEmployeeById Throws RuntimeException on Error")
+  void deleteEmployeeByIdErrorTest() {
+    Long id = 1L;
+
+    Mockito.when(repository.existsById(id)).thenReturn(true);
+    Mockito.doThrow(new RuntimeException("An error occurred")).when(repository).deleteById(id);
+
+    Assertions.assertThrows(RuntimeException.class, () -> service.deleteEmployeeById(id));
+
+    Mockito.verify(repository, times(1)).existsById(id);
+    Mockito.verify(repository, times(1)).deleteById(id);
+  }
+
+  @Test
   @DisplayName("Employee deletion fails for non-existent ID")
   void deleteEmployeeByIdNotFoundTest() {
     Long id = 1L;
@@ -206,4 +284,5 @@ class EmployeeRepositoryServiceImplTest {
     Mockito.verify(repository, times(1)).existsById(id);
     Mockito.verify(repository, never()).deleteById(any(Long.class));
   }
+
 }

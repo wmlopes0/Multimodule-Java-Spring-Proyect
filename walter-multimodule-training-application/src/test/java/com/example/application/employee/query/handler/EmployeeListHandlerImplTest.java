@@ -51,9 +51,9 @@ class EmployeeListHandlerImplTest {
   }
 
   @Test
-  @DisplayName("Error")
+  @DisplayName("ListEmployees Throws Exception on Error")
   void listEmployeesErrorTest() {
-    Mockito.when(repositoryService.listEmployees()).thenThrow(new RuntimeException("An error occurred"));
+    Mockito.when(repositoryService.listEmployees()).thenThrow(new Exception("An error occurred"));
     Assertions.assertThrows(RuntimeException.class, () -> employeeListImpl.listEmployees());
     Mockito.verify(repositoryService, times(1)).listEmployees();
   }
