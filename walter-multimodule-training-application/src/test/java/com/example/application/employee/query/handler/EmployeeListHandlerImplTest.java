@@ -49,4 +49,12 @@ class EmployeeListHandlerImplTest {
     Assertions.assertEquals(expected, result);
     Mockito.verify(repositoryService, times(1)).listEmployees();
   }
+
+  @Test
+  @DisplayName("Error")
+  void listEmployeesErrorTest() {
+    Mockito.when(repositoryService.listEmployees()).thenThrow(new RuntimeException("An error occurred"));
+    Assertions.assertThrows(RuntimeException.class, () -> employeeListImpl.listEmployees());
+    Mockito.verify(repositoryService, times(1)).listEmployees();
+  }
 }

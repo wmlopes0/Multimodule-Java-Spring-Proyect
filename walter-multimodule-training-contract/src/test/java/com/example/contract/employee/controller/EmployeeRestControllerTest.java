@@ -106,7 +106,12 @@ class EmployeeRestControllerTest {
   @DisplayName("ListEmployees Throws RuntimeException on Repository Error")
   void listEmployeesErrorTest() {
     Mockito.when(employeeListHandler.listEmployees()).thenThrow(new RuntimeException("An error occurred"));
-    Assertions.assertThrows(RuntimeException.class, () -> controller.listEmployees());
+
+    ResponseEntity<List<EmployeeNameDetailsDTO>> expected = ResponseEntity.internalServerError().build();
+    ResponseEntity<List<EmployeeNameDetailsDTO>> result = controller.listEmployees();
+
+    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
+    Assertions.assertEquals(expected.getBody(), result.getBody());
     Mockito.verify(employeeListHandler, times(1)).listEmployees();
     Mockito.verify(mapper, never()).mapToDetailsDTO(any(Employee.class));
   }

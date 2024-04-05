@@ -57,10 +57,14 @@ public class EmployeeRestController {
   @ApiResponse(responseCode = "200", description = "Successful operation")
   @GetMapping("/")
   public ResponseEntity<List<EmployeeNameDetailsDTO>> listEmployees() {
-    List<EmployeeNameDetailsDTO> result = employeeListHandler.listEmployees().stream()
-        .map(mapper::mapToDetailsDTO)
-        .toList();
-    return ResponseEntity.ok(result);
+    try {
+      List<EmployeeNameDetailsDTO> result = employeeListHandler.listEmployees().stream()
+          .map(mapper::mapToDetailsDTO)
+          .toList();
+      return ResponseEntity.ok(result);
+    } catch (RuntimeException e) {
+      return ResponseEntity.internalServerError().build();
+    }
   }
 
   @Operation(summary = "More information...", description = "This endpoint obtains information about an employee by their ID")
