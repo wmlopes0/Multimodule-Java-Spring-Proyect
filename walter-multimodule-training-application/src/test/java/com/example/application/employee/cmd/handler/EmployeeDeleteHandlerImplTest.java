@@ -3,9 +3,7 @@ package com.example.application.employee.cmd.handler;
 import static org.mockito.Mockito.times;
 
 import com.example.application.employee.cmd.dto.EmployeeDeleteCmd;
-import com.example.application.employee.cmd.dto.EmployeeUpdateCmd;
 import com.example.domain.service.EmployeeService;
-import com.example.domain.vo.EmployeeUpdateVO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

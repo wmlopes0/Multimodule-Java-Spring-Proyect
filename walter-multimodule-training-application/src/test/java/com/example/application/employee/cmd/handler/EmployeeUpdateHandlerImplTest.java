@@ -4,7 +4,6 @@ import static org.mockito.Mockito.times;
 
 import com.example.application.employee.cmd.dto.EmployeeUpdateCmd;
 import com.example.application.employee.mapper.EmployeeApplicationMapper;
-import com.example.application.employee.query.dto.EmployeeByIdQuery;
 import com.example.domain.entity.Employee;
 import com.example.domain.service.EmployeeService;
 import com.example.domain.vo.EmployeeUpdateVO;
