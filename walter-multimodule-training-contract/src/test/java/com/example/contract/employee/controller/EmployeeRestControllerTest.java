@@ -356,7 +356,7 @@ class EmployeeRestControllerTest {
   }
 
   @Test
-  @DisplayName("Delete employee by ID failed returns 404 code response")
+  @DisplayName("Delete employee by ID failed returns 404 code response.")
   void deleteEmployeeByIdNotFoundTest() {
     Long id = 1L;
     EmployeeDeleteCmd employeeDeleteCmd = new EmployeeDeleteCmd(id);
