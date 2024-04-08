@@ -142,6 +142,13 @@ class EmployeeRestControllerTestIT {
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
+
+    //    ResponseEntity<EmployeeNameDetailsDTO> fetchExpected =
+    //        ResponseEntity.ok(new EmployeeNameDetailsDTO().setNumber(result.getBody().getNumber()));
+    //    ResponseEntity<EmployeeNameDetailsDTO> fetchResult = controller.getEmployeeById(result.getBody().getNumber());
+    //
+    //    Assertions.assertEquals(fetchExpected.getStatusCode(), fetchResult.getStatusCode());
+    //    Assertions.assertEquals(fetchExpected.getBody(), fetchResult.getBody());
   }
 
   @ParameterizedTest
@@ -159,6 +166,13 @@ class EmployeeRestControllerTestIT {
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
+
+    ResponseEntity<EmployeeNameDetailsDTO> fetchExpected =
+        ResponseEntity.ok(new EmployeeNameDetailsDTO(id, newName.toUpperCase(), newName.length()));
+    ResponseEntity<EmployeeNameDetailsDTO> fetchResult = controller.getEmployeeById(id);
+
+    Assertions.assertEquals(fetchExpected.getStatusCode(), fetchResult.getStatusCode());
+    Assertions.assertEquals(fetchExpected.getBody(), fetchResult.getBody());
   }
 
   @Test
@@ -169,7 +183,12 @@ class EmployeeRestControllerTestIT {
 
     mockMvc.perform(put("/employees/{id}", id)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(new EmployeeNameDTO(newName))))
+            .content("""
+                {
+                "name": "Walter"
+                }
+                """))
+        //            .content(objectMapper.writeValueAsString(new EmployeeNameDTO(newName))))
         .andExpect(status().isNotFound());
   }
 
@@ -178,11 +197,16 @@ class EmployeeRestControllerTestIT {
   void deleteEmployeeByIdTest() {
     Long id = repository.save(new EmployeeEntity().setName("Walter")).getNumber();
 
-    ResponseEntity<Object> expected = ResponseEntity.ok().build();
-    ResponseEntity<Object> result = controller.deleteEmployeeById(id);
+    ResponseEntity<Object> deleteExpected = ResponseEntity.ok().build();
+    ResponseEntity<Object> deleteResult = controller.deleteEmployeeById(id);
 
-    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
-    Assertions.assertEquals(expected.getBody(), result.getBody());
+    Assertions.assertEquals(deleteExpected.getStatusCode(), deleteResult.getStatusCode());
+
+    ResponseEntity<EmployeeNameDetailsDTO> fetchExpected = ResponseEntity.notFound().build();
+    ResponseEntity<EmployeeNameDetailsDTO> fetchResult = controller.getEmployeeById(id);
+
+    Assertions.assertEquals(fetchExpected.getStatusCode(), fetchResult.getStatusCode());
+    Assertions.assertEquals(fetchExpected.getBody(), fetchResult.getBody());
   }
 
   @Test
