@@ -43,4 +43,18 @@ class EmployeeCreateHandlerImplTest {
     Mockito.verify(mapper, times(1)).mapToEmployeeNameVO(employeeCreateCmd);
     Mockito.verify(repositoryService, times(1)).addEmployee(employeeNameVO);
   }
+
+  @Test
+  @DisplayName("AddEmployee Throws RuntimeException on Error")
+  void addEmployeeErrorTest() {
+    EmployeeCreateCmd employeeCreateCmd = new EmployeeCreateCmd("Walter");
+    EmployeeNameVO employeeNameVO = EmployeeNameVO.builder().name("Walter").build();
+
+    Mockito.when(mapper.mapToEmployeeNameVO(employeeCreateCmd)).thenReturn(employeeNameVO);
+    Mockito.when(repositoryService.addEmployee(employeeNameVO)).thenThrow(new RuntimeException("An error occurred"));
+
+    Assertions.assertThrows(RuntimeException.class, () -> employeeCreateImpl.addEmployee(employeeCreateCmd));
+    Mockito.verify(mapper, times(1)).mapToEmployeeNameVO(employeeCreateCmd);
+    Mockito.verify(repositoryService, times(1)).addEmployee(employeeNameVO);
+  }
 }

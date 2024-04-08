@@ -43,4 +43,15 @@ class EmployeeDeleteHandlerImplTest {
     Assertions.assertFalse(employeeDeleteImpl.deleteEmployee(employeeDeleteCmd));
     Mockito.verify(repositoryService, times(1)).deleteEmployeeById(employeeDeleteCmd.getNumber());
   }
+
+  @Test
+  @DisplayName("DeleteEmployee Throws RuntimeException on Error")
+  void deleteEmployeeErrorTest() {
+    EmployeeDeleteCmd employeeDeleteCmd = new EmployeeDeleteCmd(1L);
+
+    Mockito.when(repositoryService.deleteEmployeeById(employeeDeleteCmd.getNumber())).thenThrow(new RuntimeException("An error occurred"));
+
+    Assertions.assertThrows(RuntimeException.class, () -> employeeDeleteImpl.deleteEmployee(employeeDeleteCmd));
+    Mockito.verify(repositoryService, times(1)).deleteEmployeeById(employeeDeleteCmd.getNumber());
+  }
 }
