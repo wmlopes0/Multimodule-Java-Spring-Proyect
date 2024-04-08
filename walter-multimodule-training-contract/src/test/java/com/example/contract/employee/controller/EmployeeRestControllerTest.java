@@ -106,7 +106,12 @@ class EmployeeRestControllerTest {
   @DisplayName("ListEmployees Throws RuntimeException on Repository Error")
   void listEmployeesErrorTest() {
     Mockito.when(employeeListHandler.listEmployees()).thenThrow(new RuntimeException("An error occurred"));
-    Assertions.assertThrows(RuntimeException.class, () -> controller.listEmployees());
+
+    ResponseEntity<List<EmployeeNameDetailsDTO>> expected = ResponseEntity.internalServerError().build();
+    ResponseEntity<List<EmployeeNameDetailsDTO>> result = controller.listEmployees();
+
+    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
+    Assertions.assertEquals(expected.getBody(), result.getBody());
     Mockito.verify(employeeListHandler, times(1)).listEmployees();
     Mockito.verify(mapper, never()).mapToDetailsDTO(any(Employee.class));
   }
@@ -145,6 +150,25 @@ class EmployeeRestControllerTest {
     Mockito.when(employeeGetByIdHandler.getEmployeeById(employeeByIdQuery)).thenReturn(null);
     ResponseEntity<EmployeeNameDetailsDTO> result = controller.getEmployeeById(id);
     ResponseEntity<EmployeeNameDetailsDTO> expected = ResponseEntity.notFound().build();
+
+    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
+    Assertions.assertEquals(expected.getBody(), result.getBody());
+    Mockito.verify(mapper, times(1)).mapToEmployeeByIdQuery(id);
+    Mockito.verify(employeeGetByIdHandler, times(1)).getEmployeeById(employeeByIdQuery);
+    Mockito.verify(mapper, never()).mapToDetailsDTO(any(Employee.class));
+  }
+
+  @Test
+  @DisplayName("GetEmployeeById Throws RuntimeException on Repository Error")
+  void getEmployeeByIdErrorTest() {
+    Long id = 1L;
+    EmployeeByIdQuery employeeByIdQuery = new EmployeeByIdQuery(id);
+
+    Mockito.when(mapper.mapToEmployeeByIdQuery(id)).thenReturn(employeeByIdQuery);
+    Mockito.when(employeeGetByIdHandler.getEmployeeById(employeeByIdQuery)).thenThrow(new RuntimeException("An error occurred"));
+
+    ResponseEntity<EmployeeNameDetailsDTO> expected = ResponseEntity.internalServerError().build();
+    ResponseEntity<EmployeeNameDetailsDTO> result = controller.getEmployeeById(id);
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
@@ -198,6 +222,25 @@ class EmployeeRestControllerTest {
     Mockito.verify(mapper, never()).mapToDetailsDTO(any(Employee.class));
   }
 
+  @Test
+  @DisplayName("GetEmployeeByName Throws RuntimeException on Repository Error")
+  void getEmployeeByNameErrorTest() {
+    String name = "Walter";
+    EmployeeByNameQuery employeeByNameQuery = new EmployeeByNameQuery(name);
+
+    Mockito.when(mapper.mapToEmployeeByNameQuery(name)).thenReturn(employeeByNameQuery);
+    Mockito.when(employeeGetByNameHandler.getEmployeeByName(employeeByNameQuery)).thenThrow(new RuntimeException("An error occurred"));
+
+    ResponseEntity<EmployeeNameDetailsDTO> expected = ResponseEntity.internalServerError().build();
+    ResponseEntity<EmployeeNameDetailsDTO> result = controller.getEmployeeByName(name);
+
+    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
+    Assertions.assertEquals(expected.getBody(), result.getBody());
+    Mockito.verify(mapper, times(1)).mapToEmployeeByNameQuery(name);
+    Mockito.verify(employeeGetByNameHandler, times(1)).getEmployeeByName(employeeByNameQuery);
+    Mockito.verify(mapper, never()).mapToDetailsDTO(any(Employee.class));
+  }
+
   @ParameterizedTest
   @CsvSource(value = {
       "Walter",
@@ -225,6 +268,26 @@ class EmployeeRestControllerTest {
     Mockito.verify(employeeCreateHandler, times(1)).addEmployee(employeeCreateCmd);
     Mockito.verify(mapper, times(1)).mapToResponseDTO(any(Employee.class));
     Mockito.verify(mapper, times(1)).mapToEmployeeCreateCmd(any(EmployeeNameDTO.class));
+  }
+
+  @Test
+  @DisplayName("NewEmployee Throws RuntimeException on Repository Error")
+  void newEmployeeErrorTest() {
+    String name = "Walter";
+    EmployeeNameDTO requestBody = new EmployeeNameDTO(name);
+    EmployeeCreateCmd employeeCreateCmd = new EmployeeCreateCmd(requestBody.getName());
+
+    Mockito.when(mapper.mapToEmployeeCreateCmd(requestBody)).thenReturn(employeeCreateCmd);
+    Mockito.when(employeeCreateHandler.addEmployee(employeeCreateCmd)).thenThrow(new RuntimeException("An error occurred"));
+
+    ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.internalServerError().build();
+    ResponseEntity<EmployeeResponseDTO> result = controller.newEmployee(requestBody);
+
+    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
+    Assertions.assertEquals(expected.getBody(), result.getBody());
+    Mockito.verify(mapper, times(1)).mapToEmployeeCreateCmd(any(EmployeeNameDTO.class));
+    Mockito.verify(employeeCreateHandler, times(1)).addEmployee(employeeCreateCmd);
+    Mockito.verify(mapper, never()).mapToResponseDTO(any(Employee.class));
   }
 
   @ParameterizedTest
@@ -263,8 +326,8 @@ class EmployeeRestControllerTest {
     EmployeeNameDTO requestBody = new EmployeeNameDTO("Walter");
     EmployeeUpdateCmd employeeUpdateCmd = new EmployeeUpdateCmd(id, requestBody.getName());
 
-    Mockito.when(employeeUpdateHandler.updateEmployee(employeeUpdateCmd)).thenReturn(null);
     Mockito.when(mapper.mapToEmployeeUpdateCmd(id, requestBody)).thenReturn(employeeUpdateCmd);
+    Mockito.when(employeeUpdateHandler.updateEmployee(employeeUpdateCmd)).thenReturn(null);
 
     Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> controller.updateEmployeeById(id, requestBody));
     Assertions.assertTrue(exception.getMessage().contains("Empleado no encontrado con ID: " + id));
@@ -304,6 +367,24 @@ class EmployeeRestControllerTest {
     ResponseEntity<Object> expected = ResponseEntity.notFound().build();
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
+    Mockito.verify(mapper, times(1)).mapToEmployeeDeleteCmd(id);
+    Mockito.verify(employeeDeleteHandler, times(1)).deleteEmployee(employeeDeleteCmd);
+  }
+
+  @Test
+  @DisplayName("DeleteEmployeeById Throws RuntimeException on Repository Error")
+  void deleteEmployeeByIdErrorTest() {
+    Long id = 1L;
+    EmployeeDeleteCmd employeeDeleteCmd = new EmployeeDeleteCmd(id);
+
+    Mockito.when(mapper.mapToEmployeeDeleteCmd(id)).thenReturn(employeeDeleteCmd);
+    Mockito.when(employeeDeleteHandler.deleteEmployee(employeeDeleteCmd)).thenThrow(new RuntimeException("An error occurred"));
+
+    ResponseEntity<Object> expected = ResponseEntity.internalServerError().build();
+    ResponseEntity<Object> result = controller.deleteEmployeeById(id);
+
+    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
+    Assertions.assertEquals(expected.getBody(), result.getBody());
     Mockito.verify(mapper, times(1)).mapToEmployeeDeleteCmd(id);
     Mockito.verify(employeeDeleteHandler, times(1)).deleteEmployee(employeeDeleteCmd);
   }

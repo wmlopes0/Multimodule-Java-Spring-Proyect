@@ -57,10 +57,14 @@ public class EmployeeRestController {
   @ApiResponse(responseCode = "200", description = "Successful operation")
   @GetMapping("/")
   public ResponseEntity<List<EmployeeNameDetailsDTO>> listEmployees() {
-    List<EmployeeNameDetailsDTO> result = employeeListHandler.listEmployees().stream()
-        .map(mapper::mapToDetailsDTO)
-        .toList();
-    return ResponseEntity.ok(result);
+    try {
+      List<EmployeeNameDetailsDTO> result = employeeListHandler.listEmployees().stream()
+          .map(mapper::mapToDetailsDTO)
+          .toList();
+      return ResponseEntity.ok(result);
+    } catch (RuntimeException e) {
+      return ResponseEntity.internalServerError().build();
+    }
   }
 
   @Operation(summary = "More information...", description = "This endpoint obtains information about an employee by their ID")
@@ -68,11 +72,15 @@ public class EmployeeRestController {
   @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
   @GetMapping("/{id}")
   public ResponseEntity<EmployeeNameDetailsDTO> getEmployeeById(@PathVariable("id") Long id) {
-    return Optional.ofNullable(employeeGetByIdHandler.getEmployeeById(
-            mapper.mapToEmployeeByIdQuery(id)))
-        .map(mapper::mapToDetailsDTO)
-        .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.notFound().build());
+    try {
+      return Optional.ofNullable(employeeGetByIdHandler.getEmployeeById(
+              mapper.mapToEmployeeByIdQuery(id)))
+          .map(mapper::mapToDetailsDTO)
+          .map(ResponseEntity::ok)
+          .orElse(ResponseEntity.notFound().build());
+    } catch (RuntimeException e) {
+      return ResponseEntity.internalServerError().build();
+    }
   }
 
   @Operation(summary = "More information...",
@@ -81,21 +89,29 @@ public class EmployeeRestController {
   @ApiResponse(responseCode = "404", description = "Bad request due to no match found")
   @GetMapping("/name/{name}")
   public ResponseEntity<EmployeeNameDetailsDTO> getEmployeeByName(@PathVariable("name") String name) {
-    return Optional.ofNullable(employeeGetByNameHandler.getEmployeeByName(
-            mapper.mapToEmployeeByNameQuery(name)))
-        .map(mapper::mapToDetailsDTO)
-        .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.notFound().build());
+    try {
+      return Optional.ofNullable(employeeGetByNameHandler.getEmployeeByName(
+              mapper.mapToEmployeeByNameQuery(name)))
+          .map(mapper::mapToDetailsDTO)
+          .map(ResponseEntity::ok)
+          .orElse(ResponseEntity.notFound().build());
+    } catch (RuntimeException e) {
+      return ResponseEntity.internalServerError().build();
+    }
   }
 
   @Operation(summary = "More information...", description = "This endpoint gets adds an employee to the database")
   @ApiResponse(responseCode = "201", description = "Successful operation")
   @PostMapping("/")
   public ResponseEntity<EmployeeResponseDTO> newEmployee(@RequestBody EmployeeNameDTO employeeRequest) {
-    EmployeeCreateCmd employeeCreateCmd = mapper.mapToEmployeeCreateCmd(employeeRequest);
-    Employee employee = employeeCreateHandler.addEmployee(employeeCreateCmd);
-    EmployeeResponseDTO employeeResponse = mapper.mapToResponseDTO(employee);
-    return ResponseEntity.status(HttpStatus.CREATED).body(employeeResponse);
+    try {
+      EmployeeCreateCmd employeeCreateCmd = mapper.mapToEmployeeCreateCmd(employeeRequest);
+      Employee employee = employeeCreateHandler.addEmployee(employeeCreateCmd);
+      EmployeeResponseDTO employeeResponse = mapper.mapToResponseDTO(employee);
+      return ResponseEntity.status(HttpStatus.CREATED).body(employeeResponse);
+    } catch (RuntimeException e) {
+      return ResponseEntity.internalServerError().build();
+    }
   }
 
   @Operation(summary = "More information...", description = "This endpoint updates information for a given employee")
@@ -115,8 +131,12 @@ public class EmployeeRestController {
   @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
   @DeleteMapping("/{id}")
   public ResponseEntity<Object> deleteEmployeeById(@PathVariable("id") Long id) {
-    return employeeDeleteHandler.deleteEmployee(mapper.mapToEmployeeDeleteCmd(id))
-        ? ResponseEntity.ok().build()
-        : ResponseEntity.notFound().build();
+    try {
+      return employeeDeleteHandler.deleteEmployee(mapper.mapToEmployeeDeleteCmd(id))
+          ? ResponseEntity.ok().build()
+          : ResponseEntity.notFound().build();
+    } catch (RuntimeException e) {
+      return ResponseEntity.internalServerError().build();
+    }
   }
 }

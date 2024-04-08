@@ -9,6 +9,7 @@ import com.example.domain.service.EmployeeService;
 import com.example.domain.vo.EmployeeUpdateVO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -45,6 +46,20 @@ class EmployeeUpdateHandlerImplTest {
     Employee result = employeeCreateImpl.updateEmployee(employeeUpdateCmd);
 
     Assertions.assertEquals(employee, result);
+    Mockito.verify(mapper, times(1)).mapToEmployeeUpdateVO(employeeUpdateCmd);
+    Mockito.verify(repositoryService, times(1)).updateEmployeeById(employeeUpdateVO);
+  }
+
+  @Test
+  @DisplayName("UpdateEmployee Throws RuntimeException on Error")
+  void updateEmployeeErrorTest() {
+    EmployeeUpdateCmd employeeUpdateCmd = new EmployeeUpdateCmd(1L, "Walter");
+    EmployeeUpdateVO employeeUpdateVO = EmployeeUpdateVO.builder().number(1L).name("Walter").build();
+
+    Mockito.when(mapper.mapToEmployeeUpdateVO(employeeUpdateCmd)).thenReturn(employeeUpdateVO);
+    Mockito.when(repositoryService.updateEmployeeById(employeeUpdateVO)).thenThrow(new RuntimeException("An error occurred"));
+
+    Assertions.assertThrows(RuntimeException.class, () -> employeeCreateImpl.updateEmployee(employeeUpdateCmd));
     Mockito.verify(mapper, times(1)).mapToEmployeeUpdateVO(employeeUpdateCmd);
     Mockito.verify(repositoryService, times(1)).updateEmployeeById(employeeUpdateVO);
   }
