@@ -156,7 +156,7 @@ class EmployeeRestControllerTestIT {
     Assertions.assertEquals(expected.getBody(), result.getBody());
 
     Optional<EmployeeEntity> fetchExpected = Optional.of(new EmployeeEntity(id, newName));
-    Optional<EmployeeEntity> fetchResult = repository.findById(result.getBody().getNumber());
+    Optional<EmployeeEntity> fetchResult = repository.findById(id);
 
     Assertions.assertEquals(fetchExpected, fetchResult);
   }
