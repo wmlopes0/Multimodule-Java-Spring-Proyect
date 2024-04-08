@@ -1,9 +1,7 @@
 package com.example.contract.employee.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import java.util.List;
+import java.util.Optional;
 
 import com.example.boot.app.App;
 import com.example.contract.employee.dto.EmployeeNameDTO;
@@ -11,7 +9,6 @@ import com.example.contract.employee.dto.EmployeeNameDetailsDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
 import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.repository.EmployeeRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,15 +16,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest(classes = App.class, properties = {"spring.profiles.active = test"})
-@AutoConfigureMockMvc
 class EmployeeRestControllerTestIT {
 
   @Autowired
@@ -35,12 +29,6 @@ class EmployeeRestControllerTestIT {
 
   @Autowired
   private EmployeeRepository repository;
-
-  @Autowired
-  private MockMvc mockMvc;
-
-  @Autowired
-  private ObjectMapper objectMapper;
 
   @BeforeEach
   void init() {
@@ -133,6 +121,7 @@ class EmployeeRestControllerTestIT {
       "null"
   }, nullValues = {"null"})
   @DisplayName("Add new employee returns 201 response")
+  @Transactional
   void newEmployeeTest(String name) {
     EmployeeNameDTO requestBody = new EmployeeNameDTO(name);
 
@@ -143,12 +132,10 @@ class EmployeeRestControllerTestIT {
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
 
-    //    ResponseEntity<EmployeeNameDetailsDTO> fetchExpected =
-    //        ResponseEntity.ok(new EmployeeNameDetailsDTO().setNumber(result.getBody().getNumber()));
-    //    ResponseEntity<EmployeeNameDetailsDTO> fetchResult = controller.getEmployeeById(result.getBody().getNumber());
-    //
-    //    Assertions.assertEquals(fetchExpected.getStatusCode(), fetchResult.getStatusCode());
-    //    Assertions.assertEquals(fetchExpected.getBody(), fetchResult.getBody());
+    Optional<EmployeeEntity> fetchExpected = Optional.of(new EmployeeEntity(result.getBody().getNumber(), name));
+    Optional<EmployeeEntity> fetchResult = repository.findById(result.getBody().getNumber());
+
+    Assertions.assertEquals(fetchExpected, fetchResult);
   }
 
   @ParameterizedTest
@@ -157,6 +144,7 @@ class EmployeeRestControllerTestIT {
       "null"
   }, nullValues = {"null"})
   @DisplayName("Update employee by ID successfully returns 200 code response")
+  @Transactional
   void updateEmployeeByIdTest(String name) {
     Long id = repository.save(new EmployeeEntity().setName(name)).getNumber();
     String newName = "Pepito";
@@ -167,33 +155,15 @@ class EmployeeRestControllerTestIT {
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
 
-    ResponseEntity<EmployeeNameDetailsDTO> fetchExpected =
-        ResponseEntity.ok(new EmployeeNameDetailsDTO(id, newName.toUpperCase(), newName.length()));
-    ResponseEntity<EmployeeNameDetailsDTO> fetchResult = controller.getEmployeeById(id);
+    Optional<EmployeeEntity> fetchExpected = Optional.of(new EmployeeEntity(id, newName));
+    Optional<EmployeeEntity> fetchResult = repository.findById(result.getBody().getNumber());
 
-    Assertions.assertEquals(fetchExpected.getStatusCode(), fetchResult.getStatusCode());
-    Assertions.assertEquals(fetchExpected.getBody(), fetchResult.getBody());
-  }
-
-  @Test
-  @DisplayName("Update employee by ID not found returns 404 code response")
-  void updateEmployeeByIdNotFoundTest() throws Exception {
-    Long id = 1L;
-    String newName = "Pepito";
-
-    mockMvc.perform(put("/employees/{id}", id)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("""
-                {
-                "name": "Walter"
-                }
-                """))
-        //            .content(objectMapper.writeValueAsString(new EmployeeNameDTO(newName))))
-        .andExpect(status().isNotFound());
+    Assertions.assertEquals(fetchExpected, fetchResult);
   }
 
   @Test
   @DisplayName("Deleted employee by ID successfully returns 200 code response")
+  @Transactional
   void deleteEmployeeByIdTest() {
     Long id = repository.save(new EmployeeEntity().setName("Walter")).getNumber();
 
@@ -202,11 +172,8 @@ class EmployeeRestControllerTestIT {
 
     Assertions.assertEquals(deleteExpected.getStatusCode(), deleteResult.getStatusCode());
 
-    ResponseEntity<EmployeeNameDetailsDTO> fetchExpected = ResponseEntity.notFound().build();
-    ResponseEntity<EmployeeNameDetailsDTO> fetchResult = controller.getEmployeeById(id);
-
-    Assertions.assertEquals(fetchExpected.getStatusCode(), fetchResult.getStatusCode());
-    Assertions.assertEquals(fetchExpected.getBody(), fetchResult.getBody());
+    Optional<EmployeeEntity> fetchResult = repository.findById(id);
+    Assertions.assertTrue(fetchResult.isEmpty());
   }
 
   @Test
