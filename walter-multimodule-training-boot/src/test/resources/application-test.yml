@@ -1,6 +1,6 @@
 spring:
-  datasource:
-    url: jdbc:h2:file:./data/testdbIT
-
-
-
+  data:
+    mongodb:
+      database: walter-multimodule-training
+      host: localhost
+      port: 23000
