@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Optional;
@@ -25,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest(classes = App.class, properties = {"spring.profiles.active = test"})
 @AutoConfigureMockMvc
-class EmployeeRestControllerE2ETest {
+class EmployeeRestControllerE2ETestIT {
 
   @Autowired
   private MockMvc mockMvc;
@@ -42,19 +43,26 @@ class EmployeeRestControllerE2ETest {
   @DisplayName("List employees return correctly list")
   void listEmployeesTest() throws Exception {
     Long id1 = repository.save(new EmployeeEntity().setName("Walter")).getNumber();
-    Long id2 = repository.save(new EmployeeEntity().setName("Quique")).getNumber();
+    Long id2 = repository.save(new EmployeeEntity().setName("Kike")).getNumber();
 
     String expected =
         String.format("""
-            [{"number":%d,"name":"WALTER","nameLength":6},{"number":%d,"name":"QUIQUE","nameLength":6}]""", id1, id2);
+            [
+            {
+              "number":%d,
+              "name":"KIKE",
+              "nameLength":4
+            },
+            {
+              "number":%d,
+              "name":"WALTER",
+              "nameLength":6
+            }
+            ]""", id2, id1);
 
-    String result = mockMvc.perform(get("/employees/"))
+    mockMvc.perform(get("/employees/"))
         .andExpect(status().isOk())
-        .andReturn()
-        .getResponse()
-        .getContentAsString();
-
-    Assertions.assertEquals(expected, result);
+        .andExpect(content().json(expected, false));
   }
 
   @Test
@@ -63,13 +71,9 @@ class EmployeeRestControllerE2ETest {
     String expected = """
         []""";
 
-    String result = mockMvc.perform(get("/employees/"))
+    mockMvc.perform(get("/employees/"))
         .andExpect(status().isOk())
-        .andReturn()
-        .getResponse()
-        .getContentAsString();
-
-    Assertions.assertEquals(expected, result);
+        .andExpect(content().json(expected, true));
   }
 
   @Test
@@ -79,16 +83,15 @@ class EmployeeRestControllerE2ETest {
 
     String expected =
         String.format("""
-            {"number":%d,"name":"WALTER","nameLength":6}""", id1);
+            {
+              "number":%d,
+              "name":"WALTER",
+              "nameLength":6
+            }""", id1);
 
-    String result = mockMvc.perform(get("/employees/" + id1))
+    mockMvc.perform(get("/employees/" + id1))
         .andExpect(status().isOk())
-        .andReturn()
-        .getResponse()
-        .getContentAsString();
-    System.out.println(result);
-
-    Assertions.assertEquals(expected, result);
+        .andExpect(content().json(expected, true));
   }
 
   @Test
@@ -96,13 +99,9 @@ class EmployeeRestControllerE2ETest {
   void getEmployeeByIdNotFoundTest() throws Exception {
     String expected = "";
 
-    String result = mockMvc.perform(get("/employees/" + 1))
+    mockMvc.perform(get("/employees/" + 1))
         .andExpect(status().isNotFound())
-        .andReturn()
-        .getResponse()
-        .getContentAsString();
-
-    Assertions.assertEquals(expected, result);
+        .andExpect(content().string(expected));
   }
 
   @Test
@@ -110,13 +109,9 @@ class EmployeeRestControllerE2ETest {
   void getEmployeeByIdErrorTest() throws Exception {
     String expected = "";
 
-    String result = mockMvc.perform(get("/employees/" + null))
+    mockMvc.perform(get("/employees/" + null))
         .andExpect(status().isBadRequest())
-        .andReturn()
-        .getResponse()
-        .getContentAsString();
-
-    Assertions.assertEquals(expected, result);
+        .andExpect(content().string(expected));
   }
 
   @Test
@@ -126,15 +121,15 @@ class EmployeeRestControllerE2ETest {
     String name = "Wal";
     String expected =
         String.format("""
-            {"number":%d,"name":"WALTER","nameLength":6}""", id1);
+            {
+              "number":%d,
+              "name":"WALTER",
+              "nameLength":6
+            }""", id1);
 
-    String result = mockMvc.perform(get("/employees/name/" + name))
+    mockMvc.perform(get("/employees/name/" + name))
         .andExpect(status().isOk())
-        .andReturn()
-        .getResponse()
-        .getContentAsString();
-
-    Assertions.assertEquals(expected, result);
+        .andExpect(content().json(expected, true));
   }
 
   @Test
@@ -143,13 +138,9 @@ class EmployeeRestControllerE2ETest {
     String name = "Wal";
     String expected = "";
 
-    String result = mockMvc.perform(get("/employees/name/" + name))
+    mockMvc.perform(get("/employees/name/" + name))
         .andExpect(status().isNotFound())
-        .andReturn()
-        .getResponse()
-        .getContentAsString();
-
-    Assertions.assertEquals(expected, result);
+        .andExpect(content().string(expected));
   }
 
   @Test
@@ -158,7 +149,9 @@ class EmployeeRestControllerE2ETest {
   void newEmployeeTest() throws Exception {
     String name = "Walter";
     String jsonContent = String.format("""
-        {"name":"%s"}""", name);
+        {
+          "name":"%s"
+        }""", name);
 
     String result = mockMvc.perform(post("/employees/")
             .contentType(MediaType.APPLICATION_JSON)
@@ -169,10 +162,13 @@ class EmployeeRestControllerE2ETest {
         .getContentAsString();
 
     Integer number = JsonPath.read(result, "$.number");
+    String expected = String.format("""
+        {"number":%d,"name":"%s"}""", number.longValue(), name);
 
     Optional<EmployeeEntity> fetchExpected = Optional.of(new EmployeeEntity(number.longValue(), name));
     Optional<EmployeeEntity> fetchResult = repository.findById(number.longValue());
 
+    Assertions.assertEquals(expected, result);
     Assertions.assertEquals(fetchExpected, fetchResult);
   }
 
@@ -180,9 +176,10 @@ class EmployeeRestControllerE2ETest {
   @DisplayName("Add new employee with name null returns 201 response")
   @Transactional
   void newEmployeeNameNullTest() throws Exception {
-    String name = null;
-    String jsonContent = String.format("""
-        {"name":%s}""", name);
+    String jsonContent = """
+        {
+          "name":null
+        }""";
 
     String result = mockMvc.perform(post("/employees/")
             .contentType(MediaType.APPLICATION_JSON)
@@ -193,10 +190,13 @@ class EmployeeRestControllerE2ETest {
         .getContentAsString();
 
     Integer number = JsonPath.read(result, "$.number");
+    String expected = String.format("""
+        {"number":%d,"name":null}""", number.longValue());
 
-    Optional<EmployeeEntity> fetchExpected = Optional.of(new EmployeeEntity(number.longValue(), name));
+    Optional<EmployeeEntity> fetchExpected = Optional.of(new EmployeeEntity(number.longValue(), null));
     Optional<EmployeeEntity> fetchResult = repository.findById(number.longValue());
 
+    Assertions.assertEquals(expected, result);
     Assertions.assertEquals(fetchExpected, fetchResult);
   }
 
@@ -207,23 +207,25 @@ class EmployeeRestControllerE2ETest {
     Long id = repository.save(new EmployeeEntity().setName("Walter")).getNumber();
     String newName = "ChangedName";
     String jsonContent = String.format("""
-        {"name":"%s"}""", newName);
+        {
+          "name":"%s"
+        }""", newName);
 
     String expected = String.format("""
-        {"number":%d,"name":"%s"}""", id, newName);
+        {
+          "number":%d,
+          "name":"%s"
+        }""", id, newName);
 
-    String result = mockMvc.perform(put("/employees/{id}", id)
+    mockMvc.perform(put("/employees/{id}", id)
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonContent))
         .andExpect(status().isOk())
-        .andReturn()
-        .getResponse()
-        .getContentAsString();
+        .andExpect(content().json(expected, true));
 
     Optional<EmployeeEntity> fetchExpected = Optional.of(new EmployeeEntity(id, newName));
     Optional<EmployeeEntity> fetchResult = repository.findById(id);
 
-    Assertions.assertEquals(expected, result);
     Assertions.assertEquals(fetchExpected, fetchResult);
   }
 
@@ -232,25 +234,26 @@ class EmployeeRestControllerE2ETest {
   @Transactional
   void updateEmployeeByIdNameNullTest() throws Exception {
     Long id = repository.save(new EmployeeEntity().setName("Walter")).getNumber();
-    String newName = null;
     String jsonContent = String.format("""
-        {"name":%s}""", newName);
+        {
+        "name":null
+        }""");
 
     String expected = String.format("""
-        {"number":%d,"name":%s}""", id, newName);
+        {
+        "number":%d,
+        "name":null
+        }""", id);
 
-    String result = mockMvc.perform(put("/employees/{id}", id)
+    mockMvc.perform(put("/employees/{id}", id)
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonContent))
         .andExpect(status().isOk())
-        .andReturn()
-        .getResponse()
-        .getContentAsString();
+        .andExpect(content().json(expected, true));
 
-    Optional<EmployeeEntity> fetchExpected = Optional.of(new EmployeeEntity(id, newName));
+    Optional<EmployeeEntity> fetchExpected = Optional.of(new EmployeeEntity(id, null));
     Optional<EmployeeEntity> fetchResult = repository.findById(id);
 
-    Assertions.assertEquals(expected, result);
     Assertions.assertEquals(fetchExpected, fetchResult);
   }
 
@@ -260,19 +263,17 @@ class EmployeeRestControllerE2ETest {
     Long id = 1L;
     String newName = "ChangedName";
     String jsonContent = String.format("""
-        {"name":"%s"}""", newName);
+        {
+        "name":"%s"
+        }""", newName);
 
     String expected = "";
 
-    String result = mockMvc.perform(put("/employees/{id}", id)
+    mockMvc.perform(put("/employees/{id}", id)
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonContent))
         .andExpect(status().isNotFound())
-        .andReturn()
-        .getResponse()
-        .getContentAsString();
-
-    Assertions.assertEquals(expected, result);
+        .andExpect(content().string(expected));
   }
 
   @Test
@@ -301,8 +302,7 @@ class EmployeeRestControllerE2ETest {
   @Test
   @DisplayName("Response for DeleteEmployeeById with null ID should be Internal Server Error")
   void deleteEmployeeByIdErrorTest() throws Exception {
-    Long id = null;
-    mockMvc.perform(delete("/employees/{id}", id))
+    mockMvc.perform(delete("/employees/{id}", null))
         .andExpect(status().isMethodNotAllowed());
   }
 }
