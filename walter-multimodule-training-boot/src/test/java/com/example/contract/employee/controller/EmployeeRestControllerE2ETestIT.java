@@ -234,10 +234,10 @@ class EmployeeRestControllerE2ETestIT {
   @Transactional
   void updateEmployeeByIdNameNullTest() throws Exception {
     Long id = repository.save(new EmployeeEntity().setName("Walter")).getNumber();
-    String jsonContent = String.format("""
+    String jsonContent = """
         {
         "name":null
-        }""");
+        }""";
 
     String expected = String.format("""
         {
@@ -302,7 +302,8 @@ class EmployeeRestControllerE2ETestIT {
   @Test
   @DisplayName("Response for DeleteEmployeeById with null ID should be Internal Server Error")
   void deleteEmployeeByIdErrorTest() throws Exception {
-    mockMvc.perform(delete("/employees/{id}", null))
+    Long id = null;
+    mockMvc.perform(delete("/employees/{id}", id))
         .andExpect(status().isMethodNotAllowed());
   }
 }
