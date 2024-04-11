@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest(classes = App.class, properties = {"spring.profiles.active = test"})
 class EmployeeRestControllerTestIT {
@@ -38,8 +37,8 @@ class EmployeeRestControllerTestIT {
   @Test
   @DisplayName("List employees return correctly list")
   void listEmployeesTest() {
-    Long id1 = repository.save(new EmployeeEntity().setName("Walter")).getNumber();
-    Long id2 = repository.save(new EmployeeEntity().setName("Quique")).getNumber();
+    Long id1 = repository.save(new EmployeeEntity().setNumber(1L).setName("Walter")).getNumber();
+    Long id2 = repository.save(new EmployeeEntity().setNumber(2L).setName("Quique")).getNumber();
     ResponseEntity<List<EmployeeNameDetailsDTO>> expected = ResponseEntity.ok(
         List.of(new EmployeeNameDetailsDTO(id1, "WALTER", 6),
             new EmployeeNameDetailsDTO(id2, "QUIQUE", 6)));
@@ -61,7 +60,7 @@ class EmployeeRestControllerTestIT {
   @Test
   @DisplayName("Get employee by ID returns employee and 200 response correctly")
   void getEmployeeByIdTest() {
-    Long id = repository.save(new EmployeeEntity().setName("Walter")).getNumber();
+    Long id = repository.save(new EmployeeEntity().setNumber(1L).setName("Walter")).getNumber();
 
     ResponseEntity<EmployeeNameDetailsDTO> expected = ResponseEntity.ok(new EmployeeNameDetailsDTO(id, "WALTER", 6));
     ResponseEntity<EmployeeNameDetailsDTO> result = controller.getEmployeeById(id);
@@ -94,7 +93,7 @@ class EmployeeRestControllerTestIT {
   @DisplayName("Get employee by name returns employee and 200 response correctly")
   void getEmployeeByNameTest() {
     String name = "Wal";
-    Long id = repository.save(new EmployeeEntity().setName("Walter")).getNumber();
+    Long id = repository.save(new EmployeeEntity().setNumber(1L).setName("Walter")).getNumber();
 
     ResponseEntity<EmployeeNameDetailsDTO> expected = ResponseEntity.ok(new EmployeeNameDetailsDTO(id, "WALTER", 6));
     ResponseEntity<EmployeeNameDetailsDTO> result = controller.getEmployeeByName(name);
@@ -121,7 +120,6 @@ class EmployeeRestControllerTestIT {
       "null"
   }, nullValues = {"null"})
   @DisplayName("Add new employee returns 201 response")
-  @Transactional
   void newEmployeeTest(String name) {
     EmployeeNameDTO requestBody = new EmployeeNameDTO(name);
 
@@ -144,9 +142,8 @@ class EmployeeRestControllerTestIT {
       "null"
   }, nullValues = {"null"})
   @DisplayName("Update employee by ID successfully returns 200 code response")
-  @Transactional
   void updateEmployeeByIdTest(String name) {
-    Long id = repository.save(new EmployeeEntity().setName(name)).getNumber();
+    Long id = repository.save(new EmployeeEntity().setNumber(1L).setName(name)).getNumber();
     String newName = "Pepito";
 
     ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.ok(new EmployeeResponseDTO(id, newName));
@@ -163,9 +160,8 @@ class EmployeeRestControllerTestIT {
 
   @Test
   @DisplayName("Deleted employee by ID successfully returns 200 code response")
-  @Transactional
   void deleteEmployeeByIdTest() {
-    Long id = repository.save(new EmployeeEntity().setName("Walter")).getNumber();
+    Long id = repository.save(new EmployeeEntity().setNumber(1L).setName("Walter")).getNumber();
 
     ResponseEntity<Object> deleteExpected = ResponseEntity.ok().build();
     ResponseEntity<Object> deleteResult = controller.deleteEmployeeById(id);
