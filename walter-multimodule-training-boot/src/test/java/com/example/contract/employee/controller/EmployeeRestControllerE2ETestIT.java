@@ -39,11 +39,16 @@ class EmployeeRestControllerE2ETestIT {
     repository.deleteAll();
   }
 
+  private Long getNewId() {
+    Long maxId = repository.findMaxId();
+    return (maxId == null ? 0 : maxId) + 1;
+  }
+
   @Test
   @DisplayName("List employees return correctly list")
   void listEmployeesTest() throws Exception {
-    Long id1 = repository.save(new EmployeeEntity().setName("Walter")).getNumber();
-    Long id2 = repository.save(new EmployeeEntity().setName("Kike")).getNumber();
+    Long id1 = repository.save(new EmployeeEntity().setNumber(getNewId()).setName("Walter")).getNumber();
+    Long id2 = repository.save(new EmployeeEntity().setNumber(getNewId()).setName("Kike")).getNumber();
 
     String expected =
         String.format("""
@@ -79,7 +84,7 @@ class EmployeeRestControllerE2ETestIT {
   @Test
   @DisplayName("Get employee by ID returns employee and 200 response correctly")
   void getEmployeeByIdTest() throws Exception {
-    Long id1 = repository.save(new EmployeeEntity().setName("Walter")).getNumber();
+    Long id1 = repository.save(new EmployeeEntity().setNumber(getNewId()).setName("Walter")).getNumber();
 
     String expected =
         String.format("""
@@ -117,7 +122,7 @@ class EmployeeRestControllerE2ETestIT {
   @Test
   @DisplayName("Get employee by name returns employee and 200 response correctly")
   void getEmployeeByNameTest() throws Exception {
-    Long id1 = repository.save(new EmployeeEntity().setName("Walter")).getNumber();
+    Long id1 = repository.save(new EmployeeEntity().setNumber(getNewId()).setName("Walter")).getNumber();
     String name = "Wal";
     String expected =
         String.format("""
@@ -145,7 +150,6 @@ class EmployeeRestControllerE2ETestIT {
 
   @Test
   @DisplayName("Add new employee returns 201 response")
-  @Transactional
   void newEmployeeTest() throws Exception {
     String name = "Walter";
     String jsonContent = String.format("""
@@ -174,7 +178,6 @@ class EmployeeRestControllerE2ETestIT {
 
   @Test
   @DisplayName("Add new employee with name null returns 201 response")
-  @Transactional
   void newEmployeeNameNullTest() throws Exception {
     String jsonContent = """
         {
@@ -202,9 +205,8 @@ class EmployeeRestControllerE2ETestIT {
 
   @Test
   @DisplayName("Update employee by ID successfully returns 200 code response")
-  @Transactional
   void updateEmployeeByIdTest() throws Exception {
-    Long id = repository.save(new EmployeeEntity().setName("Walter")).getNumber();
+    Long id = repository.save(new EmployeeEntity().setNumber(getNewId()).setName("Walter")).getNumber();
     String newName = "ChangedName";
     String jsonContent = String.format("""
         {
@@ -231,9 +233,8 @@ class EmployeeRestControllerE2ETestIT {
 
   @Test
   @DisplayName("Update employee by ID with name null successfully returns 200 code response")
-  @Transactional
   void updateEmployeeByIdNameNullTest() throws Exception {
-    Long id = repository.save(new EmployeeEntity().setName("Walter")).getNumber();
+    Long id = repository.save(new EmployeeEntity().setNumber(getNewId()).setName("Walter")).getNumber();
     String jsonContent = """
         {
         "name":null
@@ -278,9 +279,8 @@ class EmployeeRestControllerE2ETestIT {
 
   @Test
   @DisplayName("Deleted employee by ID successfully returns 200 code response")
-  @Transactional
   void deleteEmployeeByIdTest() throws Exception {
-    Long id = repository.save(new EmployeeEntity().setName("Walter")).getNumber();
+    Long id = repository.save(new EmployeeEntity().setNumber(getNewId()).setName("Walter")).getNumber();
 
     mockMvc.perform(delete("/employees/{id}", id))
         .andExpect(status().isOk());
