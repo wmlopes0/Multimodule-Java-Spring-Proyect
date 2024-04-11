@@ -3,4 +3,4 @@ spring:
     mongodb:
       database: walter-multimodule-training
       host: localhost
-      port: 23000
+      port: 23001
