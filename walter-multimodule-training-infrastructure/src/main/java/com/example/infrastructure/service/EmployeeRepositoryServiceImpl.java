@@ -6,6 +6,7 @@ import com.example.domain.entity.Employee;
 import com.example.domain.service.EmployeeService;
 import com.example.domain.vo.EmployeeNameVO;
 import com.example.domain.vo.EmployeeUpdateVO;
+import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.mapper.EmployeeInfrastructureMapper;
 import com.example.infrastructure.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,8 +43,10 @@ public class EmployeeRepositoryServiceImpl implements EmployeeService {
 
   @Override
   public Employee addEmployee(EmployeeNameVO employee) {
-    return employeeInfrastructureMapper.mapToDomain(
-        employeeRepository.save(employeeInfrastructureMapper.mapToEntity(employee)));
+    EmployeeEntity employeeEntity = employeeInfrastructureMapper.mapToEntity(employee);
+    Long maxId = employeeRepository.findMaxId();
+    employeeEntity.setNumber((maxId == null ? 0 : maxId) + 1);
+    return employeeInfrastructureMapper.mapToDomain(employeeRepository.save(employeeEntity));
   }
 
   @Override
