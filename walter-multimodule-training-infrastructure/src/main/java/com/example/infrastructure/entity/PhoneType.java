@@ -6,8 +6,6 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum PhoneType {
-  COMPANY(1),
-  PERSONAL(2);
-
-  private final int type;
+  COMPANY,
+  PERSONAL
 }
