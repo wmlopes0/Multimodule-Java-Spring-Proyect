@@ -1,8 +1,6 @@
 package com.example.infrastructure.mapper;
 
 import com.example.domain.entity.Employee;
-import com.example.domain.vo.EmployeeNameVO;
-import com.example.domain.vo.EmployeeUpdateVO;
 import com.example.infrastructure.entity.EmployeeEntity;
 import org.springframework.stereotype.Component;
 

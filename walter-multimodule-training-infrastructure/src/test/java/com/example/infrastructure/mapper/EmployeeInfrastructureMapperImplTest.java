@@ -3,8 +3,6 @@ package com.example.infrastructure.mapper;
 import java.util.stream.Stream;
 
 import com.example.domain.entity.Employee;
-import com.example.domain.vo.EmployeeNameVO;
-import com.example.domain.vo.EmployeeUpdateVO;
 import com.example.infrastructure.entity.EmployeeEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

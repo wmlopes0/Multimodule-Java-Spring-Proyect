@@ -4,19 +4,20 @@ import java.util.List;
 
 import com.example.domain.entity.Employee;
 import com.example.domain.vo.EmployeeNameVO;
-import com.example.domain.vo.EmployeeUpdateVO;
+import com.example.domain.vo.EmployeeNifVO;
+import com.example.domain.vo.EmployeeVO;
 
 public interface EmployeeService {
 
   List<Employee> listEmployees();
 
-  Employee getEmployeeById(Long id);
+  Employee getEmployeeById(EmployeeNifVO employeeNifVO);
 
-  Employee getEmployeeByName(EmployeeNameVO employee);
+  Employee getEmployeeByName(EmployeeNameVO employeeNameVO);
 
-  Employee addEmployee(EmployeeNameVO employee);
+  Employee addEmployee(EmployeeVO employeeVO);
 
-  Employee updateEmployeeById(EmployeeUpdateVO employeeUpdate);
+  Employee updateEmployeeById(EmployeeVO employeeVO);
 
-  boolean deleteEmployeeById(Long id);
+  boolean deleteEmployeeById(EmployeeNifVO employeeNifVO);
 }

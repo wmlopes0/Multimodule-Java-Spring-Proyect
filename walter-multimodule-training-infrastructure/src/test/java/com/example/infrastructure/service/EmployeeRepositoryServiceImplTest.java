@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.domain.entity.Employee;
-import com.example.domain.vo.EmployeeNameVO;
-import com.example.domain.vo.EmployeeUpdateVO;
 import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.mapper.EmployeeInfrastructureMapper;
 import com.example.infrastructure.repository.EmployeeRepository;
