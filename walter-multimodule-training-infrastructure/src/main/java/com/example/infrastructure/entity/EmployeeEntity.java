@@ -1,5 +1,7 @@
 package com.example.infrastructure.entity;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -19,7 +21,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class EmployeeEntity {
 
   @Id
-  private Long number;
+  private String nif;
 
   private String name;
+
+  private String lastName;
+
+  private int birthYear;
+
+  private int gender;
+
+  private List<Phone> phones;
+
+  private String email;
 }
