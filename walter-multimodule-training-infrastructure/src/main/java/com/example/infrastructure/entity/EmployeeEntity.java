@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,10 +18,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @Accessors(chain = true)
-@EqualsAndHashCode
 @Document("employees")
 public class EmployeeEntity {
 
