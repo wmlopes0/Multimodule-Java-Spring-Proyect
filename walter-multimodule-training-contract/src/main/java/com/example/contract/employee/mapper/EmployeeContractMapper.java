@@ -6,22 +6,22 @@ import com.example.application.employee.cmd.dto.EmployeeUpdateCmd;
 import com.example.application.employee.query.dto.EmployeeByIdQuery;
 import com.example.application.employee.query.dto.EmployeeByNameQuery;
 import com.example.contract.employee.dto.EmployeeNameDTO;
+import com.example.contract.employee.dto.EmployeeNifDTO;
+import com.example.contract.employee.dto.EmployeeRequestDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
 import com.example.domain.entity.Employee;
 
 public interface EmployeeContractMapper {
 
-  EmployeeCreateCmd mapToEmployeeCreateCmd(EmployeeNameDTO employeeNameDTO);
+  EmployeeCreateCmd mapToEmployeeCreateCmd(EmployeeRequestDTO employeeRequestDTO);
 
-  EmployeeDeleteCmd mapToEmployeeDeleteCmd(Long id);
+  EmployeeDeleteCmd mapToEmployeeDeleteCmd(EmployeeNifDTO employeeNifDTO);
 
-  EmployeeUpdateCmd mapToEmployeeUpdateCmd(Long id, EmployeeNameDTO employeeNameDTO);
+  EmployeeUpdateCmd mapToEmployeeUpdateCmd(EmployeeRequestDTO employeeRequestDTO);
 
-  EmployeeByIdQuery mapToEmployeeByIdQuery(Long id);
+  EmployeeByIdQuery mapToEmployeeByIdQuery(EmployeeNifDTO employeeNifDTO);
 
-  EmployeeByNameQuery mapToEmployeeByNameQuery(String name);
-
-  EmployeeNameDetailsDTO mapToDetailsDTO(Employee employee);
+  EmployeeByNameQuery mapToEmployeeByNameQuery(EmployeeNameDTO employeeNameDTO);
 
   EmployeeResponseDTO mapToResponseDTO(Employee employee);
 
