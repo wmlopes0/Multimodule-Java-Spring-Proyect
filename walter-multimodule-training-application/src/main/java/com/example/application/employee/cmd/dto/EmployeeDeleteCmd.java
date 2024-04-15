@@ -11,5 +11,5 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class EmployeeDeleteCmd {
 
-  private Long number;
+  private String nif;
 }

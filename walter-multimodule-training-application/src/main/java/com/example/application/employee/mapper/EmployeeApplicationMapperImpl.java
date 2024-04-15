@@ -1,32 +1,63 @@
 package com.example.application.employee.mapper;
 
 import com.example.application.employee.cmd.dto.EmployeeCreateCmd;
+import com.example.application.employee.cmd.dto.EmployeeDeleteCmd;
 import com.example.application.employee.cmd.dto.EmployeeUpdateCmd;
+import com.example.application.employee.query.dto.EmployeeByIdQuery;
 import com.example.application.employee.query.dto.EmployeeByNameQuery;
+import com.example.domain.vo.EmployeeNameVO;
+import com.example.domain.vo.EmployeeNifVO;
+import com.example.domain.vo.EmployeeVO;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EmployeeApplicationMapperImpl implements EmployeeApplicationMapper {
 
+  //TODO
   @Override
-  public EmployeeNameVO mapToEmployeeNameVO(EmployeeCreateCmd employeeCreateCmd) {
-    return EmployeeNameVO.builder()
-        .name(employeeCreateCmd.getName())
-        .build();
+  public EmployeeVO mapToEmployeeVO(EmployeeCreateCmd employeeCreateCmd) {
+    return null;
+  }
+
+  @Override
+  public EmployeeVO mapToEmployeeVO(EmployeeUpdateCmd employeeUpdateCmd) {
+    return null;
+  }
+
+  @Override
+  public EmployeeNifVO mapToEmployeeNifVO(EmployeeDeleteCmd employeeDeleteCmd) {
+    return null;
+  }
+
+  @Override
+  public EmployeeNifVO mapToEmployeeNifVO(EmployeeByIdQuery employeeByIdQuery) {
+    return null;
   }
 
   @Override
   public EmployeeNameVO mapToEmployeeNameVO(EmployeeByNameQuery employeeByNameQuery) {
-    return EmployeeNameVO.builder()
-        .name(employeeByNameQuery.getName())
-        .build();
+    return null;
   }
 
-  @Override
-  public EmployeeUpdateVO mapToEmployeeUpdateVO(EmployeeUpdateCmd employeeUpdateCmd) {
-    return EmployeeUpdateVO.builder()
-        .number(employeeUpdateCmd.getNumber())
-        .name(employeeUpdateCmd.getName())
-        .build();
-  }
+  //  @Override
+  //  public EmployeeNameVO mapToEmployeeNameVO(EmployeeCreateCmd employeeCreateCmd) {
+  //    return EmployeeNameVO.builder()
+  //        .name(employeeCreateCmd.getName())
+  //        .build();
+  //  }
+  //
+  //  @Override
+  //  public EmployeeNameVO mapToEmployeeNameVO(EmployeeByNameQuery employeeByNameQuery) {
+  //    return EmployeeNameVO.builder()
+  //        .name(employeeByNameQuery.getName())
+  //        .build();
+  //  }
+  //
+  //  @Override
+  //  public EmployeeUpdateVO mapToEmployeeUpdateVO(EmployeeUpdateCmd employeeUpdateCmd) {
+  //    return EmployeeUpdateVO.builder()
+  //        .number(employeeUpdateCmd.getNumber())
+  //        .name(employeeUpdateCmd.getName())
+  //        .build();
+  //  }
 }

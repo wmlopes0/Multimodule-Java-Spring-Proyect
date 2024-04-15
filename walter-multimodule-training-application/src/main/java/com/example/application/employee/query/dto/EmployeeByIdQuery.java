@@ -7,5 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class EmployeeByIdQuery {
 
-  private Long number;
+  private String nif;
 }

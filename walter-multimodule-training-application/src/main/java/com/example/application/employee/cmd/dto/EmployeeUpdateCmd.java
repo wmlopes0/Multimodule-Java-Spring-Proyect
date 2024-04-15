@@ -11,7 +11,19 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class EmployeeUpdateCmd {
 
-  private Long number;
+  private String nif;
 
   private String name;
+
+  private String surname;
+
+  private int birthYear;
+
+  private String gender;
+
+  private String personalPhone;
+
+  private String companyPhone;
+
+  private String email;
 }
