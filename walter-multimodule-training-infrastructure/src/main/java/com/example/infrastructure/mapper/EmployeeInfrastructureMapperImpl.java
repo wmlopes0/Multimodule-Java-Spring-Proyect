@@ -9,8 +9,8 @@ import com.example.domain.vo.EmployeeNameVO;
 import com.example.domain.vo.EmployeeNifVO;
 import com.example.domain.vo.EmployeeVO;
 import com.example.infrastructure.entity.EmployeeEntity;
-import com.example.infrastructure.entity.Phone;
-import com.example.infrastructure.entity.PhoneType;
+import com.example.domain.entity.Phone;
+import com.example.domain.entity.PhoneType;
 import org.springframework.stereotype.Component;
 
 @Component

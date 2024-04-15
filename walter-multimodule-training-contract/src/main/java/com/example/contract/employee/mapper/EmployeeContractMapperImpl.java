@@ -8,7 +8,6 @@ import com.example.application.employee.cmd.dto.EmployeeUpdateCmd;
 import com.example.application.employee.query.dto.EmployeeByIdQuery;
 import com.example.application.employee.query.dto.EmployeeByNameQuery;
 import com.example.contract.employee.dto.EmployeeNameDTO;
-import com.example.contract.employee.dto.EmployeeNameDetailsDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
 import com.example.domain.entity.Employee;
 import org.springframework.stereotype.Component;

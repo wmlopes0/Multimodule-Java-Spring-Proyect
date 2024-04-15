@@ -13,7 +13,21 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class EmployeeNameDTO {
+public class EmployeeRequestDTO {
+
+  private String nif;
 
   private String name;
+
+  private String surname;
+
+  private int birthYear;
+
+  private String gender;
+
+  private String personalPhone;
+
+  private String companyPhone;
+
+  private String email;
 }

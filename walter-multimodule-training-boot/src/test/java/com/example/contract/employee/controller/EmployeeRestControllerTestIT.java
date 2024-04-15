@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import com.example.boot.app.App;
 import com.example.contract.employee.dto.EmployeeNameDTO;
-import com.example.contract.employee.dto.EmployeeNameDetailsDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
 import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.repository.EmployeeRepository;

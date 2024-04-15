@@ -5,22 +5,17 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 
-@Getter
-@Setter
-@Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@Accessors(chain = true)
+@Getter
+@Setter
 @EqualsAndHashCode
-public class EmployeeNameDetailsDTO {
+public class PhoneDTO {
 
-  private Long number;
+  private String number;
 
-  private String name;
-
-  private int nameLength;
-
+  private String type;
 }
