@@ -18,7 +18,7 @@ public class EmployeeCreateHandlerImpl implements EmployeeCreateHandler {
   @Override
   public Employee addEmployee(EmployeeCreateCmd employeeCreateCmd) {
     return repositoryService.addEmployee(
-        mapper.mapToEmployeeNameVO(employeeCreateCmd)
+        mapper.mapToEmployeeVO(employeeCreateCmd)
     );
   }
 }
