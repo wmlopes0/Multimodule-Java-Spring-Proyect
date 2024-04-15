@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.example.domain.entity.Employee;
 import com.example.domain.service.EmployeeService;
-import com.example.infrastructure.entity.EmployeeEntity;
+import com.example.domain.vo.EmployeeNameVO;
+import com.example.domain.vo.EmployeeNifVO;
+import com.example.domain.vo.EmployeeVO;
 import com.example.infrastructure.mapper.EmployeeInfrastructureMapper;
 import com.example.infrastructure.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +28,8 @@ public class EmployeeRepositoryServiceImpl implements EmployeeService {
   }
 
   @Override
-  public Employee getEmployeeById(Long id) {
-    return employeeRepository.findById(id)
+  public Employee getEmployeeById(EmployeeNifVO employee) {
+    return employeeRepository.findById(employee.getNif())
         .map(employeeInfrastructureMapper::mapToDomain)
         .orElse(null);
   }
@@ -40,16 +42,14 @@ public class EmployeeRepositoryServiceImpl implements EmployeeService {
   }
 
   @Override
-  public Employee addEmployee(EmployeeNameVO employee) {
-    EmployeeEntity employeeEntity = employeeInfrastructureMapper.mapToEntity(employee);
-    Long maxId = employeeRepository.findMaxId();
-    employeeEntity.setNumber((maxId == null ? 0 : maxId) + 1);
-    return employeeInfrastructureMapper.mapToDomain(employeeRepository.save(employeeEntity));
+  public Employee addEmployee(EmployeeVO employee) {
+    return employeeInfrastructureMapper.mapToDomain(
+        employeeRepository.save(employeeInfrastructureMapper.mapToEntity(employee)));
   }
 
   @Override
-  public Employee updateEmployeeById(EmployeeUpdateVO employee) {
-    if (employeeRepository.existsById(employee.getNumber())) {
+  public Employee updateEmployeeById(EmployeeVO employee) {
+    if (employeeRepository.existsById(employee.getNif())) {
       return employeeInfrastructureMapper.mapToDomain(
           employeeRepository.save(employeeInfrastructureMapper.mapToEntity(employee)));
     }
@@ -57,9 +57,9 @@ public class EmployeeRepositoryServiceImpl implements EmployeeService {
   }
 
   @Override
-  public boolean deleteEmployeeById(Long id) {
-    if (employeeRepository.existsById(id)) {
-      employeeRepository.deleteById(id);
+  public boolean deleteEmployeeById(EmployeeNifVO employee) {
+    if (employeeRepository.existsById(employee.getNif())) {
+      employeeRepository.deleteById(employee.getNif());
       return true;
     }
     return false;

@@ -185,7 +185,7 @@ class EmployeeInfrastructureMapperImplTest {
         ),
         Arguments.of(
             List.of(
-                new Phone("+34", "722748406", PhoneType.PERSONAL),
+                new Phone("+34", "722748406", PhoneType.PERSONAL)
                 ),
             PhoneType.COMPANY,
             null
