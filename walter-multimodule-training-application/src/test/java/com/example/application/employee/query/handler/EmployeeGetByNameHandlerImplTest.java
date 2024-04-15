@@ -5,7 +5,9 @@ import static org.mockito.Mockito.times;
 import com.example.application.employee.mapper.EmployeeApplicationMapper;
 import com.example.application.employee.query.dto.EmployeeByNameQuery;
 import com.example.domain.entity.Employee;
+import com.example.domain.entity.Gender;
 import com.example.domain.service.EmployeeService;
+import com.example.domain.vo.EmployeeNameVO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,7 +34,13 @@ class EmployeeGetByNameHandlerImplTest {
   void getEmployeeByNameTest() {
     EmployeeByNameQuery employeeByNameQuery = new EmployeeByNameQuery("Walter");
     EmployeeNameVO employeeNameVO = EmployeeNameVO.builder().name("Walter").build();
-    Employee expected = new Employee().setName("Walter");
+    Employee expected = new Employee()
+        .setNif("45134320V")
+        .setName("Walter")
+        .setBirthYear(1998)
+        .setGender(Gender.MALE)
+        .setPersonalPhone("+34722748406")
+        .setEmail("wmlopes0@gmail.com");
 
     Mockito.when(mapper.mapToEmployeeNameVO(employeeByNameQuery)).thenReturn(employeeNameVO);
     Mockito.when(repositoryService.getEmployeeByName(employeeNameVO)).thenReturn(expected);
