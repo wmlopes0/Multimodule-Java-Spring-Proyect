@@ -1,4 +1,4 @@
-package com.example.infrastructure.validation;
+package com.example.domain.validation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -10,12 +10,12 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = PhoneValidator.class)
+@Constraint(validatedBy = GenderCodeValidator.class)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidPhone {
+public @interface ValidGenderCode {
 
-  String message() default "Invalid phone format";
+  String message() default "Invalid gender code";
 
   Class<?>[] groups() default {};
 

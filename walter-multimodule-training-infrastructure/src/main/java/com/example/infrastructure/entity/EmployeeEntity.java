@@ -3,7 +3,7 @@ package com.example.infrastructure.entity;
 import java.util.List;
 
 import com.example.domain.entity.Phone;
-import com.example.infrastructure.validation.ValidGenderCode;
+import com.example.domain.validation.ValidGenderCode;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

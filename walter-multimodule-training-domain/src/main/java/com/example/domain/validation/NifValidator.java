@@ -1,5 +1,6 @@
-package com.example.infrastructure.validation;
+package com.example.domain.validation;
 
+import com.example.domain.validation.ValidNIF;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

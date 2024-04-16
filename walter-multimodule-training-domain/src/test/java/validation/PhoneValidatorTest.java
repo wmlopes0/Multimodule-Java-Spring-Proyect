@@ -1,5 +1,6 @@
-package com.example.infrastructure.validation;
+package validation;
 
+import com.example.domain.validation.PhoneValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

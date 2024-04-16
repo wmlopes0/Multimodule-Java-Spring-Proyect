@@ -1,6 +1,7 @@
-package com.example.infrastructure.validation;
+package com.example.domain.validation;
 
 import com.example.domain.entity.Gender;
+import com.example.domain.validation.ValidGenderCode;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
