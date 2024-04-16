@@ -130,8 +130,8 @@ public class EmployeeRestController {
   @Operation(summary = "More information...", description = "This endpoint removes a given employee from the database by their id")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Object> deleteEmployeeById(@PathVariable("id") String nif) {
+  @DeleteMapping("/{nif}")
+  public ResponseEntity<Object> deleteEmployeeById(@PathVariable("nif") String nif) {
     try {
       return employeeDeleteHandler.deleteEmployee(mapper.mapToEmployeeDeleteCmd(new EmployeeNifDTO(nif)))
           ? ResponseEntity.ok().build()
