@@ -20,10 +20,13 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,6 +56,11 @@ public class EmployeeRestController {
   private final EmployeeListHandler employeeListHandler;
 
   private final EmployeeContractMapper mapper;
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    return ResponseEntity.badRequest().body(ex.getBindingResult().getAllErrors());
+  }
 
   @Operation(summary = "More information...", description = "This endpoint lists all employees in the database")
   @ApiResponse(responseCode = "200", description = "Successful operation")
@@ -104,7 +112,7 @@ public class EmployeeRestController {
   @Operation(summary = "More information...", description = "This endpoint gets adds an employee to the database")
   @ApiResponse(responseCode = "201", description = "Successful operation")
   @PostMapping("/")
-  public ResponseEntity<EmployeeResponseDTO> newEmployee(@RequestBody EmployeeRequestDTO employeeRequest) {
+  public ResponseEntity<EmployeeResponseDTO> newEmployee(@Valid @RequestBody EmployeeRequestDTO employeeRequest) {
     try {
       EmployeeCreateCmd employeeCreateCmd = mapper.mapToEmployeeCreateCmd(employeeRequest);
       Employee employee = employeeCreateHandler.addEmployee(employeeCreateCmd);
