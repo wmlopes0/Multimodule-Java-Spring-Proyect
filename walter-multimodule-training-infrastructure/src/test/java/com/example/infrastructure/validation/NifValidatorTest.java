@@ -27,7 +27,7 @@ class NifValidatorTest {
   @Test
   @DisplayName("Validate correct NIE format")
   void validNieTest() {
-    Assertions.assertTrue(nifValidator.isValid("X0582338R", null));
+    Assertions.assertTrue(nifValidator.isValid("Z9747924T", null));
   }
 
   @Test

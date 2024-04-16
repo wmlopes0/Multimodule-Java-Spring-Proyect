@@ -28,22 +28,17 @@ public class NifValidator implements ConstraintValidator<ValidNIF, String> {
   }
 
   private boolean isValidNie(String nie) {
-    int number = Integer.parseInt(nie.substring(1, 8));
+    int number = Integer.parseInt(nie.substring(1, 8)); // Obtén la parte numérica
     char prefix = nie.charAt(0);
     char letter = nie.charAt(8);
 
-    switch (prefix) {
-      case 'X':
-        number += 10000000;
-        break;
-      case 'Y':
-        number += 11000000;
-        break;
-      case 'Z':
-        number += 12000000;
-        break;
-      default:
-        break;
+    // Corrige la traducción del prefijo a número
+    if (prefix == 'X') {
+      number = Integer.parseInt("0" + nie.substring(1, 8));
+    } else if (prefix == 'Y') {
+      number = Integer.parseInt("1" + nie.substring(1, 8));
+    } else if (prefix == 'Z') {
+      number = Integer.parseInt("2" + nie.substring(1, 8));
     }
 
     int index = number % 23;
