@@ -58,14 +58,14 @@ class EmployeeInfrastructureMapperImplTest {
                 new Phone("+34", "722748406", PhoneType.PERSONAL),
                 new Phone("+34", "676615106", PhoneType.COMPANY)
             ),
-            "722748406",
-            "676615106"
+            "+34722748406",
+            "+34676615106"
         ),
         Arguments.of(
             List.of(
                 new Phone("+34", "722748406", PhoneType.PERSONAL)
             ),
-            "722748406",
+            "+34722748406",
             null
         ),
         Arguments.of(
@@ -113,7 +113,7 @@ class EmployeeInfrastructureMapperImplTest {
                 .gender(Gender.MALE)
                 .personalPhone("+34722748406")
                 .companyPhone("+34676615106")
-                .email("wmlopes0@gmail.com"),
+                .email("wmlopes0@gmail.com").build(),
             new EmployeeEntity()
                 .setNif("45134320V")
                 .setName("Walter")
@@ -121,8 +121,8 @@ class EmployeeInfrastructureMapperImplTest {
                 .setBirthYear(1998)
                 .setGender(Gender.MALE.getCode())
                 .setPhones(List.of(
-                    new Phone("+34", "722748406", PhoneType.PERSONAL),
-                    new Phone("+34", "676615106", PhoneType.COMPANY)))
+                    new Phone("+34", "676615106", PhoneType.COMPANY),
+                    new Phone("+34", "722748406", PhoneType.PERSONAL)))
                 .setEmail("wmlopes0@gmail.com")
         ),
         Arguments.of(
@@ -132,7 +132,7 @@ class EmployeeInfrastructureMapperImplTest {
                 .birthYear(1998)
                 .gender(Gender.MALE)
                 .companyPhone("+34676615106")
-                .email("wmlopes0@gmail.com"),
+                .email("wmlopes0@gmail.com").build(),
             new EmployeeEntity()
                 .setNif("45134320V")
                 .setName("Walter")
@@ -148,19 +148,28 @@ class EmployeeInfrastructureMapperImplTest {
   @ParameterizedTest
   @CsvSource(value = {
       "1, MALE",
-      "2, FEMALE",
-      "3 , NULL"
+      "2, FEMALE"
   })
   @DisplayName("Mapping gender code to Gender correctly")
-  void mapToGender(int genderCode, Gender expectedGender) {
+  void mapToGenderTest(int genderCode, Gender expectedGender) {
     Gender result = employeeInfrastructureMapper.mapToGender(genderCode);
     Assertions.assertEquals(expectedGender, result);
   }
 
   @ParameterizedTest
+  @CsvSource(value = {
+      "3 , ",
+      "4 , ",
+  })
+  @DisplayName("Test IllegalArgumentException for invalid gender codes")
+  void mapToGenderErrorTest(int genderCode) {
+    Assertions.assertThrows(IllegalArgumentException.class, () -> employeeInfrastructureMapper.mapToGender(genderCode));
+  }
+
+  @ParameterizedTest
   @MethodSource("extractPhoneParameters")
   @DisplayName("Extract full phone number to List for phone type correctly")
-  void extractPhoneWithTypeOfList(List<Phone> phones, PhoneType phoneType, String expectedPhone) {
+  void extractPhoneWithTypeOfListTest(List<Phone> phones, PhoneType phoneType, String expectedPhone) {
     String result = employeeInfrastructureMapper.extractPhoneWithTypeOfList(phones, phoneType);
     Assertions.assertEquals(expectedPhone, result);
   }
@@ -196,7 +205,7 @@ class EmployeeInfrastructureMapperImplTest {
   @ParameterizedTest
   @MethodSource("createPhoneParameters")
   @DisplayName("Create a phone object from a full phone number and phone type correctly")
-  void createPhone(String fullNumber, PhoneType phoneType, Phone expected) {
+  void createPhoneTest(String fullNumber, PhoneType phoneType, Phone expected) {
     Phone result = employeeInfrastructureMapper.createPhone(fullNumber, phoneType);
     Assertions.assertEquals(expected, result);
   }
@@ -209,8 +218,8 @@ class EmployeeInfrastructureMapperImplTest {
             new Phone("+34", "722748406", PhoneType.PERSONAL)
         ),
         Arguments.of(
-            "+34722748406",
-            PhoneType.PERSONAL,
+            "+44676615106",
+            PhoneType.COMPANY,
             new Phone("+44", "676615106", PhoneType.COMPANY)
         )
     );

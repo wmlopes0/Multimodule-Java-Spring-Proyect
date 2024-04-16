@@ -81,7 +81,7 @@ public class EmployeeInfrastructureMapperImpl implements EmployeeInfrastructureM
   public String extractPhoneWithTypeOfList(List<Phone> phones, PhoneType type) {
     for (Phone phone : phones) {
       if (phone.getType().equals(type)) {
-        return phone.getNumber();
+        return phone.getPrefix() + phone.getNumber();
       }
     }
     return null;
