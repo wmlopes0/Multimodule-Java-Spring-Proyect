@@ -2,10 +2,15 @@ package com.example.contract.employee.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.example.boot.app.App;
-import com.example.contract.employee.dto.EmployeeNameDTO;
+import com.example.contract.employee.dto.EmployeeRequestDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
+import com.example.contract.employee.dto.PhoneDTO;
+import com.example.domain.entity.Gender;
+import com.example.domain.entity.Phone;
+import com.example.domain.entity.PhoneType;
 import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.repository.EmployeeRepository;
 import org.junit.jupiter.api.Assertions;
@@ -13,7 +18,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -33,46 +39,120 @@ class EmployeeRestControllerTestIT {
     repository.deleteAll();
   }
 
-  @Test
+  @ParameterizedTest
+  @MethodSource("listEmployeesParameters")
   @DisplayName("List employees return correctly list")
-  void listEmployeesTest() {
-    Long id1 = repository.save(new EmployeeEntity().setNumber(1L).setName("Walter")).getNumber();
-    Long id2 = repository.save(new EmployeeEntity().setNumber(2L).setName("Quique")).getNumber();
-    ResponseEntity<List<EmployeeNameDetailsDTO>> expected = ResponseEntity.ok(
-        List.of(new EmployeeNameDetailsDTO(id1, "WALTER", 6),
-            new EmployeeNameDetailsDTO(id2, "QUIQUE", 6)));
+  void listEmployeesTest(EmployeeEntity employee1, EmployeeEntity employee2, List<EmployeeResponseDTO> employeeResponseDTOS) {
+    repository.save(employee1);
+    repository.save(employee2);
+    ResponseEntity<List<EmployeeResponseDTO>> expected = ResponseEntity.ok(employeeResponseDTOS);
 
-    ResponseEntity<List<EmployeeNameDetailsDTO>> result = controller.listEmployees();
+    ResponseEntity<List<EmployeeResponseDTO>> result = controller.listEmployees();
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
+  }
+
+  private static Stream<Arguments> listEmployeesParameters() {
+    return Stream.of(
+        Arguments.of(
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setPhones(List.of(new Phone("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("wmlopes0@gmail.com"),
+            new EmployeeEntity()
+                .setNif("45132337N")
+                .setName("Raquel")
+                .setLastName("Barbero Sánchez")
+                .setBirthYear(1996)
+                .setGender(Gender.FEMALE.getCode())
+                .setPhones(List.of(new Phone("+34", "676615106", PhoneType.PERSONAL)))
+                .setEmail("raquelbarberosanchez90@gmail.com"),
+            List.of(
+                new EmployeeResponseDTO()
+                    .setNif("45134320V")
+                    .setCompleteName("Martín Lopes, Walter")
+                    .setBirthYear(1998)
+                    .setAge(26)
+                    .setAdult(true)
+                    .setGender("Male")
+                    .setPhones(List.of(
+                        new PhoneDTO("+34722748406", PhoneType.PERSONAL.name()),
+                        new PhoneDTO(null, PhoneType.COMPANY.name())))
+                    .setEmail("wmlopes0@gmail.com"),
+                new EmployeeResponseDTO()
+                    .setNif("45132337N")
+                    .setCompleteName("Barbero Sánchez, Raquel")
+                    .setBirthYear(1996)
+                    .setAge(28)
+                    .setAdult(true)
+                    .setGender("Female")
+                    .setPhones(List.of(
+                        new PhoneDTO("+34676615106", PhoneType.PERSONAL.name()),
+                        new PhoneDTO(null, PhoneType.COMPANY.name())))
+                    .setEmail("raquelbarberosanchez90@gmail.com")
+            )
+        )
+    );
   }
 
   @Test
   @DisplayName("When list employees is empty return correctly list")
   void listEmployeesEmptyTest() {
-    ResponseEntity<List<EmployeeNameDetailsDTO>> expected = ResponseEntity.ok(List.of());
-    ResponseEntity<List<EmployeeNameDetailsDTO>> result = controller.listEmployees();
+    ResponseEntity<List<EmployeeResponseDTO>> expected = ResponseEntity.ok(List.of());
+    ResponseEntity<List<EmployeeResponseDTO>> result = controller.listEmployees();
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
   }
 
-  @Test
-  @DisplayName("Get employee by ID returns employee and 200 response correctly")
-  void getEmployeeByIdTest() {
-    Long id = repository.save(new EmployeeEntity().setNumber(1L).setName("Walter")).getNumber();
+  @ParameterizedTest
+  @MethodSource("getEmployeeByIdParameters")
+  @DisplayName("Get employee by NIF returns employee and 200 response correctly")
+  void getEmployeeByIdTest(String nif, EmployeeEntity employeeEntity, EmployeeResponseDTO employeeResponseDTO) {
+    repository.save(employeeEntity);
 
-    ResponseEntity<EmployeeNameDetailsDTO> expected = ResponseEntity.ok(new EmployeeNameDetailsDTO(id, "WALTER", 6));
-    ResponseEntity<EmployeeNameDetailsDTO> result = controller.getEmployeeById(id);
+    ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.ok(employeeResponseDTO);
+    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById(nif);
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
   }
 
+  private static Stream<Arguments> getEmployeeByIdParameters() {
+    return Stream.of(
+        Arguments.of(
+            "45134320V",
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setPhones(List.of(new Phone("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("wmlopes0@gmail.com"),
+            new EmployeeResponseDTO()
+                .setNif("45134320V")
+                .setCompleteName("Martín Lopes, Walter")
+                .setBirthYear(1998)
+                .setAge(26)
+                .setAdult(true)
+                .setGender("Male")
+                .setPhones(List.of(
+                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name()),
+                    new PhoneDTO(null, PhoneType.COMPANY.name())))
+                .setEmail("wmlopes0@gmail.com")
+        )
+    );
+  }
+
   @Test
-  @DisplayName("Get employee by ID not found returns 404 response")
+  @DisplayName("Get employee by NIF not found returns 404 response")
   void getEmployeeByIdNotFoundTest() {
-    ResponseEntity<EmployeeNameDetailsDTO> expected = ResponseEntity.notFound().build();
-    ResponseEntity<EmployeeNameDetailsDTO> result = controller.getEmployeeById(1L);
+    ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.notFound().build();
+    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById("45134320V");
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
@@ -81,24 +161,51 @@ class EmployeeRestControllerTestIT {
   @Test
   @DisplayName("Response for GetEmployeeById with null ID should be Internal Server Error")
   void getEmployeeByIdErrorTest() {
-    ResponseEntity<EmployeeNameDetailsDTO> expected = ResponseEntity.internalServerError().build();
-    ResponseEntity<EmployeeNameDetailsDTO> result = controller.getEmployeeById(null);
+    ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.internalServerError().build();
+    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById(null);
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
   }
 
-  @Test
+  @ParameterizedTest
+  @MethodSource("getEmployeeByNameParameters")
   @DisplayName("Get employee by name returns employee and 200 response correctly")
-  void getEmployeeByNameTest() {
-    String name = "Wal";
-    Long id = repository.save(new EmployeeEntity().setNumber(1L).setName("Walter")).getNumber();
+  void getEmployeeByNameTest(String name, EmployeeEntity employeeEntity, EmployeeResponseDTO employeeResponseDTO) {
+    repository.save(employeeEntity);
 
-    ResponseEntity<EmployeeNameDetailsDTO> expected = ResponseEntity.ok(new EmployeeNameDetailsDTO(id, "WALTER", 6));
-    ResponseEntity<EmployeeNameDetailsDTO> result = controller.getEmployeeByName(name);
+    ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.ok(employeeResponseDTO);
+    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeByName(name);
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
+  }
+
+  private static Stream<Arguments> getEmployeeByNameParameters() {
+    return Stream.of(
+        Arguments.of(
+            "Wal",
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setPhones(List.of(new Phone("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("wmlopes0@gmail.com"),
+            new EmployeeResponseDTO()
+                .setNif("45134320V")
+                .setCompleteName("Martín Lopes, Walter")
+                .setBirthYear(1998)
+                .setAge(26)
+                .setAdult(true)
+                .setGender("Male")
+                .setPhones(List.of(
+                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name()),
+                    new PhoneDTO(null, PhoneType.COMPANY.name())))
+                .setEmail("wmlopes0@gmail.com")
+        )
+    );
   }
 
   @Test
@@ -106,83 +213,164 @@ class EmployeeRestControllerTestIT {
   void getEmployeeByNameNotFoundTest() {
     String name = "Wal";
 
-    ResponseEntity<EmployeeNameDetailsDTO> expected = ResponseEntity.notFound().build();
-    ResponseEntity<EmployeeNameDetailsDTO> result = controller.getEmployeeByName(name);
+    ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.notFound().build();
+    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeByName(name);
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
   }
 
   @ParameterizedTest
-  @CsvSource(value = {
-      "Walter",
-      "null"
-  }, nullValues = {"null"})
+  @MethodSource("newEmployeeParameters")
   @DisplayName("Add new employee returns 201 response")
-  void newEmployeeTest(String name) {
-    EmployeeNameDTO requestBody = new EmployeeNameDTO(name);
-
-    ResponseEntity<EmployeeResponseDTO> result = controller.newEmployee(requestBody);
+  void newEmployeeTest(EmployeeRequestDTO employeeRequestDTO, EmployeeResponseDTO employeeResponseDTO, EmployeeEntity entityExpected) {
+    ResponseEntity<EmployeeResponseDTO> result = controller.newEmployee(employeeRequestDTO);
     ResponseEntity<EmployeeResponseDTO> expected =
-        ResponseEntity.status(HttpStatus.CREATED).body(new EmployeeResponseDTO(result.getBody().getNumber(), name));
+        ResponseEntity.status(HttpStatus.CREATED).body(employeeResponseDTO);
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
 
-    Optional<EmployeeEntity> fetchExpected = Optional.of(new EmployeeEntity(result.getBody().getNumber(), name));
-    Optional<EmployeeEntity> fetchResult = repository.findById(result.getBody().getNumber());
+    Optional<EmployeeEntity> fetchExpected = Optional.of(entityExpected);
+    Optional<EmployeeEntity> fetchResult = repository.findById(employeeRequestDTO.getNif());
 
     Assertions.assertEquals(fetchExpected, fetchResult);
   }
 
-  @ParameterizedTest
-  @CsvSource(value = {
-      "Walter",
-      "null"
-  }, nullValues = {"null"})
-  @DisplayName("Update employee by ID successfully returns 200 code response")
-  void updateEmployeeByIdTest(String name) {
-    Long id = repository.save(new EmployeeEntity().setNumber(1L).setName(name)).getNumber();
-    String newName = "Pepito";
+  private static Stream<Arguments> newEmployeeParameters() {
+    return Stream.of(
+        Arguments.of(
+            new EmployeeRequestDTO()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setSurname("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender("Male")
+                .setPersonalPhone("+34722748406")
+                .setEmail("wmlopes0@gmail.com"),
+            new EmployeeResponseDTO()
+                .setNif("45134320V")
+                .setCompleteName("Martín Lopes, Walter")
+                .setBirthYear(1998)
+                .setAge(26)
+                .setAdult(true)
+                .setGender("Male")
+                .setPhones(List.of(
+                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name()),
+                    new PhoneDTO(null, PhoneType.COMPANY.name())))
+                .setEmail("wmlopes0@gmail.com"),
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setPhones(List.of(new Phone("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("wmlopes0@gmail.com")
+        )
+    );
+  }
 
-    ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.ok(new EmployeeResponseDTO(id, newName));
-    ResponseEntity<EmployeeResponseDTO> result = controller.updateEmployeeById(id, new EmployeeNameDTO(newName));
+  @ParameterizedTest
+  @MethodSource("updateEmployeeByIdParameters")
+  @DisplayName("Update employee by NIF successfully returns 200 code response")
+  void updateEmployeeByIdTest(EmployeeEntity employeeEntity, EmployeeRequestDTO employeeRequestDTO,
+      EmployeeResponseDTO employeeResponseDTO, EmployeeEntity entityExpected) {
+    repository.save(employeeEntity);
+
+    ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.ok(employeeResponseDTO);
+    ResponseEntity<EmployeeResponseDTO> result = controller.updateEmployeeById(employeeRequestDTO);
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
 
-    Optional<EmployeeEntity> fetchExpected = Optional.of(new EmployeeEntity(id, newName));
-    Optional<EmployeeEntity> fetchResult = repository.findById(id);
+    Optional<EmployeeEntity> fetchExpected = Optional.of(entityExpected);
+    Optional<EmployeeEntity> fetchResult = repository.findById(employeeRequestDTO.getNif());
 
     Assertions.assertEquals(fetchExpected, fetchResult);
+  }
+
+  private static Stream<Arguments> updateEmployeeByIdParameters() {
+    return Stream.of(
+        Arguments.of(
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setPhones(List.of(
+                    new Phone("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("wmlopes0@gmail.com"),
+            new EmployeeRequestDTO()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setSurname("Martín Lopes")
+                .setBirthYear(1999)
+                .setGender("Male")
+                .setPersonalPhone("+34722748406")
+                .setCompanyPhone("+34676615106")
+                .setEmail("walterlopesdiez@gmail.com"),
+            new EmployeeResponseDTO()
+                .setNif("45134320V")
+                .setCompleteName("Martín Lopes, Walter")
+                .setBirthYear(1999)
+                .setAge(25)
+                .setAdult(true)
+                .setGender("Male")
+                .setPhones(List.of(
+                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name()),
+                    new PhoneDTO("+34676615106", PhoneType.COMPANY.name())))
+                .setEmail("walterlopesdiez@gmail.com"),
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1999)
+                .setGender(Gender.MALE.getCode())
+                .setPhones(List.of(
+                    new Phone("+34", "676615106", PhoneType.COMPANY),
+                    new Phone("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("walterlopesdiez@gmail.com")
+        )
+    );
   }
 
   @Test
-  @DisplayName("Deleted employee by ID successfully returns 200 code response")
+  @DisplayName("Deleted employee by NIF successfully returns 200 code response")
   void deleteEmployeeByIdTest() {
-    Long id = repository.save(new EmployeeEntity().setNumber(1L).setName("Walter")).getNumber();
+    EmployeeEntity employeeEntity = new EmployeeEntity().setNif("45134320V")
+        .setName("Walter")
+        .setLastName("Martín Lopes")
+        .setBirthYear(1998)
+        .setGender(Gender.MALE.getCode())
+        .setPhones(List.of(
+            new Phone("+34", "722748406", PhoneType.PERSONAL)))
+        .setEmail("wmlopes0@gmail.com");
+
+    repository.save(employeeEntity);
 
     ResponseEntity<Object> deleteExpected = ResponseEntity.ok().build();
-    ResponseEntity<Object> deleteResult = controller.deleteEmployeeById(id);
+    ResponseEntity<Object> deleteResult = controller.deleteEmployeeById(employeeEntity.getNif());
 
     Assertions.assertEquals(deleteExpected.getStatusCode(), deleteResult.getStatusCode());
 
-    Optional<EmployeeEntity> fetchResult = repository.findById(id);
+    Optional<EmployeeEntity> fetchResult = repository.findById(employeeEntity.getNif());
     Assertions.assertTrue(fetchResult.isEmpty());
   }
 
   @Test
-  @DisplayName("Delete employee by ID failed returns 404 code response.")
+  @DisplayName("Delete employee by NIF failed returns 404 code response.")
   void deleteEmployeeByIdNotFoundTest() {
     ResponseEntity<Object> expected = ResponseEntity.notFound().build();
-    ResponseEntity<Object> result = controller.deleteEmployeeById(1L);
+    ResponseEntity<Object> result = controller.deleteEmployeeById("45134320V");
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
   }
 
   @Test
-  @DisplayName("Response for DeleteEmployeeById with null ID should be Internal Server Error")
+  @DisplayName("Response for DeleteEmployeeById with null NIF should be Internal Server Error")
   void deleteEmployeeByIdErrorTest() {
     ResponseEntity<Object> expected = ResponseEntity.internalServerError().build();
     ResponseEntity<Object> result = controller.deleteEmployeeById(null);

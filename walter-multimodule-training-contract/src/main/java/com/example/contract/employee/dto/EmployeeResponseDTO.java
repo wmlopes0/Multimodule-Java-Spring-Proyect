@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @AllArgsConstructor
@@ -15,6 +16,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @EqualsAndHashCode
+@ToString
 public class EmployeeResponseDTO {
 
   private String nif;
