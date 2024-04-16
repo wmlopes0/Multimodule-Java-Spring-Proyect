@@ -67,14 +67,11 @@ public class EmployeeInfrastructureMapperImpl implements EmployeeInfrastructureM
 
   @Override
   public Gender mapToGender(int genderCode) {
-    switch (genderCode) {
-      case 1:
-        return Gender.MALE;
-      case 2:
-        return Gender.FEMALE;
-      default:
-        throw new IllegalArgumentException("Invalid gender code: " + genderCode);
-    }
+    return switch (genderCode) {
+      case 1 -> Gender.MALE;
+      case 2 -> Gender.FEMALE;
+      default -> throw new IllegalArgumentException("Invalid gender code: " + genderCode);
+    };
   }
 
   @Override
