@@ -65,7 +65,7 @@ public class EmployeeContractMapperImpl implements EmployeeContractMapper {
   public EmployeeResponseDTO mapToResponseDTO(Employee employee) {
     int actualYear = LocalDate.now().getYear();
     int age = actualYear - employee.getBirthYear();
-    boolean adult = age >= 18 ? true : false;
+    boolean adult = age >= 18;
     String gender = employee.getGender().getCode() == 1 ? "Male" : "Female";
     return new EmployeeResponseDTO()
         .setNif(employee.getNif())

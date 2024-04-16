@@ -12,9 +12,9 @@ import java.util.Optional;
 
 import com.example.boot.app.App;
 import com.example.domain.entity.Gender;
-import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.domain.entity.Phone;
 import com.example.domain.entity.PhoneType;
+import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.repository.EmployeeRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

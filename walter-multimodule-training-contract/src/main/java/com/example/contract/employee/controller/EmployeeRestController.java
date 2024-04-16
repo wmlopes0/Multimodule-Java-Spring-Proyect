@@ -71,8 +71,8 @@ public class EmployeeRestController {
   @Operation(summary = "More information...", description = "This endpoint obtains information about an employee by their NIF")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
-  @GetMapping("/{id}")
-  public ResponseEntity<EmployeeResponseDTO> getEmployeeById(@PathVariable("id") String nif) {
+  @GetMapping("/{nif}")
+  public ResponseEntity<EmployeeResponseDTO> getEmployeeById(@PathVariable("nif") String nif) {
     try {
       return Optional.ofNullable(employeeGetByIdHandler.getEmployeeById(
               mapper.mapToEmployeeByIdQuery(new EmployeeNifDTO(nif))))
