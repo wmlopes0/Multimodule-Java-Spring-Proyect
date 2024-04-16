@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -29,22 +27,34 @@ class EmployeeDeleteHandlerImplTest {
   @InjectMocks
   private EmployeeDeleteHandlerImpl employeeDeleteImpl;
 
-  @ParameterizedTest
-  @CsvSource(value = {
-      "true",
-      "false"
-  })
-  @DisplayName("Delete Employee by ID successfully, and deletion fails for non-existent ID")
-  void deleteEmployeeTest(boolean result) {
+  @Test
+  @DisplayName("Delete Employee by NIF successfully")
+  void deleteEmployeeTest() {
     EmployeeDeleteCmd employeeDeleteCmd = new EmployeeDeleteCmd("45134320V");
     EmployeeNifVO employeeNifVO = EmployeeNifVO.builder()
         .nif("45134320V")
         .build();
 
     Mockito.when(mapper.mapToEmployeeNifVO(employeeDeleteCmd)).thenReturn(employeeNifVO);
-    Mockito.when(repositoryService.deleteEmployeeById(employeeNifVO)).thenReturn(result);
+    Mockito.when(repositoryService.deleteEmployeeById(employeeNifVO)).thenReturn(true);
 
     Assertions.assertTrue(employeeDeleteImpl.deleteEmployee(employeeDeleteCmd));
+    Mockito.verify(mapper, times(1)).mapToEmployeeNifVO(employeeDeleteCmd);
+    Mockito.verify(repositoryService, times(1)).deleteEmployeeById(employeeNifVO);
+  }
+
+  @Test
+  @DisplayName("Delete Employee by NIF fails for non-existent NIF")
+  void deleteEmployeeFailTest() {
+    EmployeeDeleteCmd employeeDeleteCmd = new EmployeeDeleteCmd("45134320V");
+    EmployeeNifVO employeeNifVO = EmployeeNifVO.builder()
+        .nif("45134320V")
+        .build();
+
+    Mockito.when(mapper.mapToEmployeeNifVO(employeeDeleteCmd)).thenReturn(employeeNifVO);
+    Mockito.when(repositoryService.deleteEmployeeById(employeeNifVO)).thenReturn(false);
+
+    Assertions.assertFalse(employeeDeleteImpl.deleteEmployee(employeeDeleteCmd));
     Mockito.verify(mapper, times(1)).mapToEmployeeNifVO(employeeDeleteCmd);
     Mockito.verify(repositoryService, times(1)).deleteEmployeeById(employeeNifVO);
   }
