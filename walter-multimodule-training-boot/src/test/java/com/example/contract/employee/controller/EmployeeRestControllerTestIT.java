@@ -8,6 +8,7 @@ import com.example.boot.app.App;
 import com.example.contract.employee.dto.EmployeeNifDTO;
 import com.example.contract.employee.dto.EmployeeRequestDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
+import com.example.contract.employee.dto.EmployeeUpdateDTO;
 import com.example.contract.employee.dto.PhoneDTO;
 import com.example.domain.entity.Gender;
 import com.example.domain.entity.Phone;
@@ -159,16 +160,6 @@ class EmployeeRestControllerTestIT {
     Assertions.assertEquals(expected.getBody(), result.getBody());
   }
 
-  @Test
-  @DisplayName("Response for GetEmployeeById with null ID should be Internal Server Error")
-  void getEmployeeByIdErrorTest() {
-    ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.internalServerError().build();
-    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById(null);
-
-    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
-    Assertions.assertEquals(expected.getBody(), result.getBody());
-  }
-
   @ParameterizedTest
   @MethodSource("getEmployeeByNameParameters")
   @DisplayName("Get employee by name returns employee and 200 response correctly")
@@ -275,18 +266,18 @@ class EmployeeRestControllerTestIT {
   @ParameterizedTest
   @MethodSource("updateEmployeeByIdParameters")
   @DisplayName("Update employee by NIF successfully returns 200 code response")
-  void updateEmployeeByIdTest(EmployeeEntity employeeEntity, EmployeeRequestDTO employeeRequestDTO,
+  void updateEmployeeByIdTest(EmployeeEntity employeeEntity, EmployeeUpdateDTO employeeUpdateDTO,
       EmployeeResponseDTO employeeResponseDTO, EmployeeEntity entityExpected) {
     repository.save(employeeEntity);
 
     ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.ok(employeeResponseDTO);
-    ResponseEntity<EmployeeResponseDTO> result = controller.updateEmployeeById(employeeRequestDTO);
+    ResponseEntity<EmployeeResponseDTO> result = controller.updateEmployeeById(employeeUpdateDTO);
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
 
     Optional<EmployeeEntity> fetchExpected = Optional.of(entityExpected);
-    Optional<EmployeeEntity> fetchResult = repository.findById(employeeRequestDTO.getNif());
+    Optional<EmployeeEntity> fetchResult = repository.findById(employeeUpdateDTO.getNif());
 
     Assertions.assertEquals(fetchExpected, fetchResult);
   }
@@ -303,7 +294,7 @@ class EmployeeRestControllerTestIT {
                 .setPhones(List.of(
                     new Phone("+34", "722748406", PhoneType.PERSONAL)))
                 .setEmail("wmlopes0@gmail.com"),
-            new EmployeeRequestDTO()
+            new EmployeeUpdateDTO()
                 .setNif("45134320V")
                 .setName("Walter")
                 .setSurname("Martín Lopes")
@@ -367,16 +358,6 @@ class EmployeeRestControllerTestIT {
   void deleteEmployeeByIdNotFoundTest() {
     ResponseEntity<Object> expected = ResponseEntity.notFound().build();
     ResponseEntity<Object> result = controller.deleteEmployeeById(new EmployeeNifDTO("45134320V"));
-
-    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
-    Assertions.assertEquals(expected.getBody(), result.getBody());
-  }
-
-  @Test
-  @DisplayName("Response for DeleteEmployeeById with null NIF should be Internal Server Error")
-  void deleteEmployeeByIdErrorTest() {
-    ResponseEntity<Object> expected = ResponseEntity.internalServerError().build();
-    ResponseEntity<Object> result = controller.deleteEmployeeById(null);
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());

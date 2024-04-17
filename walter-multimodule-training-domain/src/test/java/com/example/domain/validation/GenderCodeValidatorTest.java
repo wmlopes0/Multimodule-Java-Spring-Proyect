@@ -1,6 +1,5 @@
-package validation;
+package com.example.domain.validation;
 
-import com.example.domain.validation.GenderCodeValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

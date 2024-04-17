@@ -13,6 +13,7 @@ import com.example.domain.entity.Employee;
 import com.example.domain.entity.Gender;
 import com.example.domain.entity.Phone;
 import com.example.domain.entity.PhoneType;
+import com.example.domain.exception.EmployeeNotFoundException;
 import com.example.domain.vo.EmployeeNameVO;
 import com.example.domain.vo.EmployeeNifVO;
 import com.example.domain.vo.EmployeeVO;
@@ -266,15 +267,15 @@ class EmployeeRepositoryServiceImplTest {
   @MethodSource("addUpdateEmployeeParameters")
   @DisplayName("Update Employee information successfully")
   void updateEmployeeByIdTest(EmployeeVO employeeVO, EmployeeEntity employeeEntity, Employee employee) {
-    Mockito.when(repository.existsById(employeeVO.getNif())).thenReturn(true);
-    Mockito.when(employeeInfrastructureMapper.mapToEntity(employeeVO)).thenReturn(employeeEntity);
+    Mockito.when(repository.findById(employeeVO.getNif())).thenReturn(Optional.of(employeeEntity));
+
     Mockito.when(repository.save(employeeEntity)).thenReturn(employeeEntity);
     Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity)).thenReturn(employee);
+
     Employee result = service.updateEmployeeById(employeeVO);
 
     Assertions.assertEquals(employee, result);
-    Mockito.verify(repository, times(1)).existsById(employeeVO.getNif());
-    Mockito.verify(employeeInfrastructureMapper, times(1)).mapToEntity(employeeVO);
+    Mockito.verify(repository, times(1)).findById(employeeVO.getNif());
     Mockito.verify(repository, times(1)).save(employeeEntity);
     Mockito.verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
   }
@@ -283,14 +284,13 @@ class EmployeeRepositoryServiceImplTest {
   @MethodSource("addUpdateErrorEmployeeParameters")
   @DisplayName("UpdateEmployee Throws RuntimeException on Error")
   void updateEmployeeErrorTest(EmployeeVO employeeVO, EmployeeEntity employeeEntity) {
-    Mockito.when(repository.existsById(employeeVO.getNif())).thenReturn(true);
-    Mockito.when(employeeInfrastructureMapper.mapToEntity(employeeVO)).thenReturn(employeeEntity);
+
+    Mockito.when(repository.findById(employeeVO.getNif())).thenReturn(Optional.of(employeeEntity));
     Mockito.when(repository.save(employeeEntity)).thenThrow(new RuntimeException("An error occurred"));
 
     Assertions.assertThrows(RuntimeException.class, () -> service.updateEmployeeById(employeeVO));
 
-    Mockito.verify(repository, times(1)).existsById(employeeVO.getNif());
-    Mockito.verify(employeeInfrastructureMapper, times(1)).mapToEntity(employeeVO);
+    Mockito.verify(repository, times(1)).findById(employeeVO.getNif());
     Mockito.verify(repository, times(1)).save(employeeEntity);
     Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(employeeEntity);
   }
@@ -307,12 +307,10 @@ class EmployeeRepositoryServiceImplTest {
         .email("wmlopes0@gmail.com")
         .build();
 
-    Mockito.when(repository.existsById(employeeVO.getNif())).thenReturn(false);
-    Employee result = service.updateEmployeeById(employeeVO);
+    Mockito.when(repository.findById(employeeVO.getNif())).thenReturn(Optional.empty());
+    Assertions.assertThrows(EmployeeNotFoundException.class, () -> service.updateEmployeeById(employeeVO));
 
-    Assertions.assertNull(result);
-    Mockito.verify(repository, times(1)).existsById(employeeVO.getNif());
-    Mockito.verify(employeeInfrastructureMapper, never()).mapToEntity(employeeVO);
+    Mockito.verify(repository, times(1)).findById(employeeVO.getNif());
     Mockito.verify(repository, never()).save(any(EmployeeEntity.class));
     Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }

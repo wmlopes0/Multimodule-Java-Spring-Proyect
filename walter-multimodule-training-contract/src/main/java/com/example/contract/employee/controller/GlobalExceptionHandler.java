@@ -3,6 +3,7 @@ package com.example.contract.employee.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.example.domain.exception.EmployeeNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -36,6 +37,12 @@ public class GlobalExceptionHandler {
     errorDetails.put("error", "Internal Server Error");
     errorDetails.put("message", ex.getMessage());
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorDetails);
+  }
+
+  @ExceptionHandler(EmployeeNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public ResponseEntity<Map<String, String>> handleEmployeeNotFoundException(EmployeeNotFoundException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
   }
 
 }

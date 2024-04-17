@@ -1,10 +1,12 @@
 package com.example.infrastructure.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.domain.entity.Employee;
 import com.example.domain.entity.Phone;
 import com.example.domain.entity.PhoneType;
+import com.example.domain.exception.EmployeeNotFoundException;
 import com.example.domain.service.EmployeeService;
 import com.example.domain.vo.EmployeeNameVO;
 import com.example.domain.vo.EmployeeNifVO;
@@ -54,25 +56,10 @@ public class EmployeeRepositoryServiceImpl implements EmployeeService {
   public Employee updateEmployeeById(EmployeeVO employeeVO) {
     return employeeInfrastructureMapper.mapToDomain(employeeRepository.findById(employeeVO.getNif())
         .map(existingEmployee -> {
-          if (employeeVO.getName() != null) {
-            existingEmployee.setName(employeeVO.getName());
-          }
-          if (employeeVO.getSurname() != null) {
-            existingEmployee.setLastName(employeeVO.getSurname());
-          }
-          if (employeeVO.getBirthYear() != 0) {
-            existingEmployee.setBirthYear(employeeVO.getBirthYear());
-          }
-          if (employeeVO.getGender() != null) {
-            existingEmployee.setGender(employeeVO.getGender().getCode());
-          }
-          updatePhones(existingEmployee, employeeVO);
-          if (employeeVO.getEmail() != null) {
-            existingEmployee.setEmail(employeeVO.getEmail());
-          }
+          updateEmployeeDetails(existingEmployee, employeeVO);
           return employeeRepository.save(existingEmployee);
         })
-        .orElse(null));
+        .orElseThrow(() -> new EmployeeNotFoundException("No employee found with that ID.")));
   }
 
   @Override
@@ -84,19 +71,37 @@ public class EmployeeRepositoryServiceImpl implements EmployeeService {
     return false;
   }
 
-  private void updatePhones(EmployeeEntity existingEmployee, EmployeeVO employeeVO) {
-    List<Phone> updatedPhones = existingEmployee.getPhones();
-
-    if (employeeVO.getPersonalPhone() != null) {
-      Phone personalPhone = employeeInfrastructureMapper.createPhone(employeeVO.getPersonalPhone(), PhoneType.PERSONAL);
-      updatedPhones.removeIf(phone -> phone.getType() == PhoneType.PERSONAL);
-      updatedPhones.add(personalPhone);
+  private void updateEmployeeDetails(EmployeeEntity existingEmployee, EmployeeVO employeeVO) {
+    if (employeeVO.getName() != null) {
+      existingEmployee.setName(employeeVO.getName());
     }
+    if (employeeVO.getSurname() != null) {
+      existingEmployee.setLastName(employeeVO.getSurname());
+    }
+    if (employeeVO.getBirthYear() != 0) {
+      existingEmployee.setBirthYear(employeeVO.getBirthYear());
+    }
+    if (employeeVO.getGender() != null) {
+      existingEmployee.setGender(employeeVO.getGender().getCode());
+    }
+    updatePhones(existingEmployee, employeeVO);
+    if (employeeVO.getEmail() != null) {
+      existingEmployee.setEmail(employeeVO.getEmail());
+    }
+  }
 
+  private void updatePhones(EmployeeEntity existingEmployee, EmployeeVO employeeVO) {
+    List<Phone> updatedPhones = new ArrayList<>(existingEmployee.getPhones());
     if (employeeVO.getCompanyPhone() != null) {
       Phone companyPhone = employeeInfrastructureMapper.createPhone(employeeVO.getCompanyPhone(), PhoneType.COMPANY);
       updatedPhones.removeIf(phone -> phone.getType() == PhoneType.COMPANY);
       updatedPhones.add(companyPhone);
     }
+    if (employeeVO.getPersonalPhone() != null) {
+      Phone personalPhone = employeeInfrastructureMapper.createPhone(employeeVO.getPersonalPhone(), PhoneType.PERSONAL);
+      updatedPhones.removeIf(phone -> phone.getType() == PhoneType.PERSONAL);
+      updatedPhones.add(personalPhone);
+    }
+    existingEmployee.setPhones(updatedPhones);
   }
 }

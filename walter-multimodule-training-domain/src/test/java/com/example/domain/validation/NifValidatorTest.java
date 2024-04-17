@@ -1,6 +1,5 @@
-package validation;
+package com.example.domain.validation;
 
-import com.example.domain.validation.NifValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
