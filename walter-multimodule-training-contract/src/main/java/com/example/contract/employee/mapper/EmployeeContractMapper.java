@@ -9,6 +9,7 @@ import com.example.contract.employee.dto.EmployeeNameDTO;
 import com.example.contract.employee.dto.EmployeeNifDTO;
 import com.example.contract.employee.dto.EmployeeRequestDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
+import com.example.contract.employee.dto.EmployeeUpdateDTO;
 import com.example.domain.entity.Employee;
 
 public interface EmployeeContractMapper {
@@ -17,7 +18,7 @@ public interface EmployeeContractMapper {
 
   EmployeeDeleteCmd mapToEmployeeDeleteCmd(EmployeeNifDTO employeeNifDTO);
 
-  EmployeeUpdateCmd mapToEmployeeUpdateCmd(EmployeeRequestDTO employeeRequestDTO);
+  EmployeeUpdateCmd mapToEmployeeUpdateCmd(EmployeeUpdateDTO employeeUpdateDTO);
 
   EmployeeByIdQuery mapToEmployeeByIdQuery(EmployeeNifDTO employeeNifDTO);
 

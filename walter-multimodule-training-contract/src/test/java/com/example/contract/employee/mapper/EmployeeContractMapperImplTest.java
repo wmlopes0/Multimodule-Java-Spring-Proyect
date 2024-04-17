@@ -11,6 +11,7 @@ import com.example.contract.employee.dto.EmployeeNameDTO;
 import com.example.contract.employee.dto.EmployeeNifDTO;
 import com.example.contract.employee.dto.EmployeeRequestDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
+import com.example.contract.employee.dto.EmployeeUpdateDTO;
 import com.example.contract.employee.dto.PhoneDTO;
 import com.example.domain.entity.Employee;
 import com.example.domain.entity.Gender;
@@ -61,7 +62,7 @@ class EmployeeContractMapperImplTest {
   @Test
   @DisplayName("Mapping id and EmployeeRequestDTO to EmployeeUpdateCmd correctly")
   void mapToEmployeeUpdateCmdTest() {
-    EmployeeRequestDTO employeeRequestDTO = new EmployeeRequestDTO()
+    EmployeeUpdateDTO employeeUpdateDTO = new EmployeeUpdateDTO()
         .setNif("45134320V")
         .setName("Walter")
         .setSurname("Martín Lopes")
@@ -78,7 +79,7 @@ class EmployeeContractMapperImplTest {
         .setPersonalPhone("+34722748406")
         .setEmail("wmlopes0@gmail.com");
 
-    EmployeeUpdateCmd result = mapper.mapToEmployeeUpdateCmd(employeeRequestDTO);
+    EmployeeUpdateCmd result = mapper.mapToEmployeeUpdateCmd(employeeUpdateDTO);
     Assertions.assertEquals(expected, result);
   }
 

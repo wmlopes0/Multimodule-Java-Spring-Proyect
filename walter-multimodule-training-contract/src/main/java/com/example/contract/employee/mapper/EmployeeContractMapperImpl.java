@@ -12,6 +12,7 @@ import com.example.contract.employee.dto.EmployeeNameDTO;
 import com.example.contract.employee.dto.EmployeeNifDTO;
 import com.example.contract.employee.dto.EmployeeRequestDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
+import com.example.contract.employee.dto.EmployeeUpdateDTO;
 import com.example.contract.employee.dto.PhoneDTO;
 import com.example.domain.entity.Employee;
 import com.example.domain.entity.PhoneType;
@@ -39,16 +40,16 @@ public class EmployeeContractMapperImpl implements EmployeeContractMapper {
   }
 
   @Override
-  public EmployeeUpdateCmd mapToEmployeeUpdateCmd(EmployeeRequestDTO employeeRequestDTO) {
+  public EmployeeUpdateCmd mapToEmployeeUpdateCmd(EmployeeUpdateDTO employeeUpdateDTO) {
     return new EmployeeUpdateCmd()
-        .setNif(employeeRequestDTO.getNif())
-        .setName(employeeRequestDTO.getName())
-        .setSurname(employeeRequestDTO.getSurname())
-        .setBirthYear(employeeRequestDTO.getBirthYear())
-        .setGender(employeeRequestDTO.getGender())
-        .setPersonalPhone(employeeRequestDTO.getPersonalPhone())
-        .setCompanyPhone(employeeRequestDTO.getCompanyPhone())
-        .setEmail(employeeRequestDTO.getEmail());
+        .setNif(employeeUpdateDTO.getNif())
+        .setName(employeeUpdateDTO.getName())
+        .setSurname(employeeUpdateDTO.getSurname())
+        .setBirthYear(employeeUpdateDTO.getBirthYear())
+        .setGender(employeeUpdateDTO.getGender())
+        .setPersonalPhone(employeeUpdateDTO.getPersonalPhone())
+        .setCompanyPhone(employeeUpdateDTO.getCompanyPhone())
+        .setEmail(employeeUpdateDTO.getEmail());
   }
 
   @Override

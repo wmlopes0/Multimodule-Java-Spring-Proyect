@@ -28,4 +28,14 @@ public class GlobalExceptionHandler {
     });
     return ResponseEntity.badRequest().body(errors);
   }
+
+  @ExceptionHandler(RuntimeException.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException ex) {
+    Map<String, String> errorDetails = new HashMap<>();
+    errorDetails.put("error", "Internal Server Error");
+    errorDetails.put("message", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorDetails);
+  }
+
 }

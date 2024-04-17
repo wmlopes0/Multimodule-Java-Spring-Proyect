@@ -23,6 +23,7 @@ import com.example.contract.employee.dto.EmployeeNameDTO;
 import com.example.contract.employee.dto.EmployeeNifDTO;
 import com.example.contract.employee.dto.EmployeeRequestDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
+import com.example.contract.employee.dto.EmployeeUpdateDTO;
 import com.example.contract.employee.dto.PhoneDTO;
 import com.example.contract.employee.mapper.EmployeeContractMapper;
 import com.example.domain.entity.Employee;
@@ -429,7 +430,7 @@ class EmployeeRestControllerTest {
   @ParameterizedTest
   @MethodSource("updateEmployeeByIdParameters")
   @DisplayName("Update employee by NIF successfully returns 200 code response")
-  void updateEmployeeByIdTest(EmployeeRequestDTO employeeRequest, EmployeeUpdateCmd employeeUpdateCmd, Employee employee,
+  void updateEmployeeByIdTest(EmployeeUpdateDTO employeeRequest, EmployeeUpdateCmd employeeUpdateCmd, Employee employee,
       EmployeeResponseDTO employeeResponseDTO) {
 
     Mockito.when(mapper.mapToEmployeeUpdateCmd(employeeRequest)).thenReturn(employeeUpdateCmd);
@@ -449,7 +450,7 @@ class EmployeeRestControllerTest {
   private static Stream<Arguments> updateEmployeeByIdParameters() {
     return Stream.of(
         Arguments.of(
-            new EmployeeRequestDTO()
+            new EmployeeUpdateDTO()
                 .setNif("45134320V")
                 .setName("Walter")
                 .setSurname("Martín Lopes")
@@ -490,7 +491,7 @@ class EmployeeRestControllerTest {
   @Test
   @DisplayName("Update employee by NIF not found returns 404 code response")
   void updateEmployeeByIdNotFoundTest() {
-    EmployeeRequestDTO employeeRequestDTO = new EmployeeRequestDTO()
+    EmployeeUpdateDTO employeeUpdateDTO = new EmployeeUpdateDTO()
         .setNif("45134320V")
         .setName("Walter")
         .setSurname("Martín Lopes")
@@ -507,12 +508,12 @@ class EmployeeRestControllerTest {
         .setPersonalPhone("+34722748406")
         .setEmail("wmlopes0@gmail.com");
 
-    Mockito.when(mapper.mapToEmployeeUpdateCmd(employeeRequestDTO)).thenReturn(employeeUpdateCmd);
+    Mockito.when(mapper.mapToEmployeeUpdateCmd(employeeUpdateDTO)).thenReturn(employeeUpdateCmd);
     Mockito.when(employeeUpdateHandler.updateEmployee(employeeUpdateCmd)).thenReturn(null);
 
-    Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> controller.updateEmployeeById(employeeRequestDTO));
+    Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> controller.updateEmployeeById(employeeUpdateDTO));
     Assertions.assertTrue(exception.getMessage().contains("Empleado no encontrado."));
-    Mockito.verify(mapper, times(1)).mapToEmployeeUpdateCmd(employeeRequestDTO);
+    Mockito.verify(mapper, times(1)).mapToEmployeeUpdateCmd(employeeUpdateDTO);
     Mockito.verify(employeeUpdateHandler, times(1)).updateEmployee(employeeUpdateCmd);
     Mockito.verify(mapper, never()).mapToResponseDTO(any(Employee.class));
   }

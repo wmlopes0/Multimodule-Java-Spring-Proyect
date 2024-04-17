@@ -3,10 +3,13 @@ package com.example.infrastructure.service;
 import java.util.List;
 
 import com.example.domain.entity.Employee;
+import com.example.domain.entity.Phone;
+import com.example.domain.entity.PhoneType;
 import com.example.domain.service.EmployeeService;
 import com.example.domain.vo.EmployeeNameVO;
 import com.example.domain.vo.EmployeeNifVO;
 import com.example.domain.vo.EmployeeVO;
+import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.mapper.EmployeeInfrastructureMapper;
 import com.example.infrastructure.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
@@ -48,12 +51,28 @@ public class EmployeeRepositoryServiceImpl implements EmployeeService {
   }
 
   @Override
-  public Employee updateEmployeeById(EmployeeVO employee) {
-    if (employeeRepository.existsById(employee.getNif())) {
-      return employeeInfrastructureMapper.mapToDomain(
-          employeeRepository.save(employeeInfrastructureMapper.mapToEntity(employee)));
-    }
-    return null;
+  public Employee updateEmployeeById(EmployeeVO employeeVO) {
+    return employeeInfrastructureMapper.mapToDomain(employeeRepository.findById(employeeVO.getNif())
+        .map(existingEmployee -> {
+          if (employeeVO.getName() != null) {
+            existingEmployee.setName(employeeVO.getName());
+          }
+          if (employeeVO.getSurname() != null) {
+            existingEmployee.setLastName(employeeVO.getSurname());
+          }
+          if (employeeVO.getBirthYear() != 0) {
+            existingEmployee.setBirthYear(employeeVO.getBirthYear());
+          }
+          if (employeeVO.getGender() != null) {
+            existingEmployee.setGender(employeeVO.getGender().getCode());
+          }
+          updatePhones(existingEmployee, employeeVO);
+          if (employeeVO.getEmail() != null) {
+            existingEmployee.setEmail(employeeVO.getEmail());
+          }
+          return employeeRepository.save(existingEmployee);
+        })
+        .orElse(null));
   }
 
   @Override
@@ -63,5 +82,21 @@ public class EmployeeRepositoryServiceImpl implements EmployeeService {
       return true;
     }
     return false;
+  }
+
+  private void updatePhones(EmployeeEntity existingEmployee, EmployeeVO employeeVO) {
+    List<Phone> updatedPhones = existingEmployee.getPhones();
+
+    if (employeeVO.getPersonalPhone() != null) {
+      Phone personalPhone = employeeInfrastructureMapper.createPhone(employeeVO.getPersonalPhone(), PhoneType.PERSONAL);
+      updatedPhones.removeIf(phone -> phone.getType() == PhoneType.PERSONAL);
+      updatedPhones.add(personalPhone);
+    }
+
+    if (employeeVO.getCompanyPhone() != null) {
+      Phone companyPhone = employeeInfrastructureMapper.createPhone(employeeVO.getCompanyPhone(), PhoneType.COMPANY);
+      updatedPhones.removeIf(phone -> phone.getType() == PhoneType.COMPANY);
+      updatedPhones.add(companyPhone);
+    }
   }
 }

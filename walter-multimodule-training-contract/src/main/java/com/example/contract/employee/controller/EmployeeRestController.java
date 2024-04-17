@@ -14,6 +14,7 @@ import com.example.contract.employee.dto.EmployeeNameDTO;
 import com.example.contract.employee.dto.EmployeeNifDTO;
 import com.example.contract.employee.dto.EmployeeRequestDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
+import com.example.contract.employee.dto.EmployeeUpdateDTO;
 import com.example.contract.employee.mapper.EmployeeContractMapper;
 import com.example.domain.entity.Employee;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -59,14 +60,10 @@ public class EmployeeRestController {
   @ApiResponse(responseCode = "200", description = "Successful operation")
   @GetMapping("/")
   public ResponseEntity<List<EmployeeResponseDTO>> listEmployees() {
-    try {
-      List<EmployeeResponseDTO> result = employeeListHandler.listEmployees().stream()
-          .map(mapper::mapToResponseDTO)
-          .toList();
-      return ResponseEntity.ok(result);
-    } catch (RuntimeException e) {
-      return ResponseEntity.internalServerError().build();
-    }
+    List<EmployeeResponseDTO> result = employeeListHandler.listEmployees().stream()
+        .map(mapper::mapToResponseDTO)
+        .toList();
+    return ResponseEntity.ok(result);
   }
 
   @Operation(summary = "More information...", description = "This endpoint obtains information about an employee by their NIF")
@@ -74,15 +71,11 @@ public class EmployeeRestController {
   @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
   @GetMapping("/nif/")
   public ResponseEntity<EmployeeResponseDTO> getEmployeeById(@Valid @RequestBody EmployeeNifDTO nif) {
-    try {
-      return Optional.ofNullable(employeeGetByIdHandler.getEmployeeById(
-              mapper.mapToEmployeeByIdQuery(nif)))
-          .map(mapper::mapToResponseDTO)
-          .map(ResponseEntity::ok)
-          .orElse(ResponseEntity.notFound().build());
-    } catch (RuntimeException e) {
-      return ResponseEntity.internalServerError().build();
-    }
+    return Optional.ofNullable(employeeGetByIdHandler.getEmployeeById(
+            mapper.mapToEmployeeByIdQuery(nif)))
+        .map(mapper::mapToResponseDTO)
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
   }
 
   @Operation(summary = "More information...",
@@ -91,41 +84,33 @@ public class EmployeeRestController {
   @ApiResponse(responseCode = "404", description = "Bad request due to no match found")
   @GetMapping("/name/{name}")
   public ResponseEntity<EmployeeResponseDTO> getEmployeeByName(@PathVariable("name") String name) {
-    try {
-      return Optional.ofNullable(employeeGetByNameHandler.getEmployeeByName(
-              mapper.mapToEmployeeByNameQuery(new EmployeeNameDTO(name))))
-          .map(mapper::mapToResponseDTO)
-          .map(ResponseEntity::ok)
-          .orElse(ResponseEntity.notFound().build());
-    } catch (RuntimeException e) {
-      return ResponseEntity.internalServerError().build();
-    }
+    return Optional.ofNullable(employeeGetByNameHandler.getEmployeeByName(
+            mapper.mapToEmployeeByNameQuery(new EmployeeNameDTO(name))))
+        .map(mapper::mapToResponseDTO)
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
   }
 
   @Operation(summary = "More information...", description = "This endpoint gets adds an employee to the database")
   @ApiResponse(responseCode = "201", description = "Successful operation")
   @PostMapping("/")
   public ResponseEntity<EmployeeResponseDTO> newEmployee(@Valid @RequestBody EmployeeRequestDTO employeeRequest) {
-    try {
-      EmployeeCreateCmd employeeCreateCmd = mapper.mapToEmployeeCreateCmd(employeeRequest);
-      Employee employee = employeeCreateHandler.addEmployee(employeeCreateCmd);
-      EmployeeResponseDTO employeeResponse = mapper.mapToResponseDTO(employee);
-      return ResponseEntity.status(HttpStatus.CREATED).body(employeeResponse);
-    } catch (RuntimeException e) {
-      return ResponseEntity.internalServerError().build();
-    }
+    EmployeeCreateCmd employeeCreateCmd = mapper.mapToEmployeeCreateCmd(employeeRequest);
+    Employee employee = employeeCreateHandler.addEmployee(employeeCreateCmd);
+    EmployeeResponseDTO employeeResponse = mapper.mapToResponseDTO(employee);
+    return ResponseEntity.status(HttpStatus.CREATED).body(employeeResponse);
   }
 
   @Operation(summary = "More information...", description = "This endpoint updates information for a given employee")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
   @PutMapping("/")
-  public ResponseEntity<EmployeeResponseDTO> updateEmployeeById(@RequestBody EmployeeRequestDTO employeeRequest) {
+  public ResponseEntity<EmployeeResponseDTO> updateEmployeeById(@Valid @RequestBody EmployeeUpdateDTO employeeRequest) {
     return Optional.ofNullable(employeeUpdateHandler.updateEmployee(
             mapper.mapToEmployeeUpdateCmd(employeeRequest)))
         .map(mapper::mapToResponseDTO)
         .map(ResponseEntity::ok)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empleado no encontrado."));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found."));
   }
 
   @Operation(summary = "More information...", description = "This endpoint removes a given employee from the database by their id")
@@ -133,12 +118,8 @@ public class EmployeeRestController {
   @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
   @DeleteMapping("/")
   public ResponseEntity<Object> deleteEmployeeById(@Valid @RequestBody EmployeeNifDTO nif) {
-    try {
-      return employeeDeleteHandler.deleteEmployee(mapper.mapToEmployeeDeleteCmd(nif))
-          ? ResponseEntity.ok().build()
-          : ResponseEntity.notFound().build();
-    } catch (RuntimeException e) {
-      return ResponseEntity.internalServerError().build();
-    }
+    return employeeDeleteHandler.deleteEmployee(mapper.mapToEmployeeDeleteCmd(nif))
+        ? ResponseEntity.ok().build()
+        : ResponseEntity.notFound().build();
   }
 }

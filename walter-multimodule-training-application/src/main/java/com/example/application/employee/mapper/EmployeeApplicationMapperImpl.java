@@ -1,5 +1,7 @@
 package com.example.application.employee.mapper;
 
+import java.util.Optional;
+
 import com.example.application.employee.cmd.dto.EmployeeCreateCmd;
 import com.example.application.employee.cmd.dto.EmployeeDeleteCmd;
 import com.example.application.employee.cmd.dto.EmployeeUpdateCmd;
@@ -16,7 +18,7 @@ public class EmployeeApplicationMapperImpl implements EmployeeApplicationMapper 
 
   @Override
   public EmployeeVO mapToEmployeeVO(EmployeeCreateCmd employeeCreateCmd) {
-    Gender gender = "male".equalsIgnoreCase(employeeCreateCmd.getGender()) ? Gender.MALE : Gender.FEMALE;
+    Gender gender = parseGender(employeeCreateCmd.getGender());
     return EmployeeVO.builder()
         .nif(employeeCreateCmd.getNif())
         .name(employeeCreateCmd.getName())
@@ -31,7 +33,7 @@ public class EmployeeApplicationMapperImpl implements EmployeeApplicationMapper 
 
   @Override
   public EmployeeVO mapToEmployeeVO(EmployeeUpdateCmd employeeUpdateCmd) {
-    Gender gender = "male".equalsIgnoreCase(employeeUpdateCmd.getGender()) ? Gender.MALE : Gender.FEMALE;
+    Gender gender = parseGender(employeeUpdateCmd.getGender());
     return EmployeeVO.builder()
         .nif(employeeUpdateCmd.getNif())
         .name(employeeUpdateCmd.getName())
@@ -64,4 +66,13 @@ public class EmployeeApplicationMapperImpl implements EmployeeApplicationMapper 
         .name(employeeByNameQuery.getName())
         .build();
   }
+
+  private Gender parseGender(String gender) {
+    return Optional.ofNullable(gender)
+        .map(String::toLowerCase)
+        .filter(g -> g.equals("male") || g.equals("female"))
+        .map(g -> g.equals("male") ? Gender.MALE : Gender.FEMALE)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid gender provided."));
+  }
+
 }
