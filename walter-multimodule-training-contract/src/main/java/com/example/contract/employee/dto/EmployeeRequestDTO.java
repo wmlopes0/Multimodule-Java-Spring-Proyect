@@ -1,7 +1,9 @@
 package com.example.contract.employee.dto;
 
+import com.example.domain.validation.ValidGender;
 import com.example.domain.validation.ValidNIF;
 import com.example.domain.validation.ValidPhone;
+import com.example.domain.validation.ValidYearOfBirth;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -31,9 +33,11 @@ public class EmployeeRequestDTO {
   private String surname;
 
   @NotNull(message = "Birth year cannot be null")
+  @ValidYearOfBirth
   private int birthYear;
 
   @NotNull(message = "Gender cannot be null")
+  @ValidGender(message = "Gender must be either 'Male' or 'Female'")
   private String gender;
 
   @NotNull(message = "Personal phone cannot be null")

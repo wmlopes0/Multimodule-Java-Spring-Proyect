@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.example.boot.app.App;
+import com.example.contract.employee.dto.EmployeeNifDTO;
 import com.example.domain.entity.Gender;
 import com.example.domain.entity.Phone;
 import com.example.domain.entity.PhoneType;
@@ -139,7 +140,14 @@ class EmployeeRestControllerE2ETestIT {
   void getEmployeeByIdTest(String nif, EmployeeEntity employeeEntity, String expected) throws Exception {
     repository.save(employeeEntity);
 
-    mockMvc.perform(get("/employees/" + nif))
+    String jsonContent = String.format("""
+        {
+         "nif": "%s"
+        }""", nif);
+
+    mockMvc.perform(get("/employees/nif/")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(jsonContent))
         .andExpect(status().isOk())
         .andExpect(content().json(expected, false));
   }
@@ -180,16 +188,18 @@ class EmployeeRestControllerE2ETestIT {
     );
   }
 
-  @ParameterizedTest
-  @CsvSource(value = {
-      "45134320V",
-      "null"
-  }, nullValues = "null")
+  @Test
   @DisplayName("Get employee by NIF not found returns 404 response")
-  void getEmployeeByIdNotFoundTest(String nif) throws Exception {
+  void getEmployeeByIdNotFoundTest() throws Exception {
     String expected = "";
+    String jsonContent = """
+        {
+         "nif": "45134320V"
+        }""";
 
-    mockMvc.perform(get("/employees/" + nif))
+    mockMvc.perform(get("/employees/nif/")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(jsonContent))
         .andExpect(status().isNotFound())
         .andExpect(content().string(expected));
   }
@@ -412,6 +422,10 @@ class EmployeeRestControllerE2ETestIT {
   @DisplayName("Deleted employee by ID successfully returns 200 code response")
   void deleteEmployeeByIdTest() throws Exception {
     String nif = "45134320V";
+    String jsonContent = String.format("""
+        {
+         "nif": "%s"
+        }""", nif);
 
     repository.save(new EmployeeEntity()
         .setNif(nif)
@@ -423,7 +437,9 @@ class EmployeeRestControllerE2ETestIT {
         .setEmail("wmlopes0@gmail.com")
     );
 
-    mockMvc.perform(delete("/employees/{nif}", nif))
+    mockMvc.perform(delete("/employees/")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(jsonContent))
         .andExpect(status().isOk());
 
     Optional<EmployeeEntity> fetchExpected = Optional.empty();
@@ -435,8 +451,13 @@ class EmployeeRestControllerE2ETestIT {
   @Test
   @DisplayName("Delete employee by ID failed returns 404 code response.")
   void deleteEmployeeByIdNotFoundTest() throws Exception {
-    String nif = "45134320V";
-    mockMvc.perform(delete("/employees/{nif}", nif))
+    String jsonContent = """
+        {
+         "nif": "45134320V"
+        }""";
+    mockMvc.perform(delete("/employees/")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(jsonContent))
         .andExpect(status().isNotFound());
   }
 }

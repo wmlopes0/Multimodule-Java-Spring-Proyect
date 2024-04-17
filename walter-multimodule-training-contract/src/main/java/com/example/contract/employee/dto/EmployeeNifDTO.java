@@ -1,5 +1,7 @@
 package com.example.contract.employee.dto;
 
+import com.example.domain.validation.ValidNIF;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,5 +17,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode
 public class EmployeeNifDTO {
 
+  @NotNull(message = "NIF cannot be null")
+  @ValidNIF
   private String nif;
 }

@@ -1,6 +1,5 @@
 package com.example.domain.validation;
 
-import com.example.domain.validation.ValidNIF;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -17,7 +16,6 @@ public class NifValidator implements ConstraintValidator<ValidNIF, String> {
     if (value == null) {
       return false;
     }
-
     return (value.matches(DNI_PATTERN) && isValidDni(value)) || (value.matches(NIE_PATTERN) && isValidNie(value));
   }
 

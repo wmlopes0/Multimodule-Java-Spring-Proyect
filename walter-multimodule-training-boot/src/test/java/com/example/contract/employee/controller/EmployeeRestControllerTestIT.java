@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.example.boot.app.App;
+import com.example.contract.employee.dto.EmployeeNifDTO;
 import com.example.contract.employee.dto.EmployeeRequestDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
 import com.example.contract.employee.dto.PhoneDTO;
@@ -111,11 +112,11 @@ class EmployeeRestControllerTestIT {
   @ParameterizedTest
   @MethodSource("getEmployeeByIdParameters")
   @DisplayName("Get employee by NIF returns employee and 200 response correctly")
-  void getEmployeeByIdTest(String nif, EmployeeEntity employeeEntity, EmployeeResponseDTO employeeResponseDTO) {
+  void getEmployeeByIdTest(EmployeeNifDTO employeeNifDTO, EmployeeEntity employeeEntity, EmployeeResponseDTO employeeResponseDTO) {
     repository.save(employeeEntity);
 
     ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.ok(employeeResponseDTO);
-    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById(nif);
+    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById(employeeNifDTO);
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
@@ -124,7 +125,7 @@ class EmployeeRestControllerTestIT {
   private static Stream<Arguments> getEmployeeByIdParameters() {
     return Stream.of(
         Arguments.of(
-            "45134320V",
+            new EmployeeNifDTO("45134320V"),
             new EmployeeEntity()
                 .setNif("45134320V")
                 .setName("Walter")
@@ -152,7 +153,7 @@ class EmployeeRestControllerTestIT {
   @DisplayName("Get employee by NIF not found returns 404 response")
   void getEmployeeByIdNotFoundTest() {
     ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.notFound().build();
-    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById("45134320V");
+    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById(new EmployeeNifDTO("45134320V"));
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
@@ -339,7 +340,9 @@ class EmployeeRestControllerTestIT {
   @Test
   @DisplayName("Deleted employee by NIF successfully returns 200 code response")
   void deleteEmployeeByIdTest() {
-    EmployeeEntity employeeEntity = new EmployeeEntity().setNif("45134320V")
+    EmployeeNifDTO employeeNifDTO = new EmployeeNifDTO("45134320V");
+    EmployeeEntity employeeEntity = new EmployeeEntity()
+        .setNif("45134320V")
         .setName("Walter")
         .setLastName("Martín Lopes")
         .setBirthYear(1998)
@@ -351,7 +354,7 @@ class EmployeeRestControllerTestIT {
     repository.save(employeeEntity);
 
     ResponseEntity<Object> deleteExpected = ResponseEntity.ok().build();
-    ResponseEntity<Object> deleteResult = controller.deleteEmployeeById(employeeEntity.getNif());
+    ResponseEntity<Object> deleteResult = controller.deleteEmployeeById(employeeNifDTO);
 
     Assertions.assertEquals(deleteExpected.getStatusCode(), deleteResult.getStatusCode());
 
@@ -363,7 +366,7 @@ class EmployeeRestControllerTestIT {
   @DisplayName("Delete employee by NIF failed returns 404 code response.")
   void deleteEmployeeByIdNotFoundTest() {
     ResponseEntity<Object> expected = ResponseEntity.notFound().build();
-    ResponseEntity<Object> result = controller.deleteEmployeeById("45134320V");
+    ResponseEntity<Object> result = controller.deleteEmployeeById(new EmployeeNifDTO("45134320V"));
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());

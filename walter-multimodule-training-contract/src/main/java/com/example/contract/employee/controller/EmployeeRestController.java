@@ -24,9 +24,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,11 +55,6 @@ public class EmployeeRestController {
 
   private final EmployeeContractMapper mapper;
 
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
-    return ResponseEntity.badRequest().body(ex.getBindingResult().getAllErrors());
-  }
-
   @Operation(summary = "More information...", description = "This endpoint lists all employees in the database")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   @GetMapping("/")
@@ -79,11 +72,11 @@ public class EmployeeRestController {
   @Operation(summary = "More information...", description = "This endpoint obtains information about an employee by their NIF")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
-  @GetMapping("/{nif}")
-  public ResponseEntity<EmployeeResponseDTO> getEmployeeById(@PathVariable("nif") String nif) {
+  @GetMapping("/nif/")
+  public ResponseEntity<EmployeeResponseDTO> getEmployeeById(@Valid @RequestBody EmployeeNifDTO nif) {
     try {
       return Optional.ofNullable(employeeGetByIdHandler.getEmployeeById(
-              mapper.mapToEmployeeByIdQuery(new EmployeeNifDTO(nif))))
+              mapper.mapToEmployeeByIdQuery(nif)))
           .map(mapper::mapToResponseDTO)
           .map(ResponseEntity::ok)
           .orElse(ResponseEntity.notFound().build());
@@ -138,10 +131,10 @@ public class EmployeeRestController {
   @Operation(summary = "More information...", description = "This endpoint removes a given employee from the database by their id")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
-  @DeleteMapping("/{nif}")
-  public ResponseEntity<Object> deleteEmployeeById(@PathVariable("nif") String nif) {
+  @DeleteMapping("/")
+  public ResponseEntity<Object> deleteEmployeeById(@Valid @RequestBody EmployeeNifDTO nif) {
     try {
-      return employeeDeleteHandler.deleteEmployee(mapper.mapToEmployeeDeleteCmd(new EmployeeNifDTO(nif)))
+      return employeeDeleteHandler.deleteEmployee(mapper.mapToEmployeeDeleteCmd(nif))
           ? ResponseEntity.ok().build()
           : ResponseEntity.notFound().build();
     } catch (RuntimeException e) {

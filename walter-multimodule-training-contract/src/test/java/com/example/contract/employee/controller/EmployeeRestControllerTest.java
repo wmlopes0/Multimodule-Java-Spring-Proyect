@@ -170,7 +170,7 @@ class EmployeeRestControllerTest {
     Mockito.when(mapper.mapToEmployeeByIdQuery(employeeNifDTO)).thenReturn(employeeByIdQuery);
     Mockito.when(employeeGetByIdHandler.getEmployeeById(employeeByIdQuery)).thenReturn(employee);
     Mockito.when(mapper.mapToResponseDTO(employee)).thenReturn(employeeResponseDTO);
-    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById(nif);
+    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById(employeeNifDTO);
     ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.ok(employeeResponseDTO);
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
@@ -215,7 +215,7 @@ class EmployeeRestControllerTest {
 
     Mockito.when(mapper.mapToEmployeeByIdQuery(employeeNifDTO)).thenReturn(employeeByIdQuery);
     Mockito.when(employeeGetByIdHandler.getEmployeeById(employeeByIdQuery)).thenReturn(null);
-    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById(nif);
+    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById(employeeNifDTO);
     ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.notFound().build();
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
@@ -236,7 +236,7 @@ class EmployeeRestControllerTest {
     Mockito.when(employeeGetByIdHandler.getEmployeeById(employeeByIdQuery)).thenThrow(new RuntimeException("An error occurred"));
 
     ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.internalServerError().build();
-    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById(nif);
+    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById(employeeNifDTO);
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
@@ -529,7 +529,7 @@ class EmployeeRestControllerTest {
 
     Mockito.when(mapper.mapToEmployeeDeleteCmd(employeeNifDTO)).thenReturn(employeeDeleteCmd);
     Mockito.when(employeeDeleteHandler.deleteEmployee(employeeDeleteCmd)).thenReturn(true);
-    ResponseEntity<Object> result = controller.deleteEmployeeById(nif);
+    ResponseEntity<Object> result = controller.deleteEmployeeById(employeeNifDTO);
     ResponseEntity<Object> expected = ResponseEntity.ok().build();
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
@@ -546,7 +546,7 @@ class EmployeeRestControllerTest {
 
     Mockito.when(mapper.mapToEmployeeDeleteCmd(employeeNifDTO)).thenReturn(employeeDeleteCmd);
     Mockito.when(employeeDeleteHandler.deleteEmployee(employeeDeleteCmd)).thenReturn(false);
-    ResponseEntity<Object> result = controller.deleteEmployeeById(nif);
+    ResponseEntity<Object> result = controller.deleteEmployeeById(employeeNifDTO);
     ResponseEntity<Object> expected = ResponseEntity.notFound().build();
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
@@ -565,7 +565,7 @@ class EmployeeRestControllerTest {
     Mockito.when(employeeDeleteHandler.deleteEmployee(employeeDeleteCmd)).thenThrow(new RuntimeException("An error occurred"));
 
     ResponseEntity<Object> expected = ResponseEntity.internalServerError().build();
-    ResponseEntity<Object> result = controller.deleteEmployeeById(nif);
+    ResponseEntity<Object> result = controller.deleteEmployeeById(employeeNifDTO);
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
