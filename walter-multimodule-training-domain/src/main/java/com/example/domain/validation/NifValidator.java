@@ -14,7 +14,7 @@ public class NifValidator implements ConstraintValidator<ValidNIF, String> {
   @Override
   public boolean isValid(String value, ConstraintValidatorContext context) {
     if (value == null) {
-      return false;
+      return true;
     }
     return (value.matches(DNI_PATTERN) && isValidDni(value)) || (value.matches(NIE_PATTERN) && isValidNie(value));
   }

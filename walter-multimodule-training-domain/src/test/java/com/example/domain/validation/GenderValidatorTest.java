@@ -26,8 +26,8 @@ class GenderValidatorTest {
     Assertions.assertFalse(genderValidator.isValid("woman", null));
     Assertions.assertFalse(genderValidator.isValid("MALES", null));
     Assertions.assertFalse(genderValidator.isValid("123", null));
-    Assertions.assertFalse(genderValidator.isValid(null, null));
     Assertions.assertFalse(genderValidator.isValid("", null));
     Assertions.assertFalse(genderValidator.isValid("  ", null));
+    Assertions.assertTrue(genderValidator.isValid(null, null));
   }
 }

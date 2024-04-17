@@ -32,7 +32,7 @@ public class EmployeeUpdateDTO {
   private String surname;
 
   @ValidYearOfBirth
-  private int birthYear;
+  private Integer birthYear;
 
   @ValidGender(message = "Gender must be either 'Male' or 'Female'")
   private String gender;

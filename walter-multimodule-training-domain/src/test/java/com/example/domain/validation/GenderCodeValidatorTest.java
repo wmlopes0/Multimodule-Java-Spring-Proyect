@@ -21,6 +21,6 @@ class GenderCodeValidatorTest {
     Assertions.assertFalse(genderCodeValidator.isValid(0, null));
     Assertions.assertFalse(genderCodeValidator.isValid(4, null));
     Assertions.assertFalse(genderCodeValidator.isValid(-1, null));
-    Assertions.assertFalse(genderCodeValidator.isValid(null, null));
+    Assertions.assertTrue(genderCodeValidator.isValid(null, null));
   }
 }

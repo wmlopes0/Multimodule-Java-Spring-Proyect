@@ -10,7 +10,7 @@ public class YearOfBirthValidator implements ConstraintValidator<ValidYearOfBirt
   @Override
   public boolean isValid(Integer value, ConstraintValidatorContext context) {
     if (value == null) {
-      return false;
+      return true;
     }
 
     int currentYear = LocalDate.now().getYear();

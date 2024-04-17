@@ -9,7 +9,7 @@ public class GenderCodeValidator implements ConstraintValidator<ValidGenderCode,
   @Override
   public boolean isValid(Integer value, ConstraintValidatorContext context) {
     if (value == null) {
-      return false;
+      return true;
     }
     for (Gender g : Gender.values()) {
       if (g.getCode() == value) {

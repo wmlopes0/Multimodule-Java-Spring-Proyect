@@ -42,7 +42,7 @@ class NifValidatorTest {
   @Test
   @DisplayName("Handle null and empty NIF values")
   void nullAndEmptyValuesTest() {
-    Assertions.assertFalse(nifValidator.isValid(null, null));
+    Assertions.assertTrue(nifValidator.isValid(null, null));
     Assertions.assertFalse(nifValidator.isValid("", null));
   }
 

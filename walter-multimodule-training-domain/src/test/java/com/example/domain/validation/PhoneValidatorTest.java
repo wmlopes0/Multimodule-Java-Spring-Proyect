@@ -21,7 +21,7 @@ class PhoneValidatorTest {
     Assertions.assertFalse(phoneValidator.isValid("1234567890", null));
     Assertions.assertFalse(phoneValidator.isValid("+34 123456789", null));
     Assertions.assertFalse(phoneValidator.isValid("+341234567890", null));
-    Assertions.assertFalse(phoneValidator.isValid(null, null));
     Assertions.assertFalse(phoneValidator.isValid("+3412", null));
+    Assertions.assertTrue(phoneValidator.isValid(null, null));
   }
 }

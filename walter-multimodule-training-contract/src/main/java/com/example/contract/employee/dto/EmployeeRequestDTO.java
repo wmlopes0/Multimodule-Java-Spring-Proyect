@@ -34,7 +34,7 @@ public class EmployeeRequestDTO {
 
   @NotNull(message = "Birth year cannot be null")
   @ValidYearOfBirth
-  private int birthYear;
+  private Integer birthYear;
 
   @NotNull(message = "Gender cannot be null")
   @ValidGender(message = "Gender must be either 'Male' or 'Female'")
@@ -45,6 +45,7 @@ public class EmployeeRequestDTO {
   @ValidPhone
   private String personalPhone;
 
+  @ValidPhone
   private String companyPhone;
 
   @Email(message = "Invalid email format")
