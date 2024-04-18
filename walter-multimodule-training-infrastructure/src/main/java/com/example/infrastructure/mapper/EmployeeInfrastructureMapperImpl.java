@@ -5,12 +5,12 @@ import java.util.List;
 
 import com.example.domain.entity.Employee;
 import com.example.domain.entity.Gender;
-import com.example.domain.entity.Phone;
 import com.example.domain.entity.PhoneType;
 import com.example.domain.vo.EmployeeNameVO;
 import com.example.domain.vo.EmployeeNifVO;
 import com.example.domain.vo.EmployeeVO;
 import com.example.infrastructure.entity.EmployeeEntity;
+import com.example.infrastructure.entity.PhoneEntity;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -43,14 +43,14 @@ public class EmployeeInfrastructureMapperImpl implements EmployeeInfrastructureM
 
   @Override
   public EmployeeEntity mapToEntity(EmployeeVO employeeVO) {
-    List<Phone> phones = new ArrayList<>();
+    List<PhoneEntity> phones = new ArrayList<>();
 
-    Phone companyPhone = createPhone(employeeVO.getCompanyPhone(), PhoneType.COMPANY);
+    PhoneEntity companyPhone = createPhone(employeeVO.getCompanyPhone(), PhoneType.COMPANY);
     if (companyPhone != null) {
       phones.add(companyPhone);
     }
 
-    Phone personalPhone = createPhone(employeeVO.getPersonalPhone(), PhoneType.PERSONAL);
+    PhoneEntity personalPhone = createPhone(employeeVO.getPersonalPhone(), PhoneType.PERSONAL);
     if (personalPhone != null) {
       phones.add(personalPhone);
     }
@@ -75,8 +75,8 @@ public class EmployeeInfrastructureMapperImpl implements EmployeeInfrastructureM
   }
 
   @Override
-  public String extractPhoneWithTypeOfList(List<Phone> phones, PhoneType type) {
-    for (Phone phone : phones) {
+  public String extractPhoneWithTypeOfList(List<PhoneEntity> phones, PhoneType type) {
+    for (PhoneEntity phone : phones) {
       if (phone.getType().equals(type)) {
         return phone.getPrefix() + phone.getNumber();
       }
@@ -85,11 +85,11 @@ public class EmployeeInfrastructureMapperImpl implements EmployeeInfrastructureM
   }
 
   @Override
-  public Phone createPhone(String fullNumber, PhoneType type) {
+  public PhoneEntity createPhone(String fullNumber, PhoneType type) {
     if (fullNumber != null && !fullNumber.isEmpty()) {
       String prefix = fullNumber.substring(0, 3);
       String number = fullNumber.substring(3);
-      return new Phone(prefix, number, type);
+      return new PhoneEntity(prefix, number, type);
     }
     return null;
   }

@@ -5,8 +5,6 @@ import com.example.application.employee.cmd.dto.EmployeeDeleteCmd;
 import com.example.application.employee.cmd.dto.EmployeeUpdateCmd;
 import com.example.application.employee.query.dto.EmployeeByIdQuery;
 import com.example.application.employee.query.dto.EmployeeByNameQuery;
-import com.example.contract.employee.dto.EmployeeNameDTO;
-import com.example.contract.employee.dto.EmployeeNifDTO;
 import com.example.contract.employee.dto.EmployeeRequestDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
 import com.example.contract.employee.dto.EmployeeUpdateDTO;
@@ -16,13 +14,13 @@ public interface EmployeeContractMapper {
 
   EmployeeCreateCmd mapToEmployeeCreateCmd(EmployeeRequestDTO employeeRequestDTO);
 
-  EmployeeDeleteCmd mapToEmployeeDeleteCmd(EmployeeNifDTO employeeNifDTO);
+  EmployeeDeleteCmd mapToEmployeeDeleteCmd(String nif);
 
-  EmployeeUpdateCmd mapToEmployeeUpdateCmd(EmployeeUpdateDTO employeeUpdateDTO);
+  EmployeeUpdateCmd mapToEmployeeUpdateCmd(String nif, EmployeeUpdateDTO employeeUpdateDTO);
 
-  EmployeeByIdQuery mapToEmployeeByIdQuery(EmployeeNifDTO employeeNifDTO);
+  EmployeeByIdQuery mapToEmployeeByIdQuery(String nif);
 
-  EmployeeByNameQuery mapToEmployeeByNameQuery(EmployeeNameDTO employeeNameDTO);
+  EmployeeByNameQuery mapToEmployeeByNameQuery(String name);
 
   EmployeeResponseDTO mapToResponseDTO(Employee employee);
 

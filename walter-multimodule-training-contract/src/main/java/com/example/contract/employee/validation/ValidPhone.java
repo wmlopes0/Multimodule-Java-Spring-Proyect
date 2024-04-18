@@ -1,4 +1,4 @@
-package com.example.domain.validation;
+package com.example.contract.employee.validation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

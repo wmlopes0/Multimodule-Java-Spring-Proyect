@@ -8,8 +8,6 @@ import com.example.application.employee.cmd.dto.EmployeeDeleteCmd;
 import com.example.application.employee.cmd.dto.EmployeeUpdateCmd;
 import com.example.application.employee.query.dto.EmployeeByIdQuery;
 import com.example.application.employee.query.dto.EmployeeByNameQuery;
-import com.example.contract.employee.dto.EmployeeNameDTO;
-import com.example.contract.employee.dto.EmployeeNifDTO;
 import com.example.contract.employee.dto.EmployeeRequestDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
 import com.example.contract.employee.dto.EmployeeUpdateDTO;
@@ -35,14 +33,14 @@ public class EmployeeContractMapperImpl implements EmployeeContractMapper {
   }
 
   @Override
-  public EmployeeDeleteCmd mapToEmployeeDeleteCmd(EmployeeNifDTO employeeNifDTO) {
-    return new EmployeeDeleteCmd(employeeNifDTO.getNif());
+  public EmployeeDeleteCmd mapToEmployeeDeleteCmd(String nif) {
+    return new EmployeeDeleteCmd(nif);
   }
 
   @Override
-  public EmployeeUpdateCmd mapToEmployeeUpdateCmd(EmployeeUpdateDTO employeeUpdateDTO) {
+  public EmployeeUpdateCmd mapToEmployeeUpdateCmd(String nif, EmployeeUpdateDTO employeeUpdateDTO) {
     return new EmployeeUpdateCmd()
-        .setNif(employeeUpdateDTO.getNif())
+        .setNif(nif)
         .setName(employeeUpdateDTO.getName())
         .setSurname(employeeUpdateDTO.getSurname())
         .setBirthYear(employeeUpdateDTO.getBirthYear())
@@ -53,13 +51,13 @@ public class EmployeeContractMapperImpl implements EmployeeContractMapper {
   }
 
   @Override
-  public EmployeeByIdQuery mapToEmployeeByIdQuery(EmployeeNifDTO employeeNifDTO) {
-    return new EmployeeByIdQuery(employeeNifDTO.getNif());
+  public EmployeeByIdQuery mapToEmployeeByIdQuery(String nif) {
+    return new EmployeeByIdQuery(nif);
   }
 
   @Override
-  public EmployeeByNameQuery mapToEmployeeByNameQuery(EmployeeNameDTO employeeNameDTO) {
-    return new EmployeeByNameQuery(employeeNameDTO.getName());
+  public EmployeeByNameQuery mapToEmployeeByNameQuery(String name) {
+    return new EmployeeByNameQuery(name);
   }
 
   @Override

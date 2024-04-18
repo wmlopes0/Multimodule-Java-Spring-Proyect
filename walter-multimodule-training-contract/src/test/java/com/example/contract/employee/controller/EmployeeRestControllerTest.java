@@ -19,8 +19,6 @@ import com.example.application.employee.query.dto.EmployeeByNameQuery;
 import com.example.application.employee.query.handler.EmployeeGetByIdHandler;
 import com.example.application.employee.query.handler.EmployeeGetByNameHandler;
 import com.example.application.employee.query.handler.EmployeeListHandler;
-import com.example.contract.employee.dto.EmployeeNameDTO;
-import com.example.contract.employee.dto.EmployeeNifDTO;
 import com.example.contract.employee.dto.EmployeeRequestDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
 import com.example.contract.employee.dto.EmployeeUpdateDTO;
@@ -151,18 +149,17 @@ class EmployeeRestControllerTest {
   @MethodSource("getEmployeeByIdParameters")
   @DisplayName("Get employee by NIF returns employee and 200 response correctly")
   void getEmployeeByIdTest(String nif, Employee employee, EmployeeResponseDTO employeeResponseDTO) {
-    EmployeeNifDTO employeeNifDTO = new EmployeeNifDTO(nif);
     EmployeeByIdQuery employeeByIdQuery = new EmployeeByIdQuery(nif);
 
-    Mockito.when(mapper.mapToEmployeeByIdQuery(employeeNifDTO)).thenReturn(employeeByIdQuery);
+    Mockito.when(mapper.mapToEmployeeByIdQuery(nif)).thenReturn(employeeByIdQuery);
     Mockito.when(employeeGetByIdHandler.getEmployeeById(employeeByIdQuery)).thenReturn(employee);
     Mockito.when(mapper.mapToResponseDTO(employee)).thenReturn(employeeResponseDTO);
-    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById(employeeNifDTO);
+    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById(nif);
     ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.ok(employeeResponseDTO);
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
-    Mockito.verify(mapper, times(1)).mapToEmployeeByIdQuery(employeeNifDTO);
+    Mockito.verify(mapper, times(1)).mapToEmployeeByIdQuery(nif);
     Mockito.verify(employeeGetByIdHandler, times(1)).getEmployeeById(employeeByIdQuery);
     Mockito.verify(mapper, times(1)).mapToResponseDTO(employee);
   }
@@ -198,16 +195,15 @@ class EmployeeRestControllerTest {
   void getEmployeeByIdNotFoundTest() {
     String nif = "45134320V";
     EmployeeByIdQuery employeeByIdQuery = new EmployeeByIdQuery(nif);
-    EmployeeNifDTO employeeNifDTO = new EmployeeNifDTO(nif);
 
-    Mockito.when(mapper.mapToEmployeeByIdQuery(employeeNifDTO)).thenReturn(employeeByIdQuery);
+    Mockito.when(mapper.mapToEmployeeByIdQuery(nif)).thenReturn(employeeByIdQuery);
     Mockito.when(employeeGetByIdHandler.getEmployeeById(employeeByIdQuery)).thenReturn(null);
-    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById(employeeNifDTO);
+    ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById(nif);
     ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.notFound().build();
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
-    Mockito.verify(mapper, times(1)).mapToEmployeeByIdQuery(employeeNifDTO);
+    Mockito.verify(mapper, times(1)).mapToEmployeeByIdQuery(nif);
     Mockito.verify(employeeGetByIdHandler, times(1)).getEmployeeById(employeeByIdQuery);
     Mockito.verify(mapper, never()).mapToResponseDTO(any(Employee.class));
   }
@@ -217,9 +213,8 @@ class EmployeeRestControllerTest {
   @DisplayName("Get employee by name returns employee and 200 response correctly")
   void getEmployeeByNameTest(String name, Employee employee, EmployeeResponseDTO employeeResponseDTO) {
     EmployeeByNameQuery employeeByNameQuery = new EmployeeByNameQuery(name);
-    EmployeeNameDTO employeeNameDTO = new EmployeeNameDTO(name);
 
-    Mockito.when(mapper.mapToEmployeeByNameQuery(employeeNameDTO)).thenReturn(employeeByNameQuery);
+    Mockito.when(mapper.mapToEmployeeByNameQuery(name)).thenReturn(employeeByNameQuery);
     Mockito.when(employeeGetByNameHandler.getEmployeeByName(employeeByNameQuery)).thenReturn(employee);
     Mockito.when(mapper.mapToResponseDTO(employee)).thenReturn(employeeResponseDTO);
     ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeByName(name);
@@ -227,7 +222,7 @@ class EmployeeRestControllerTest {
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
-    Mockito.verify(mapper, times(1)).mapToEmployeeByNameQuery(employeeNameDTO);
+    Mockito.verify(mapper, times(1)).mapToEmployeeByNameQuery(name);
     Mockito.verify(employeeGetByNameHandler, times(1)).getEmployeeByName(employeeByNameQuery);
     Mockito.verify(mapper, times(1)).mapToResponseDTO(employee);
   }
@@ -265,17 +260,16 @@ class EmployeeRestControllerTest {
   }, nullValues = {"null"})
   @DisplayName("Get employee by name not found returns 404 response")
   void getEmployeeByNameNotFoundTest(String name) {
-    EmployeeNameDTO employeeNameDTO = new EmployeeNameDTO(name);
     EmployeeByNameQuery employeeByNameQuery = new EmployeeByNameQuery(name);
 
-    Mockito.when(mapper.mapToEmployeeByNameQuery(employeeNameDTO)).thenReturn(employeeByNameQuery);
+    Mockito.when(mapper.mapToEmployeeByNameQuery(name)).thenReturn(employeeByNameQuery);
     Mockito.when(employeeGetByNameHandler.getEmployeeByName(employeeByNameQuery)).thenReturn(null);
     ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeByName(name);
     ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.notFound().build();
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
-    Mockito.verify(mapper, times(1)).mapToEmployeeByNameQuery(employeeNameDTO);
+    Mockito.verify(mapper, times(1)).mapToEmployeeByNameQuery(name);
     Mockito.verify(employeeGetByNameHandler, times(1)).getEmployeeByName(employeeByNameQuery);
     Mockito.verify(mapper, never()).mapToResponseDTO(any(Employee.class));
   }
@@ -343,28 +337,28 @@ class EmployeeRestControllerTest {
   @ParameterizedTest
   @MethodSource("updateEmployeeByIdParameters")
   @DisplayName("Update employee by NIF successfully returns 200 code response")
-  void updateEmployeeByIdTest(EmployeeUpdateDTO employeeRequest, EmployeeUpdateCmd employeeUpdateCmd, Employee employee,
+  void updateEmployeeByIdTest(String nif, EmployeeUpdateDTO employeeRequest, EmployeeUpdateCmd employeeUpdateCmd, Employee employee,
       EmployeeResponseDTO employeeResponseDTO) {
 
-    Mockito.when(mapper.mapToEmployeeUpdateCmd(employeeRequest)).thenReturn(employeeUpdateCmd);
+    Mockito.when(mapper.mapToEmployeeUpdateCmd(nif, employeeRequest)).thenReturn(employeeUpdateCmd);
     Mockito.when(employeeUpdateHandler.updateEmployee(employeeUpdateCmd)).thenReturn(employee);
     Mockito.when(mapper.mapToResponseDTO(employee)).thenReturn(employeeResponseDTO);
 
-    ResponseEntity<EmployeeResponseDTO> result = controller.updateEmployeeById(employeeRequest);
+    ResponseEntity<EmployeeResponseDTO> result = controller.updateEmployeeById(nif, employeeRequest);
     ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.ok(employeeResponseDTO);
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());
     Mockito.verify(employeeUpdateHandler, times(1)).updateEmployee(employeeUpdateCmd);
     Mockito.verify(mapper, times(1)).mapToResponseDTO(any(Employee.class));
-    Mockito.verify(mapper, times(1)).mapToEmployeeUpdateCmd(employeeRequest);
+    Mockito.verify(mapper, times(1)).mapToEmployeeUpdateCmd(nif, employeeRequest);
   }
 
   private static Stream<Arguments> updateEmployeeByIdParameters() {
     return Stream.of(
         Arguments.of(
+            "45134320V",
             new EmployeeUpdateDTO()
-                .setNif("45134320V")
                 .setName("Walter")
                 .setSurname("Martín Lopes")
                 .setBirthYear(1998)
@@ -404,8 +398,8 @@ class EmployeeRestControllerTest {
   @Test
   @DisplayName("Update employee by NIF not found returns 404 code response")
   void updateEmployeeByIdNotFoundTest() {
+    String nif = "45134320V";
     EmployeeUpdateDTO employeeUpdateDTO = new EmployeeUpdateDTO()
-        .setNif("45134320V")
         .setName("Walter")
         .setSurname("Martín Lopes")
         .setBirthYear(1998)
@@ -413,7 +407,7 @@ class EmployeeRestControllerTest {
         .setPersonalPhone("+34722748406")
         .setEmail("wmlopes0@gmail.com");
     EmployeeUpdateCmd employeeUpdateCmd = new EmployeeUpdateCmd()
-        .setNif("45134320V")
+        .setNif(nif)
         .setName("Walter")
         .setSurname("Martín Lopes")
         .setBirthYear(1998)
@@ -421,12 +415,13 @@ class EmployeeRestControllerTest {
         .setPersonalPhone("+34722748406")
         .setEmail("wmlopes0@gmail.com");
 
-    Mockito.when(mapper.mapToEmployeeUpdateCmd(employeeUpdateDTO)).thenReturn(employeeUpdateCmd);
+    Mockito.when(mapper.mapToEmployeeUpdateCmd(nif, employeeUpdateDTO)).thenReturn(employeeUpdateCmd);
     Mockito.when(employeeUpdateHandler.updateEmployee(employeeUpdateCmd)).thenReturn(null);
 
-    Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> controller.updateEmployeeById(employeeUpdateDTO));
+    Exception exception =
+        Assertions.assertThrows(ResponseStatusException.class, () -> controller.updateEmployeeById(nif, employeeUpdateDTO));
     Assertions.assertTrue(exception.getMessage().contains("Employee not found."));
-    Mockito.verify(mapper, times(1)).mapToEmployeeUpdateCmd(employeeUpdateDTO);
+    Mockito.verify(mapper, times(1)).mapToEmployeeUpdateCmd(nif, employeeUpdateDTO);
     Mockito.verify(employeeUpdateHandler, times(1)).updateEmployee(employeeUpdateCmd);
     Mockito.verify(mapper, never()).mapToResponseDTO(any(Employee.class));
   }
@@ -439,15 +434,14 @@ class EmployeeRestControllerTest {
   @DisplayName("Deleted employee by NIF successfully returns 200 code response")
   void deleteEmployeeByIdTest(String nif) {
     EmployeeDeleteCmd employeeDeleteCmd = new EmployeeDeleteCmd(nif);
-    EmployeeNifDTO employeeNifDTO = new EmployeeNifDTO(nif);
 
-    Mockito.when(mapper.mapToEmployeeDeleteCmd(employeeNifDTO)).thenReturn(employeeDeleteCmd);
+    Mockito.when(mapper.mapToEmployeeDeleteCmd(nif)).thenReturn(employeeDeleteCmd);
     Mockito.when(employeeDeleteHandler.deleteEmployee(employeeDeleteCmd)).thenReturn(true);
-    ResponseEntity<Object> result = controller.deleteEmployeeById(employeeNifDTO);
+    ResponseEntity<Object> result = controller.deleteEmployeeById(nif);
     ResponseEntity<Object> expected = ResponseEntity.ok().build();
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
-    Mockito.verify(mapper, times(1)).mapToEmployeeDeleteCmd(employeeNifDTO);
+    Mockito.verify(mapper, times(1)).mapToEmployeeDeleteCmd(nif);
     Mockito.verify(employeeDeleteHandler, times(1)).deleteEmployee(employeeDeleteCmd);
   }
 
@@ -456,15 +450,14 @@ class EmployeeRestControllerTest {
   void deleteEmployeeByIdNotFoundTest() {
     String nif = "45134320V";
     EmployeeDeleteCmd employeeDeleteCmd = new EmployeeDeleteCmd(nif);
-    EmployeeNifDTO employeeNifDTO = new EmployeeNifDTO(nif);
 
-    Mockito.when(mapper.mapToEmployeeDeleteCmd(employeeNifDTO)).thenReturn(employeeDeleteCmd);
+    Mockito.when(mapper.mapToEmployeeDeleteCmd(nif)).thenReturn(employeeDeleteCmd);
     Mockito.when(employeeDeleteHandler.deleteEmployee(employeeDeleteCmd)).thenReturn(false);
-    ResponseEntity<Object> result = controller.deleteEmployeeById(employeeNifDTO);
+    ResponseEntity<Object> result = controller.deleteEmployeeById(nif);
     ResponseEntity<Object> expected = ResponseEntity.notFound().build();
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
-    Mockito.verify(mapper, times(1)).mapToEmployeeDeleteCmd(employeeNifDTO);
+    Mockito.verify(mapper, times(1)).mapToEmployeeDeleteCmd(nif);
     Mockito.verify(employeeDeleteHandler, times(1)).deleteEmployee(employeeDeleteCmd);
   }
 }

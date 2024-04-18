@@ -18,6 +18,7 @@ import com.example.domain.vo.EmployeeNameVO;
 import com.example.domain.vo.EmployeeNifVO;
 import com.example.domain.vo.EmployeeVO;
 import com.example.infrastructure.entity.EmployeeEntity;
+import com.example.infrastructure.entity.PhoneEntity;
 import com.example.infrastructure.mapper.EmployeeInfrastructureMapper;
 import com.example.infrastructure.repository.EmployeeRepository;
 import org.junit.jupiter.api.Assertions;
@@ -68,14 +69,14 @@ class EmployeeRepositoryServiceImplTest {
                 .setName("Walter")
                 .setBirthYear(1998)
                 .setGender(Gender.MALE.getCode())
-                .setPhones(List.of(new Phone("+34", "722748406", PhoneType.PERSONAL)))
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
                 .setEmail("wmlopes0@gmail.com"),
             new EmployeeEntity()
                 .setNif("45132337N")
                 .setName("Raquel")
                 .setBirthYear(1996)
                 .setGender(Gender.FEMALE.getCode())
-                .setPhones(List.of(new Phone("+34", "676615106", PhoneType.PERSONAL)))
+                .setPhones(List.of(new PhoneEntity("+34", "676615106", PhoneType.PERSONAL)))
                 .setEmail("raquelbarberosanchez90@gmail.com"),
             new Employee()
                 .setNif("45134320V")
@@ -139,7 +140,7 @@ class EmployeeRepositoryServiceImplTest {
                 .setName("Walter")
                 .setBirthYear(1998)
                 .setGender(Gender.MALE.getCode())
-                .setPhones(List.of(new Phone("+34", "722748406", PhoneType.PERSONAL)))
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
                 .setEmail("wmlopes0@gmail.com"),
             new Employee()
                 .setNif("45134320V")
@@ -197,7 +198,7 @@ class EmployeeRepositoryServiceImplTest {
                 .setName("Walter")
                 .setBirthYear(1998)
                 .setGender(Gender.MALE.getCode())
-                .setPhones(List.of(new Phone("+34", "722748406", PhoneType.PERSONAL)))
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
                 .setEmail("wmlopes0@gmail.com"),
             new Employee()
                 .setNif("45134320V")
@@ -331,7 +332,7 @@ class EmployeeRepositoryServiceImplTest {
                 .setName("Walter")
                 .setBirthYear(1998)
                 .setGender(Gender.MALE.getCode())
-                .setPhones(List.of(new Phone("+34", "722748406", PhoneType.PERSONAL)))
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
                 .setEmail("wmlopes0@gmail.com"),
             new Employee()
                 .setNif("45134320V")
@@ -360,7 +361,7 @@ class EmployeeRepositoryServiceImplTest {
                 .setName("Walter")
                 .setBirthYear(1998)
                 .setGender(Gender.MALE.getCode())
-                .setPhones(List.of(new Phone("+34", "722748406", PhoneType.PERSONAL)))
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
                 .setEmail("wmlopes0@gmail.com")
         )
     );

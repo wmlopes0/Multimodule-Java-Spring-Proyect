@@ -1,11 +1,9 @@
 package com.example.contract.employee.dto;
 
-import com.example.domain.validation.ValidGender;
-import com.example.domain.validation.ValidNIF;
-import com.example.domain.validation.ValidPhone;
-import com.example.domain.validation.ValidYearOfBirth;
+import com.example.contract.employee.validation.ValidGender;
+import com.example.contract.employee.validation.ValidPhone;
+import com.example.contract.employee.validation.ValidYearOfBirth;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -21,10 +19,6 @@ import lombok.experimental.Accessors;
 @Setter
 @EqualsAndHashCode
 public class EmployeeUpdateDTO {
-
-  @NotNull(message = "NIF cannot be null")
-  @ValidNIF
-  private String nif;
 
   @Size(min = 1, message = "Name cannot be empty")
   private String name;

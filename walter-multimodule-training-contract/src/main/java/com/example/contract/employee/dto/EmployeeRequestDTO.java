@@ -1,9 +1,9 @@
 package com.example.contract.employee.dto;
 
-import com.example.domain.validation.ValidGender;
-import com.example.domain.validation.ValidNIF;
-import com.example.domain.validation.ValidPhone;
-import com.example.domain.validation.ValidYearOfBirth;
+import com.example.contract.employee.validation.ValidGender;
+import com.example.contract.employee.validation.ValidNIF;
+import com.example.contract.employee.validation.ValidPhone;
+import com.example.contract.employee.validation.ValidYearOfBirth;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

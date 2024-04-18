@@ -10,12 +10,11 @@ import com.example.application.employee.cmd.handler.EmployeeUpdateHandler;
 import com.example.application.employee.query.handler.EmployeeGetByIdHandler;
 import com.example.application.employee.query.handler.EmployeeGetByNameHandler;
 import com.example.application.employee.query.handler.EmployeeListHandler;
-import com.example.contract.employee.dto.EmployeeNameDTO;
-import com.example.contract.employee.dto.EmployeeNifDTO;
 import com.example.contract.employee.dto.EmployeeRequestDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
 import com.example.contract.employee.dto.EmployeeUpdateDTO;
 import com.example.contract.employee.mapper.EmployeeContractMapper;
+import com.example.contract.employee.validation.ValidNIF;
 import com.example.domain.entity.Employee;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -69,8 +68,8 @@ public class EmployeeRestController {
   @Operation(summary = "More information...", description = "This endpoint obtains information about an employee by their NIF")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
-  @GetMapping("/nif/")
-  public ResponseEntity<EmployeeResponseDTO> getEmployeeById(@Valid @RequestBody EmployeeNifDTO nif) {
+  @GetMapping("/{nif}")
+  public ResponseEntity<EmployeeResponseDTO> getEmployeeById(@PathVariable("nif") @ValidNIF String nif) {
     return Optional.ofNullable(employeeGetByIdHandler.getEmployeeById(
             mapper.mapToEmployeeByIdQuery(nif)))
         .map(mapper::mapToResponseDTO)
@@ -85,7 +84,7 @@ public class EmployeeRestController {
   @GetMapping("/name/{name}")
   public ResponseEntity<EmployeeResponseDTO> getEmployeeByName(@PathVariable("name") String name) {
     return Optional.ofNullable(employeeGetByNameHandler.getEmployeeByName(
-            mapper.mapToEmployeeByNameQuery(new EmployeeNameDTO(name))))
+            mapper.mapToEmployeeByNameQuery(name)))
         .map(mapper::mapToResponseDTO)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
@@ -104,10 +103,11 @@ public class EmployeeRestController {
   @Operation(summary = "More information...", description = "This endpoint updates information for a given employee")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
-  @PutMapping("/")
-  public ResponseEntity<EmployeeResponseDTO> updateEmployeeById(@Valid @RequestBody EmployeeUpdateDTO employeeRequest) {
+  @PutMapping("/{nif}")
+  public ResponseEntity<EmployeeResponseDTO> updateEmployeeById(@PathVariable("nif") String nif,
+      @Valid @RequestBody EmployeeUpdateDTO employeeRequest) {
     return Optional.ofNullable(employeeUpdateHandler.updateEmployee(
-            mapper.mapToEmployeeUpdateCmd(employeeRequest)))
+            mapper.mapToEmployeeUpdateCmd(nif, employeeRequest)))
         .map(mapper::mapToResponseDTO)
         .map(ResponseEntity::ok)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found."));
@@ -116,8 +116,8 @@ public class EmployeeRestController {
   @Operation(summary = "More information...", description = "This endpoint removes a given employee from the database by their id")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
-  @DeleteMapping("/")
-  public ResponseEntity<Object> deleteEmployeeById(@Valid @RequestBody EmployeeNifDTO nif) {
+  @DeleteMapping("/{nif}")
+  public ResponseEntity<Object> deleteEmployeeById(@PathVariable("nif") @ValidNIF String nif) {
     return employeeDeleteHandler.deleteEmployee(mapper.mapToEmployeeDeleteCmd(nif))
         ? ResponseEntity.ok().build()
         : ResponseEntity.notFound().build();

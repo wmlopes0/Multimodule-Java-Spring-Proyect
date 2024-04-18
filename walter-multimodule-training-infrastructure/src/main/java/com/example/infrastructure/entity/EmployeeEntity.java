@@ -2,9 +2,6 @@ package com.example.infrastructure.entity;
 
 import java.util.List;
 
-import com.example.domain.entity.Phone;
-import com.example.domain.validation.ValidGenderCode;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -32,14 +29,12 @@ public class EmployeeEntity {
   @NotNull(message = "Birth year cannot be null")
   private int birthYear;
 
-  @ValidGenderCode
   private int gender;
 
   @NotNull(message = "Phone list cannot be null")
   @Size(min = 1, message = "Phone list cannot be empty")
-  private List<Phone> phones;
+  private List<PhoneEntity> phones;
 
-  @Email(message = "Invalid email format")
   @NotNull(message = "Email cannot be null")
   private String email;
 }

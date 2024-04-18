@@ -11,6 +11,7 @@ import com.example.domain.vo.EmployeeNameVO;
 import com.example.domain.vo.EmployeeNifVO;
 import com.example.domain.vo.EmployeeVO;
 import com.example.infrastructure.entity.EmployeeEntity;
+import com.example.infrastructure.entity.PhoneEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ class EmployeeInfrastructureMapperImplTest {
   @ParameterizedTest
   @MethodSource("mapToDomainParameters")
   @DisplayName("Mapping EmployeeEntity to Employee correctly")
-  void mapToDomainTest(List<Phone> phones, String expectedPersonalPhone, String expectedCompanyPhone) {
+  void mapToDomainTest(List<PhoneEntity> phones, String expectedPersonalPhone, String expectedCompanyPhone) {
     EmployeeEntity employeeEntity = new EmployeeEntity()
         .setNif("45134320V")
         .setName("Walter")
@@ -55,15 +56,15 @@ class EmployeeInfrastructureMapperImplTest {
     return Stream.of(
         Arguments.of(
             List.of(
-                new Phone("+34", "722748406", PhoneType.PERSONAL),
-                new Phone("+34", "676615106", PhoneType.COMPANY)
+                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL),
+                new PhoneEntity("+34", "676615106", PhoneType.COMPANY)
             ),
             "+34722748406",
             "+34676615106"
         ),
         Arguments.of(
             List.of(
-                new Phone("+34", "722748406", PhoneType.PERSONAL)
+                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)
             ),
             "+34722748406",
             null
@@ -121,8 +122,8 @@ class EmployeeInfrastructureMapperImplTest {
                 .setBirthYear(1998)
                 .setGender(Gender.MALE.getCode())
                 .setPhones(List.of(
-                    new Phone("+34", "676615106", PhoneType.COMPANY),
-                    new Phone("+34", "722748406", PhoneType.PERSONAL)))
+                    new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
+                    new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
                 .setEmail("wmlopes0@gmail.com")
         ),
         Arguments.of(
@@ -139,7 +140,7 @@ class EmployeeInfrastructureMapperImplTest {
                 .setBirthYear(1998)
                 .setGender(Gender.MALE.getCode())
                 .setPhones(List.of(
-                    new Phone("+34", "676615106", PhoneType.COMPANY)))
+                    new PhoneEntity("+34", "676615106", PhoneType.COMPANY)))
                 .setEmail("wmlopes0@gmail.com")
         )
     );
@@ -169,7 +170,7 @@ class EmployeeInfrastructureMapperImplTest {
   @ParameterizedTest
   @MethodSource("extractPhoneParameters")
   @DisplayName("Extract full phone number to List for phone type correctly")
-  void extractPhoneWithTypeOfListTest(List<Phone> phones, PhoneType phoneType, String expectedPhone) {
+  void extractPhoneWithTypeOfListTest(List<PhoneEntity> phones, PhoneType phoneType, String expectedPhone) {
     String result = employeeInfrastructureMapper.extractPhoneWithTypeOfList(phones, phoneType);
     Assertions.assertEquals(expectedPhone, result);
   }
@@ -178,23 +179,23 @@ class EmployeeInfrastructureMapperImplTest {
     return Stream.of(
         Arguments.of(
             List.of(
-                new Phone("+34", "722748406", PhoneType.PERSONAL),
-                new Phone("+34", "676615106", PhoneType.COMPANY)
+                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL),
+                new PhoneEntity("+34", "676615106", PhoneType.COMPANY)
             ),
             PhoneType.PERSONAL,
             "+34722748406"
         ),
         Arguments.of(
             List.of(
-                new Phone("+34", "722748406", PhoneType.PERSONAL),
-                new Phone("+34", "676615106", PhoneType.COMPANY)
+                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL),
+                new PhoneEntity("+34", "676615106", PhoneType.COMPANY)
             ),
             PhoneType.COMPANY,
             "+34676615106"
         ),
         Arguments.of(
             List.of(
-                new Phone("+34", "722748406", PhoneType.PERSONAL)
+                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)
             ),
             PhoneType.COMPANY,
             null
@@ -205,8 +206,8 @@ class EmployeeInfrastructureMapperImplTest {
   @ParameterizedTest
   @MethodSource("createPhoneParameters")
   @DisplayName("Create a phone object from a full phone number and phone type correctly")
-  void createPhoneTest(String fullNumber, PhoneType phoneType, Phone expected) {
-    Phone result = employeeInfrastructureMapper.createPhone(fullNumber, phoneType);
+  void createPhoneTest(String fullNumber, PhoneType phoneType, PhoneEntity expected) {
+    PhoneEntity result = employeeInfrastructureMapper.createPhone(fullNumber, phoneType);
     Assertions.assertEquals(expected, result);
   }
 
@@ -215,12 +216,12 @@ class EmployeeInfrastructureMapperImplTest {
         Arguments.of(
             "+34722748406",
             PhoneType.PERSONAL,
-            new Phone("+34", "722748406", PhoneType.PERSONAL)
+            new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)
         ),
         Arguments.of(
             "+44676615106",
             PhoneType.COMPANY,
-            new Phone("+44", "676615106", PhoneType.COMPANY)
+            new PhoneEntity("+44", "676615106", PhoneType.COMPANY)
         )
     );
   }

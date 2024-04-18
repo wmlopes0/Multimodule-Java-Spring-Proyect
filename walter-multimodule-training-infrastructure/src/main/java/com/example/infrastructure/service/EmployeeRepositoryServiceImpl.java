@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.domain.entity.Employee;
-import com.example.domain.entity.Phone;
 import com.example.domain.entity.PhoneType;
 import com.example.domain.exception.EmployeeNotFoundException;
 import com.example.domain.service.EmployeeService;
@@ -12,6 +11,7 @@ import com.example.domain.vo.EmployeeNameVO;
 import com.example.domain.vo.EmployeeNifVO;
 import com.example.domain.vo.EmployeeVO;
 import com.example.infrastructure.entity.EmployeeEntity;
+import com.example.infrastructure.entity.PhoneEntity;
 import com.example.infrastructure.mapper.EmployeeInfrastructureMapper;
 import com.example.infrastructure.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
@@ -91,14 +91,14 @@ public class EmployeeRepositoryServiceImpl implements EmployeeService {
   }
 
   private void updatePhones(EmployeeEntity existingEmployee, EmployeeVO employeeVO) {
-    List<Phone> updatedPhones = new ArrayList<>(existingEmployee.getPhones());
+    List<PhoneEntity> updatedPhones = new ArrayList<>(existingEmployee.getPhones());
     if (employeeVO.getCompanyPhone() != null) {
-      Phone companyPhone = employeeInfrastructureMapper.createPhone(employeeVO.getCompanyPhone(), PhoneType.COMPANY);
+      PhoneEntity companyPhone = employeeInfrastructureMapper.createPhone(employeeVO.getCompanyPhone(), PhoneType.COMPANY);
       updatedPhones.removeIf(phone -> phone.getType() == PhoneType.COMPANY);
       updatedPhones.add(companyPhone);
     }
     if (employeeVO.getPersonalPhone() != null) {
-      Phone personalPhone = employeeInfrastructureMapper.createPhone(employeeVO.getPersonalPhone(), PhoneType.PERSONAL);
+      PhoneEntity personalPhone = employeeInfrastructureMapper.createPhone(employeeVO.getPersonalPhone(), PhoneType.PERSONAL);
       updatedPhones.removeIf(phone -> phone.getType() == PhoneType.PERSONAL);
       updatedPhones.add(personalPhone);
     }

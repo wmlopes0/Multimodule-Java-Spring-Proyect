@@ -1,4 +1,4 @@
-package com.example.domain.validation;
+package com.example.contract.employee.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

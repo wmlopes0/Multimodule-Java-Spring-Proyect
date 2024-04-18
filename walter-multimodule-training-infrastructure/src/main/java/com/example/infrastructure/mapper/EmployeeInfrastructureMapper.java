@@ -4,12 +4,12 @@ import java.util.List;
 
 import com.example.domain.entity.Employee;
 import com.example.domain.entity.Gender;
-import com.example.domain.entity.Phone;
 import com.example.domain.entity.PhoneType;
 import com.example.domain.vo.EmployeeNameVO;
 import com.example.domain.vo.EmployeeNifVO;
 import com.example.domain.vo.EmployeeVO;
 import com.example.infrastructure.entity.EmployeeEntity;
+import com.example.infrastructure.entity.PhoneEntity;
 
 public interface EmployeeInfrastructureMapper {
 
@@ -23,7 +23,7 @@ public interface EmployeeInfrastructureMapper {
 
   Gender mapToGender(int genderCode);
 
-  String extractPhoneWithTypeOfList(List<Phone> phones, PhoneType type);
+  String extractPhoneWithTypeOfList(List<PhoneEntity> phones, PhoneType type);
 
-  Phone createPhone(String fullNumber, PhoneType type);
+  PhoneEntity createPhone(String fullNumber, PhoneType type);
 }

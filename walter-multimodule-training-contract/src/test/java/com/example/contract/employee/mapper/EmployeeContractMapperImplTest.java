@@ -7,8 +7,6 @@ import com.example.application.employee.cmd.dto.EmployeeDeleteCmd;
 import com.example.application.employee.cmd.dto.EmployeeUpdateCmd;
 import com.example.application.employee.query.dto.EmployeeByIdQuery;
 import com.example.application.employee.query.dto.EmployeeByNameQuery;
-import com.example.contract.employee.dto.EmployeeNameDTO;
-import com.example.contract.employee.dto.EmployeeNifDTO;
 import com.example.contract.employee.dto.EmployeeRequestDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
 import com.example.contract.employee.dto.EmployeeUpdateDTO;
@@ -52,9 +50,9 @@ class EmployeeContractMapperImplTest {
   @Test
   @DisplayName("Mapping id to EmployeeDeleteCmd correctly")
   void mapToEmployeeDeleteCmdTest() {
-    EmployeeNifDTO employeeNifDTO = new EmployeeNifDTO("45134320V");
-    EmployeeDeleteCmd expected = new EmployeeDeleteCmd(employeeNifDTO.getNif());
-    EmployeeDeleteCmd result = mapper.mapToEmployeeDeleteCmd(employeeNifDTO);
+    String nif = "45134320V";
+    EmployeeDeleteCmd expected = new EmployeeDeleteCmd(nif);
+    EmployeeDeleteCmd result = mapper.mapToEmployeeDeleteCmd(nif);
 
     Assertions.assertEquals(expected, result);
   }
@@ -62,8 +60,8 @@ class EmployeeContractMapperImplTest {
   @Test
   @DisplayName("Mapping id and EmployeeRequestDTO to EmployeeUpdateCmd correctly")
   void mapToEmployeeUpdateCmdTest() {
+    String nif = "45134320V";
     EmployeeUpdateDTO employeeUpdateDTO = new EmployeeUpdateDTO()
-        .setNif("45134320V")
         .setName("Walter")
         .setSurname("Martín Lopes")
         .setBirthYear(1998)
@@ -71,7 +69,7 @@ class EmployeeContractMapperImplTest {
         .setPersonalPhone("+34722748406")
         .setEmail("wmlopes0@gmail.com");
     EmployeeUpdateCmd expected = new EmployeeUpdateCmd()
-        .setNif("45134320V")
+        .setNif(nif)
         .setName("Walter")
         .setSurname("Martín Lopes")
         .setBirthYear(1998)
@@ -79,16 +77,16 @@ class EmployeeContractMapperImplTest {
         .setPersonalPhone("+34722748406")
         .setEmail("wmlopes0@gmail.com");
 
-    EmployeeUpdateCmd result = mapper.mapToEmployeeUpdateCmd(employeeUpdateDTO);
+    EmployeeUpdateCmd result = mapper.mapToEmployeeUpdateCmd(nif, employeeUpdateDTO);
     Assertions.assertEquals(expected, result);
   }
 
   @Test
   @DisplayName("Mapping EmployeeNifDTO to EmployeeByIdQuery correctly")
   void mapToEmployeeByIdQueryTest() {
-    EmployeeNifDTO employeeNifDTO = new EmployeeNifDTO("45134320V");
-    EmployeeByIdQuery expected = new EmployeeByIdQuery(employeeNifDTO.getNif());
-    EmployeeByIdQuery result = mapper.mapToEmployeeByIdQuery(employeeNifDTO);
+    String nif = "45134320V";
+    EmployeeByIdQuery expected = new EmployeeByIdQuery(nif);
+    EmployeeByIdQuery result = mapper.mapToEmployeeByIdQuery(nif);
 
     Assertions.assertEquals(expected, result);
   }
@@ -96,9 +94,9 @@ class EmployeeContractMapperImplTest {
   @Test
   @DisplayName("Mapping EmployeeNameDTO to EmployeeByNameQuery correctly")
   void mapToEmployeeByNameQueryTest() {
-    EmployeeNameDTO employeeNameDTO = new EmployeeNameDTO("Walter");
-    EmployeeByNameQuery expected = new EmployeeByNameQuery(employeeNameDTO.getName());
-    EmployeeByNameQuery result = mapper.mapToEmployeeByNameQuery(employeeNameDTO);
+    String name = "Walter";
+    EmployeeByNameQuery expected = new EmployeeByNameQuery(name);
+    EmployeeByNameQuery result = mapper.mapToEmployeeByNameQuery(name);
 
     Assertions.assertEquals(expected, result);
   }

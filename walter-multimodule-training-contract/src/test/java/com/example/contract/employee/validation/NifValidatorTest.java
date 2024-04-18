@@ -1,4 +1,4 @@
-package com.example.domain.validation;
+package com.example.contract.employee.validation;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -13,9 +14,9 @@ import java.util.stream.Stream;
 
 import com.example.boot.app.App;
 import com.example.domain.entity.Gender;
-import com.example.domain.entity.Phone;
 import com.example.domain.entity.PhoneType;
 import com.example.infrastructure.entity.EmployeeEntity;
+import com.example.infrastructure.entity.PhoneEntity;
 import com.example.infrastructure.repository.EmployeeRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,7 +68,7 @@ class EmployeeRestControllerE2ETestIT {
                 .setLastName("Martín Lopes")
                 .setBirthYear(1998)
                 .setGender(Gender.MALE.getCode())
-                .setPhones(List.of(new Phone("+34", "722748406", PhoneType.PERSONAL)))
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
                 .setEmail("wmlopes0@gmail.com"),
             new EmployeeEntity()
                 .setNif("45132337N")
@@ -75,7 +76,7 @@ class EmployeeRestControllerE2ETestIT {
                 .setLastName("Barbero Sánchez")
                 .setBirthYear(1996)
                 .setGender(Gender.FEMALE.getCode())
-                .setPhones(List.of(new Phone("+34", "676615106", PhoneType.COMPANY)))
+                .setPhones(List.of(new PhoneEntity("+34", "676615106", PhoneType.COMPANY)))
                 .setEmail("raquelbarberosanchez90@gmail.com"),
             """
                 [
@@ -139,14 +140,7 @@ class EmployeeRestControllerE2ETestIT {
   void getEmployeeByIdTest(String nif, EmployeeEntity employeeEntity, String expected) throws Exception {
     repository.save(employeeEntity);
 
-    String jsonContent = String.format("""
-        {
-         "nif": "%s"
-        }""", nif);
-
-    mockMvc.perform(get("/employees/nif/")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(jsonContent))
+    mockMvc.perform(get("/employees/{nif}", nif))
         .andExpect(status().isOk())
         .andExpect(content().json(expected, false));
   }
@@ -161,7 +155,7 @@ class EmployeeRestControllerE2ETestIT {
                 .setLastName("Martín Lopes")
                 .setBirthYear(1998)
                 .setGender(Gender.MALE.getCode())
-                .setPhones(List.of(new Phone("+34", "722748406", PhoneType.PERSONAL)))
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
                 .setEmail("wmlopes0@gmail.com"),
             """
                     {
@@ -191,39 +185,27 @@ class EmployeeRestControllerE2ETestIT {
   @DisplayName("Get employee by NIF not found returns 404 response")
   void getEmployeeByIdNotFoundTest() throws Exception {
     String expected = "";
-    String jsonContent = """
-        {
-         "nif": "45134320V"
-        }""";
+    String nif = "45134320V";
 
-    mockMvc.perform(get("/employees/nif/")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(jsonContent))
+    mockMvc.perform(get("/employees/{nif}", nif))
         .andExpect(status().isNotFound())
         .andExpect(content().string(expected));
   }
 
   @ParameterizedTest
   @CsvSource(value = {
-      "45134320Z,Invalid NIF",
-      "4513,Invalid NIF",
-      "null,Invalid NIF"
+      "45134320Z",
+      "4513",
   }, nullValues = "null")
-  @DisplayName("Invalid NIF should result in HTTP 400 BadRequest")
-  void getEmployeeByIdInvalidTest(String nif, String message) throws Exception {
-    String jsonContent = String.format("""
+  @DisplayName("Invalid NIF should result in HTTP 500 InternalServerError")
+  void getEmployeeByIdInvalidTest(String nif) throws Exception {
+    String expected = """
         {
-         "nif": "%s"
-        }""", nif);
-    String expected = String.format("""
-        {
-         "nif":"%s"
+         "nif":"Invalid NIF"
         }
-        """, message);
+        """;
 
-    mockMvc.perform(get("/employees/nif/")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(jsonContent))
+    mockMvc.perform(get("/employees/{nif}", nif))
         .andExpect(status().isBadRequest())
         .andExpect(content().json(expected, false));
   }
@@ -234,7 +216,7 @@ class EmployeeRestControllerE2ETestIT {
   void getEmployeeByNameTest(String name, EmployeeEntity employeeEntity, String expected) throws Exception {
     repository.save(employeeEntity);
 
-    mockMvc.perform(get("/employees/name/" + name))
+    mockMvc.perform(get("/employees/name/{name}", name))
         .andExpect(status().isOk())
         .andExpect(content().json(expected, true));
   }
@@ -249,7 +231,7 @@ class EmployeeRestControllerE2ETestIT {
                 .setLastName("Martín Lopes")
                 .setBirthYear(1998)
                 .setGender(Gender.MALE.getCode())
-                .setPhones(List.of(new Phone("+34", "722748406", PhoneType.PERSONAL)))
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
                 .setEmail("wmlopes0@gmail.com"),
             """
                 {
@@ -280,7 +262,7 @@ class EmployeeRestControllerE2ETestIT {
     String name = "Wal";
     String expected = "";
 
-    mockMvc.perform(get("/employees/name/" + name))
+    mockMvc.perform(get("/employees/name/{name}", name))
         .andExpect(status().isNotFound())
         .andExpect(content().string(expected));
   }
@@ -341,7 +323,7 @@ class EmployeeRestControllerE2ETestIT {
                 .setLastName("Martín Lopes")
                 .setBirthYear(1998)
                 .setGender(Gender.MALE.getCode())
-                .setPhones(List.of(new Phone("+34", "722748406", PhoneType.PERSONAL)))
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
                 .setEmail("wmlopes0@gmail.com")
         )
     );
@@ -408,7 +390,7 @@ class EmployeeRestControllerE2ETestIT {
       throws Exception {
     repository.save(employeeEntity);
 
-    mockMvc.perform(put("/employees/")
+    mockMvc.perform(put("/employees/{nif}", nif)
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonContent))
         .andExpect(status().isOk())
@@ -430,11 +412,10 @@ class EmployeeRestControllerE2ETestIT {
                 .setLastName("Martín Lopes")
                 .setBirthYear(1998)
                 .setGender(Gender.MALE.getCode())
-                .setPhones(List.of(new Phone("+34", "722748406", PhoneType.PERSONAL)))
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
                 .setEmail("wmlopes0@gmail.com"),
             """
                 {
-                       "nif": "45134320V",
                        "name": "Walter",
                        "surname":"Martín Lopes",
                        "birthYear": 1998,
@@ -468,7 +449,7 @@ class EmployeeRestControllerE2ETestIT {
                 .setLastName("Martín Lopes")
                 .setBirthYear(1998)
                 .setGender(Gender.MALE.getCode())
-                .setPhones(List.of(new Phone("+34", "722748406", PhoneType.PERSONAL)))
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
                 .setEmail("walterlopesdiez@gmail.com")
 
         )
@@ -478,10 +459,11 @@ class EmployeeRestControllerE2ETestIT {
   @ParameterizedTest
   @MethodSource("updateEmployeeInvalidParameters")
   @DisplayName("Updating an employee with invalid parameters should return HTTP 400 BadRequest")
-  void updateEmployeeInvalidParametersTest(String jsonContent, String expected) throws Exception {
-    mockMvc.perform(put("/employees/")
+  void updateEmployeeInvalidParametersTest(String nif, String jsonContent, String expected) throws Exception {
+    mockMvc.perform(put("/employees/{nif}", nif)
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonContent))
+        .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(content().json(expected, false));
   }
@@ -489,9 +471,9 @@ class EmployeeRestControllerE2ETestIT {
   private static Stream<Arguments> updateEmployeeInvalidParameters() {
     return Stream.of(
         Arguments.of(
+            "45134320V",
             """
                 {
-                       "nif": "451343260V",
                        "name": "",
                        "birthYear": 2025,
                        "gender": "Binary",
@@ -500,35 +482,12 @@ class EmployeeRestControllerE2ETestIT {
                       }""",
             """
                 {
-                       "nif": "Invalid NIF",
                        "name": "Name cannot be empty",
                        "birthYear": "Invalid year of birth",
                        "gender": "Gender must be either 'Male' or 'Female'",
                        "personalPhone": "Invalid phone format",
                        "email": "Invalid email format"
                       }"""
-
-        ),
-        Arguments.of(
-            """
-                {
-                       "surname": "Martín Lopes",
-                       "companyPhone": "+34722748406",
-                       "email": "wmlopes0@gmail.com"
-                      }""",
-            """
-                {
-                       "nif": "NIF cannot be null"
-                      }"""
-
-        ),
-        Arguments.of(
-            """
-                {
-                       "nif": "451343260V"
-                      }""",
-            """
-                {}"""
 
         )
     );
@@ -537,9 +496,9 @@ class EmployeeRestControllerE2ETestIT {
   @Test
   @DisplayName("Update employee by ID not found returns 404 code response")
   void updateEmployeeByIdNotFoundTest() throws Exception {
+    String nif = "45134320V";
     String jsonContent = """
         {
-               "nif": "45134320V",
                "name": "Walter",
                "surname": "Martín Lopes",
                "birthYear": 1998,
@@ -548,7 +507,7 @@ class EmployeeRestControllerE2ETestIT {
                "email": "walterlopesdiez@gmail.com"
               }""";
 
-    mockMvc.perform(put("/employees/")
+    mockMvc.perform(put("/employees/{nif}", nif)
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonContent))
         .andExpect(status().isNotFound())
@@ -559,10 +518,6 @@ class EmployeeRestControllerE2ETestIT {
   @DisplayName("Deleted employee by ID successfully returns 200 code response")
   void deleteEmployeeByIdTest() throws Exception {
     String nif = "45134320V";
-    String jsonContent = String.format("""
-        {
-         "nif": "%s"
-        }""", nif);
 
     repository.save(new EmployeeEntity()
         .setNif(nif)
@@ -570,13 +525,11 @@ class EmployeeRestControllerE2ETestIT {
         .setLastName("Martín Lopes")
         .setBirthYear(1998)
         .setGender(Gender.MALE.getCode())
-        .setPhones(List.of(new Phone("+34", "722748406", PhoneType.PERSONAL)))
+        .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
         .setEmail("wmlopes0@gmail.com")
     );
 
-    mockMvc.perform(delete("/employees/")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(jsonContent))
+    mockMvc.perform(delete("/employees/{nif}", nif))
         .andExpect(status().isOk());
 
     Optional<EmployeeEntity> fetchExpected = Optional.empty();
@@ -587,23 +540,22 @@ class EmployeeRestControllerE2ETestIT {
 
   @ParameterizedTest
   @CsvSource(value = {
-      "45134320Z,Invalid NIF",
-      "4513,Invalid NIF",
-      "null,Invalid NIF"
+      "45134320Z",
+      "4513"
   }, nullValues = "null")
-  @DisplayName("Invalid NIF should result in HTTP 400 BadRequest")
-  void deleteEmployeeByIdInvalidTest(String nif, String message) throws Exception {
+  @DisplayName("Invalid NIF should result in HTTP 500 InternalServerError")
+  void deleteEmployeeByIdInvalidTest(String nif) throws Exception {
     String jsonContent = String.format("""
         {
          "nif": "%s"
         }""", nif);
-    String expected = String.format("""
+    String expected = """
         {
-         "nif":"%s"
+         "nif":"Invalid NIF"
         }
-        """, message);
+        """;
 
-    mockMvc.perform(delete("/employees/")
+    mockMvc.perform(delete("/employees/{nif}", nif)
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonContent))
         .andExpect(status().isBadRequest())
@@ -613,13 +565,8 @@ class EmployeeRestControllerE2ETestIT {
   @Test
   @DisplayName("Delete employee by ID failed returns 404 code response.")
   void deleteEmployeeByIdNotFoundTest() throws Exception {
-    String jsonContent = """
-        {
-         "nif": "45134320V"
-        }""";
-    mockMvc.perform(delete("/employees/")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(jsonContent))
+    String nif = "45134320V";
+    mockMvc.perform(delete("/employees/{nif}", nif))
         .andExpect(status().isNotFound());
   }
 }
