@@ -3,6 +3,8 @@ package com.example.contract.employee.controller;
 import com.example.domain.exception.EmployeeNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,24 +28,12 @@ public class TestController {
     throw new EmployeeNotFoundException("Employee not found");
   }
 
+  @Getter
+  @Setter
   static class TestRequest {
 
     @NotNull(message = "must not be empty")
     private String name;
 
-    public String getName() {
-      return name;
-    }
-
-    public void setName(String name) {
-      this.name = name;
-    }
   }
-
-//  static class EmployeeNotFoundException extends RuntimeException {
-//
-//    public EmployeeNotFoundException(String message) {
-//      super(message);
-//    }
-//  }
 }
