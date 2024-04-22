@@ -8,19 +8,19 @@ import lombok.Value;
 @Value
 public class EmployeeVO {
 
-  private String nif;
+  String nif;
 
-  private String name;
+  String name;
 
-  private String surname;
+  String surname;
 
-  private int birthYear;
+  int birthYear;
 
-  private Gender gender;
+  Gender gender;
 
-  private String companyPhone;
+  String companyPhone;
 
-  private String personalPhone;
+  String personalPhone;
 
-  private String email;
+  String email;
 }

@@ -8,7 +8,7 @@ import lombok.Value;
 
 @Builder
 @Value
-public class CompanyUpdateVO {
+public class CompanyCreateVO {
 
   String cif;
 

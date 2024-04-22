@@ -7,5 +7,5 @@ import lombok.Value;
 @Value
 public class EmployeeNifVO {
 
-  private String nif;
+  String nif;
 }
