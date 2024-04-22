@@ -1,4 +1,4 @@
-package com.example.contract.employee.dto;
+package com.example.contract.employee.dto.company;
 
 import com.example.contract.employee.validation.ValidGender;
 import com.example.contract.employee.validation.ValidNIF;
@@ -20,34 +20,22 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class EmployeeRequestDTO {
+public class EmployeeDTO {
 
-  @NotNull(message = "NIF cannot be null")
-  @ValidNIF
   private String nif;
 
-  @NotNull(message = "Name cannot be null")
-  @Size(min = 1, message = "Name cannot be empty")
   private String name;
 
   private String surname;
 
-  @NotNull(message = "Birth year cannot be null")
-  @ValidYearOfBirth
   private Integer birthYear;
 
-  @NotNull(message = "Gender cannot be null")
-  @ValidGender(message = "Gender must be either 'Male' or 'Female'")
   private String gender;
 
-  @NotNull(message = "Personal phone cannot be null")
-  @Size(min = 1, message = "Personal phone cannot be empty")
-  @ValidPhone
   private String personalPhone;
 
-  @ValidPhone
   private String companyPhone;
 
-  @Email(message = "Invalid email format")
   private String email;
+
 }
