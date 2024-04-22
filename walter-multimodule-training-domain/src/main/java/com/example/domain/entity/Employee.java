@@ -11,7 +11,19 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class Employee {
 
-  private Long number;
+  private String nif;
 
   private String name;
+
+  private String surname;
+
+  private int birthYear;
+
+  private Gender gender;
+
+  private String companyPhone;
+
+  private String personalPhone;
+
+  private String email;
 }
