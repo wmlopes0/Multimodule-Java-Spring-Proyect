@@ -1,4 +1,4 @@
-package com.example.contract.employee.dto.employee;
+package com.example.contract.employee.dto;
 
 import java.util.List;
 

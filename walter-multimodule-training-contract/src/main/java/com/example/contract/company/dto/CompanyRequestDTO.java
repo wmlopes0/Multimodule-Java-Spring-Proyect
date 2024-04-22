@@ -1,5 +1,6 @@
-package com.example.contract.employee.dto.employee;
+package com.example.contract.company.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,9 +14,10 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class PhoneDTO {
+public class CompanyRequestDTO {
 
-  private String number;
+  @NotNull(message = "CIF cannot be null")
+  private String cif;
 
-  private String type;
+  private String name;
 }

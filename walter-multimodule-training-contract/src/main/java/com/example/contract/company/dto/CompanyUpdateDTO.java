@@ -1,4 +1,4 @@
-package com.example.contract.employee.dto.company;
+package com.example.contract.company.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

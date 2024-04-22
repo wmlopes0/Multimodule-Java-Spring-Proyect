@@ -5,10 +5,10 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.example.boot.app.App;
-import com.example.contract.employee.dto.employee.EmployeeRequestDTO;
-import com.example.contract.employee.dto.employee.EmployeeResponseDTO;
-import com.example.contract.employee.dto.employee.EmployeeUpdateDTO;
-import com.example.contract.employee.dto.employee.PhoneDTO;
+import com.example.contract.employee.dto.EmployeeRequestDTO;
+import com.example.contract.employee.dto.EmployeeResponseDTO;
+import com.example.contract.employee.dto.EmployeeUpdateDTO;
+import com.example.contract.employee.dto.PhoneDTO;
 import com.example.domain.entity.Gender;
 import com.example.domain.entity.PhoneType;
 import com.example.infrastructure.entity.EmployeeEntity;
