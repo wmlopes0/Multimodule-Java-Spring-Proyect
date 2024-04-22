@@ -7,7 +7,7 @@ import com.example.application.employee.mapper.EmployeeApplicationMapper;
 import com.example.domain.entity.Employee;
 import com.example.domain.entity.Gender;
 import com.example.domain.service.EmployeeService;
-import com.example.domain.vo.EmployeeVO;
+import com.example.domain.vo.employee.EmployeeVO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

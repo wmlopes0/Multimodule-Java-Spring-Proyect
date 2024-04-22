@@ -1,4 +1,4 @@
-package com.example.domain.vo;
+package com.example.domain.vo.employee;
 
 import com.example.domain.entity.Gender;
 import lombok.Builder;

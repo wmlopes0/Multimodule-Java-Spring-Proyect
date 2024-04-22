@@ -5,9 +5,9 @@ import java.util.List;
 import com.example.domain.entity.Employee;
 import com.example.domain.entity.Gender;
 import com.example.domain.entity.PhoneType;
-import com.example.domain.vo.EmployeeNameVO;
-import com.example.domain.vo.EmployeeNifVO;
-import com.example.domain.vo.EmployeeVO;
+import com.example.domain.vo.employee.EmployeeNameVO;
+import com.example.domain.vo.employee.EmployeeNifVO;
+import com.example.domain.vo.employee.EmployeeVO;
 import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.entity.PhoneEntity;
 

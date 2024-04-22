@@ -3,9 +3,9 @@ package com.example.domain.service;
 import java.util.List;
 
 import com.example.domain.entity.Employee;
-import com.example.domain.vo.EmployeeNameVO;
-import com.example.domain.vo.EmployeeNifVO;
-import com.example.domain.vo.EmployeeVO;
+import com.example.domain.vo.employee.EmployeeNameVO;
+import com.example.domain.vo.employee.EmployeeNifVO;
+import com.example.domain.vo.employee.EmployeeVO;
 
 public interface EmployeeService {
 
