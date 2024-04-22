@@ -1,5 +1,5 @@
 package com.example.application.company.mapper;
 
-public interface CompanyApplicationMapper{
+public interface CompanyApplicationMapper {
 
 }
