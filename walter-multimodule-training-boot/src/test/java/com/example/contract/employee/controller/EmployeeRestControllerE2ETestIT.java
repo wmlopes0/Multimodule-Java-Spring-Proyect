@@ -91,10 +91,6 @@ class EmployeeRestControllerE2ETestIT {
                        {
                            "number": "+34722748406",
                            "type": "PERSONAL"
-                       },
-                       {
-                           "number": null,
-                           "type": "COMPANY"
                        }
                    ],
                    "email": "wmlopes0@gmail.com"
@@ -107,10 +103,6 @@ class EmployeeRestControllerE2ETestIT {
                    "adult": true,
                    "gender": "Female",
                    "phones": [
-                       {
-                           "number": null,
-                           "type": "PERSONAL"
-                       },
                        {
                            "number": "+34676615106",
                            "type": "COMPANY"
@@ -169,10 +161,6 @@ class EmployeeRestControllerE2ETestIT {
                           {
                               "number": "+34722748406",
                               "type": "PERSONAL"
-                          },
-                          {
-                              "number": null,
-                              "type": "COMPANY"
                           }
                       ],
                       "email": "wmlopes0@gmail.com"
@@ -245,10 +233,6 @@ class EmployeeRestControllerE2ETestIT {
                            {
                                "number": "+34722748406",
                                "type": "PERSONAL"
-                           },
-                           {
-                               "number": null,
-                               "type": "COMPANY"
                            }
                        ],
                        "email": "wmlopes0@gmail.com"
@@ -309,10 +293,6 @@ class EmployeeRestControllerE2ETestIT {
                            {
                                "number": "+34722748406",
                                "type": "PERSONAL"
-                           },
-                           {
-                               "number": null,
-                               "type": "COMPANY"
                            }
                        ],
                        "email": "wmlopes0@gmail.com"
@@ -435,10 +415,6 @@ class EmployeeRestControllerE2ETestIT {
                            {
                                "number": "+34722748406",
                                "type": "PERSONAL"
-                           },
-                           {
-                               "number": null,
-                               "type": "COMPANY"
                            }
                        ],
                        "email": "walterlopesdiez@gmail.com"

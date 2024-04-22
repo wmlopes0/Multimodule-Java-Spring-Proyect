@@ -1,6 +1,7 @@
 package com.example.contract.employee.mapper;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.application.employee.cmd.dto.EmployeeCreateCmd;
@@ -66,6 +67,15 @@ public class EmployeeContractMapperImpl implements EmployeeContractMapper {
     int age = actualYear - employee.getBirthYear();
     boolean adult = age >= 18;
     String gender = employee.getGender().getCode() == 1 ? "Male" : "Female";
+
+    List<PhoneDTO> phones = new ArrayList<>();
+    if (employee.getPersonalPhone() != null) {
+      phones.add(new PhoneDTO(employee.getPersonalPhone(), PhoneType.PERSONAL.name()));
+    }
+    if (employee.getCompanyPhone() != null) {
+      phones.add(new PhoneDTO(employee.getCompanyPhone(), PhoneType.COMPANY.name()));
+    }
+
     return new EmployeeResponseDTO()
         .setNif(employee.getNif())
         .setCompleteName(employee.getSurname() + ", " + employee.getName())
@@ -73,10 +83,7 @@ public class EmployeeContractMapperImpl implements EmployeeContractMapper {
         .setAge(age)
         .setAdult(adult)
         .setGender(gender)
-        .setPhones(List.of(
-            new PhoneDTO(employee.getPersonalPhone(), PhoneType.PERSONAL.name()),
-            new PhoneDTO(employee.getCompanyPhone(), PhoneType.COMPANY.name()))
-        )
+        .setPhones(phones)
         .setEmail(employee.getEmail());
   }
 }

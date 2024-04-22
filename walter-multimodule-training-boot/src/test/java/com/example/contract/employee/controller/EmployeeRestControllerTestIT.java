@@ -81,8 +81,7 @@ class EmployeeRestControllerTestIT {
                     .setAdult(true)
                     .setGender("Male")
                     .setPhones(List.of(
-                        new PhoneDTO("+34722748406", PhoneType.PERSONAL.name()),
-                        new PhoneDTO(null, PhoneType.COMPANY.name())))
+                        new PhoneDTO("+34722748406", PhoneType.PERSONAL.name())))
                     .setEmail("wmlopes0@gmail.com"),
                 new EmployeeResponseDTO()
                     .setNif("45132337N")
@@ -92,8 +91,7 @@ class EmployeeRestControllerTestIT {
                     .setAdult(true)
                     .setGender("Female")
                     .setPhones(List.of(
-                        new PhoneDTO("+34676615106", PhoneType.PERSONAL.name()),
-                        new PhoneDTO(null, PhoneType.COMPANY.name())))
+                        new PhoneDTO("+34676615106", PhoneType.PERSONAL.name())))
                     .setEmail("raquelbarberosanchez90@gmail.com")
             )
         )
@@ -142,8 +140,7 @@ class EmployeeRestControllerTestIT {
                 .setAdult(true)
                 .setGender("Male")
                 .setPhones(List.of(
-                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name()),
-                    new PhoneDTO(null, PhoneType.COMPANY.name())))
+                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name())))
                 .setEmail("wmlopes0@gmail.com")
         )
     );
@@ -192,8 +189,7 @@ class EmployeeRestControllerTestIT {
                 .setAdult(true)
                 .setGender("Male")
                 .setPhones(List.of(
-                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name()),
-                    new PhoneDTO(null, PhoneType.COMPANY.name())))
+                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name())))
                 .setEmail("wmlopes0@gmail.com")
         )
     );
@@ -247,8 +243,7 @@ class EmployeeRestControllerTestIT {
                 .setAdult(true)
                 .setGender("Male")
                 .setPhones(List.of(
-                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name()),
-                    new PhoneDTO(null, PhoneType.COMPANY.name())))
+                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name())))
                 .setEmail("wmlopes0@gmail.com"),
             new EmployeeEntity()
                 .setNif("45134320V")
