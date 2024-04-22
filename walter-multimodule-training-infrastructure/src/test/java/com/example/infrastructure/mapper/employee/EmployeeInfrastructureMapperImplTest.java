@@ -1,4 +1,4 @@
-package com.example.infrastructure.mapper;
+package com.example.infrastructure.mapper.employee;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -11,8 +11,6 @@ import com.example.domain.vo.employee.EmployeeNifVO;
 import com.example.domain.vo.employee.EmployeeVO;
 import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.entity.PhoneEntity;
-import com.example.infrastructure.mapper.employee.EmployeeInfrastructureMapper;
-import com.example.infrastructure.mapper.employee.EmployeeInfrastructureMapperImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

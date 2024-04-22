@@ -2,7 +2,6 @@ package com.example.infrastructure.mapper.company;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.example.domain.entity.Company;
 import com.example.domain.entity.Employee;
@@ -10,14 +9,14 @@ import com.example.domain.vo.company.CompanyCreateVO;
 import com.example.domain.vo.company.CompanyUpdateVO;
 import com.example.infrastructure.entity.CompanyEntity;
 import com.example.infrastructure.mapper.employee.EmployeeInfrastructureMapper;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
 @Component
 public class CompanyInfrastructureMapperImpl implements CompanyInfrastructureMapper {
 
-  private final EmployeeInfrastructureMapper employeeMapper;
+  @Autowired
+  private EmployeeInfrastructureMapper employeeMapper;
 
   @Override
   public Company mapToDomain(CompanyEntity companyEntity) {
@@ -28,7 +27,7 @@ public class CompanyInfrastructureMapperImpl implements CompanyInfrastructureMap
     if (companyEntity.getEmployees() != null && !companyEntity.getEmployees().isEmpty()) {
       List<Employee> employees = companyEntity.getEmployees().stream()
           .map(employeeMapper::mapToDomain)
-          .collect(Collectors.toList());
+          .toList();
       company.setEmployees(employees);
     } else {
       company.setEmployees(new ArrayList<>());
@@ -44,7 +43,7 @@ public class CompanyInfrastructureMapperImpl implements CompanyInfrastructureMap
         .setEmployees(
             companyCreateVO.getEmployees().stream()
                 .map(employeeMapper::mapDomainToEntity)
-                .collect(Collectors.toList()));
+                .toList());
   }
 
   @Override
@@ -55,6 +54,6 @@ public class CompanyInfrastructureMapperImpl implements CompanyInfrastructureMap
         .setEmployees(
             companyUpdateVO.getEmployees().stream()
                 .map(employeeMapper::mapDomainToEntity)
-                .collect(Collectors.toList()));
+                .toList());
   }
 }
