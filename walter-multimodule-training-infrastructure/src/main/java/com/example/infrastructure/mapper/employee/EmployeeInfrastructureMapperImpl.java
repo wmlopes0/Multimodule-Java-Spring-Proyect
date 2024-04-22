@@ -68,15 +68,14 @@ public class EmployeeInfrastructureMapperImpl implements EmployeeInfrastructureM
   @Override
   public EmployeeEntity mapDomainToEntity(Employee employee) {
     List<PhoneEntity> phones = new ArrayList<>();
+    PhoneEntity personalPhone = createPhone(employee.getPersonalPhone(), PhoneType.PERSONAL);
+    if (personalPhone != null) {
+      phones.add(personalPhone);
+    }
 
     PhoneEntity companyPhone = createPhone(employee.getCompanyPhone(), PhoneType.COMPANY);
     if (companyPhone != null) {
       phones.add(companyPhone);
-    }
-
-    PhoneEntity personalPhone = createPhone(employee.getPersonalPhone(), PhoneType.PERSONAL);
-    if (personalPhone != null) {
-      phones.add(personalPhone);
     }
 
     return new EmployeeEntity()

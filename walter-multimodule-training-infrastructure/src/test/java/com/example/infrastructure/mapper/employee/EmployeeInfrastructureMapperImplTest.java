@@ -51,6 +51,34 @@ class EmployeeInfrastructureMapperImplTest {
     Assertions.assertEquals(expected, result);
   }
 
+  @ParameterizedTest
+  @MethodSource("mapToDomainParameters")
+  @DisplayName("Mapping Employee to EmployeeEntity correctly")
+  void mapDomainToEntity(List<PhoneEntity> expectedPhones, String personalPhone, String companyPhone) {
+    Employee employee = new Employee()
+        .setNif("45134320V")
+        .setName("Walter")
+        .setSurname("Martín Lopes")
+        .setBirthYear(1998)
+        .setGender(Gender.MALE)
+        .setCompanyPhone(companyPhone)
+        .setPersonalPhone(personalPhone)
+        .setEmail("wmlopes0@gmail.com");
+
+    EmployeeEntity expected = new EmployeeEntity()
+        .setNif("45134320V")
+        .setName("Walter")
+        .setLastName("Martín Lopes")
+        .setBirthYear(1998)
+        .setGender(Gender.MALE.getCode())
+        .setPhones(expectedPhones)
+        .setEmail("wmlopes0@gmail.com");
+
+    EmployeeEntity result = employeeInfrastructureMapper.mapDomainToEntity(employee);
+
+    Assertions.assertEquals(expected, result);
+  }
+
   private static Stream<Arguments> mapToDomainParameters() {
     return Stream.of(
         Arguments.of(
@@ -224,4 +252,5 @@ class EmployeeInfrastructureMapperImplTest {
         )
     );
   }
+
 }
