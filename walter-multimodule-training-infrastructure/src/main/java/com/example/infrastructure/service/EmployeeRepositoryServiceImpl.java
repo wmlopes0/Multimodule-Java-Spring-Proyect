@@ -12,7 +12,7 @@ import com.example.domain.vo.employee.EmployeeNifVO;
 import com.example.domain.vo.employee.EmployeeVO;
 import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.entity.PhoneEntity;
-import com.example.infrastructure.mapper.EmployeeInfrastructureMapper;
+import com.example.infrastructure.mapper.employee.EmployeeInfrastructureMapper;
 import com.example.infrastructure.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.example.infrastructure.mapper;
+package com.example.infrastructure.mapper.employee;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +63,30 @@ public class EmployeeInfrastructureMapperImpl implements EmployeeInfrastructureM
         .setGender(employeeVO.getGender().getCode())
         .setPhones(phones)
         .setEmail(employeeVO.getEmail());
+  }
+
+  @Override
+  public EmployeeEntity mapDomainToEntity(Employee employee) {
+    List<PhoneEntity> phones = new ArrayList<>();
+
+    PhoneEntity companyPhone = createPhone(employee.getCompanyPhone(), PhoneType.COMPANY);
+    if (companyPhone != null) {
+      phones.add(companyPhone);
+    }
+
+    PhoneEntity personalPhone = createPhone(employee.getPersonalPhone(), PhoneType.PERSONAL);
+    if (personalPhone != null) {
+      phones.add(personalPhone);
+    }
+
+    return new EmployeeEntity()
+        .setNif(employee.getNif())
+        .setName(employee.getName())
+        .setLastName(employee.getSurname())
+        .setBirthYear(employee.getBirthYear())
+        .setGender(employee.getGender().getCode())
+        .setPhones(phones)
+        .setEmail(employee.getEmail());
   }
 
   @Override

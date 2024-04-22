@@ -1,4 +1,4 @@
-package com.example.infrastructure.mapper;
+package com.example.infrastructure.mapper.employee;
 
 import java.util.List;
 
@@ -20,6 +20,8 @@ public interface EmployeeInfrastructureMapper {
   EmployeeEntity mapToEntity(EmployeeNifVO employeeNifVO);
 
   EmployeeEntity mapToEntity(EmployeeVO employeeVO);
+
+  EmployeeEntity mapDomainToEntity(Employee employee);
 
   Gender mapToGender(int genderCode);
 
