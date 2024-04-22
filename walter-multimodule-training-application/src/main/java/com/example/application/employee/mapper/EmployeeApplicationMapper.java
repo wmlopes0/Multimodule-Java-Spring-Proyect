@@ -1,17 +1,24 @@
 package com.example.application.employee.mapper;
 
 import com.example.application.employee.cmd.dto.EmployeeCreateCmd;
+import com.example.application.employee.cmd.dto.EmployeeDeleteCmd;
 import com.example.application.employee.cmd.dto.EmployeeUpdateCmd;
+import com.example.application.employee.query.dto.EmployeeByIdQuery;
 import com.example.application.employee.query.dto.EmployeeByNameQuery;
 import com.example.domain.vo.EmployeeNameVO;
-import com.example.domain.vo.EmployeeUpdateVO;
+import com.example.domain.vo.EmployeeNifVO;
+import com.example.domain.vo.EmployeeVO;
 
 public interface EmployeeApplicationMapper {
 
-  EmployeeNameVO mapToEmployeeNameVO(EmployeeCreateCmd employeeCreateCmd);
+  EmployeeVO mapToEmployeeVO(EmployeeCreateCmd employeeCreateCmd);
+
+  EmployeeVO mapToEmployeeVO(EmployeeUpdateCmd employeeUpdateCmd);
+
+  EmployeeNifVO mapToEmployeeNifVO(EmployeeDeleteCmd employeeDeleteCmd);
+
+  EmployeeNifVO mapToEmployeeNifVO(EmployeeByIdQuery employeeByIdQuery);
 
   EmployeeNameVO mapToEmployeeNameVO(EmployeeByNameQuery employeeByNameQuery);
-
-  EmployeeUpdateVO mapToEmployeeUpdateVO(EmployeeUpdateCmd employeeUpdateCmd);
 
 }

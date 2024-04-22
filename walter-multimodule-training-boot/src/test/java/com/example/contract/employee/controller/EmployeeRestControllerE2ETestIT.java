@@ -4,19 +4,28 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.example.boot.app.App;
+import com.example.domain.entity.Gender;
+import com.example.domain.entity.PhoneType;
 import com.example.infrastructure.entity.EmployeeEntity;
+import com.example.infrastructure.entity.PhoneEntity;
 import com.example.infrastructure.repository.EmployeeRepository;
-import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,30 +47,72 @@ class EmployeeRestControllerE2ETestIT {
     repository.deleteAll();
   }
 
-  @Test
+  @ParameterizedTest
+  @MethodSource("listEmployeesParameters")
   @DisplayName("List employees return correctly list")
-  void listEmployeesTest() throws Exception {
-    Long id1 = repository.save(new EmployeeEntity().setNumber(1L).setName("Walter")).getNumber();
-    Long id2 = repository.save(new EmployeeEntity().setNumber(2L).setName("Kike")).getNumber();
-
-    String expected =
-        String.format("""
-            [
-            {
-              "number":%d,
-              "name":"KIKE",
-              "nameLength":4
-            },
-            {
-              "number":%d,
-              "name":"WALTER",
-              "nameLength":6
-            }
-            ]""", id2, id1);
+  void listEmployeesTest(EmployeeEntity employeeEntity1, EmployeeEntity employeeEntity2, String expected) throws Exception {
+    repository.save(employeeEntity1);
+    repository.save(employeeEntity2);
 
     mockMvc.perform(get("/employees/"))
         .andExpect(status().isOk())
         .andExpect(content().json(expected, false));
+  }
+
+  private static Stream<Arguments> listEmployeesParameters() {
+    return Stream.of(
+        Arguments.of(
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("wmlopes0@gmail.com"),
+            new EmployeeEntity()
+                .setNif("45132337N")
+                .setName("Raquel")
+                .setLastName("Barbero Sánchez")
+                .setBirthYear(1996)
+                .setGender(Gender.FEMALE.getCode())
+                .setPhones(List.of(new PhoneEntity("+34", "676615106", PhoneType.COMPANY)))
+                .setEmail("raquelbarberosanchez90@gmail.com"),
+            """
+                [
+                  {
+                   "nif": "45134320V",
+                   "completeName": "Martín Lopes, Walter",
+                   "birthYear": 1998,
+                   "age": 26,
+                   "adult": true,
+                   "gender": "Male",
+                   "phones": [
+                       {
+                           "number": "+34722748406",
+                           "type": "PERSONAL"
+                       }
+                   ],
+                   "email": "wmlopes0@gmail.com"
+                  },
+                {
+                   "nif": "45132337N",
+                   "completeName": "Barbero Sánchez, Raquel",
+                   "birthYear": 1996,
+                   "age": 28,
+                   "adult": true,
+                   "gender": "Female",
+                   "phones": [
+                       {
+                           "number": "+34676615106",
+                           "type": "COMPANY"
+                       }
+                   ],
+                   "email": "raquelbarberosanchez90@gmail.com"
+                  }
+                ]"""
+        )
+    );
   }
 
   @Test
@@ -75,60 +126,118 @@ class EmployeeRestControllerE2ETestIT {
         .andExpect(content().json(expected, true));
   }
 
-  @Test
+  @ParameterizedTest
+  @MethodSource("getEmployeeByIdParameters")
   @DisplayName("Get employee by ID returns employee and 200 response correctly")
-  void getEmployeeByIdTest() throws Exception {
-    Long id1 = repository.save(new EmployeeEntity().setNumber(1L).setName("Walter")).getNumber();
+  void getEmployeeByIdTest(String nif, EmployeeEntity employeeEntity, String expected) throws Exception {
+    repository.save(employeeEntity);
 
-    String expected =
-        String.format("""
-            {
-              "number":%d,
-              "name":"WALTER",
-              "nameLength":6
-            }""", id1);
-
-    mockMvc.perform(get("/employees/" + id1))
+    mockMvc.perform(get("/employees/{nif}", nif))
         .andExpect(status().isOk())
-        .andExpect(content().json(expected, true));
+        .andExpect(content().json(expected, false));
+  }
+
+  private static Stream<Arguments> getEmployeeByIdParameters() {
+    return Stream.of(
+        Arguments.of(
+            "45134320V",
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("wmlopes0@gmail.com"),
+            """
+                    {
+                      "nif": "45134320V",
+                      "completeName": "Martín Lopes, Walter",
+                      "birthYear": 1998,
+                      "age": 26,
+                      "adult": true,
+                      "gender": "Male",
+                      "phones": [
+                          {
+                              "number": "+34722748406",
+                              "type": "PERSONAL"
+                          }
+                      ],
+                      "email": "wmlopes0@gmail.com"
+                    }
+                """)
+    );
   }
 
   @Test
-  @DisplayName("Get employee by ID not found returns 404 response")
+  @DisplayName("Get employee by NIF not found returns 404 response")
   void getEmployeeByIdNotFoundTest() throws Exception {
     String expected = "";
+    String nif = "45134320V";
 
-    mockMvc.perform(get("/employees/" + 1))
+    mockMvc.perform(get("/employees/{nif}", nif))
         .andExpect(status().isNotFound())
         .andExpect(content().string(expected));
   }
 
-  @Test
-  @DisplayName("Response for GetEmployeeById with null ID should be Internal Server Error")
-  void getEmployeeByIdErrorTest() throws Exception {
-    String expected = "";
+  @ParameterizedTest
+  @CsvSource(value = {
+      "45134320Z",
+      "4513",
+  }, nullValues = "null")
+  @DisplayName("Invalid NIF should result in HTTP 500 InternalServerError")
+  void getEmployeeByIdInvalidTest(String nif) throws Exception {
+    String expected = """
+        {
+         "nif":"Invalid NIF"
+        }
+        """;
 
-    mockMvc.perform(get("/employees/" + null))
+    mockMvc.perform(get("/employees/{nif}", nif))
         .andExpect(status().isBadRequest())
-        .andExpect(content().string(expected));
+        .andExpect(content().json(expected, false));
   }
 
-  @Test
+  @ParameterizedTest
+  @MethodSource("getEmployeeByNameParameters")
   @DisplayName("Get employee by name returns employee and 200 response correctly")
-  void getEmployeeByNameTest() throws Exception {
-    Long id1 = repository.save(new EmployeeEntity().setNumber(1L).setName("Walter")).getNumber();
-    String name = "Wal";
-    String expected =
-        String.format("""
-            {
-              "number":%d,
-              "name":"WALTER",
-              "nameLength":6
-            }""", id1);
+  void getEmployeeByNameTest(String name, EmployeeEntity employeeEntity, String expected) throws Exception {
+    repository.save(employeeEntity);
 
-    mockMvc.perform(get("/employees/name/" + name))
+    mockMvc.perform(get("/employees/name/{name}", name))
         .andExpect(status().isOk())
         .andExpect(content().json(expected, true));
+  }
+
+  private static Stream<Arguments> getEmployeeByNameParameters() {
+    return Stream.of(
+        Arguments.of(
+            "Wal",
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("wmlopes0@gmail.com"),
+            """
+                {
+                       "nif": "45134320V",
+                       "completeName": "Martín Lopes, Walter",
+                       "birthYear": 1998,
+                       "age": 26,
+                       "adult": true,
+                       "gender": "Male",
+                       "phones": [
+                           {
+                               "number": "+34722748406",
+                               "type": "PERSONAL"
+                           }
+                       ],
+                       "email": "wmlopes0@gmail.com"
+                }""")
+    );
   }
 
   @Test
@@ -137,167 +246,303 @@ class EmployeeRestControllerE2ETestIT {
     String name = "Wal";
     String expected = "";
 
-    mockMvc.perform(get("/employees/name/" + name))
+    mockMvc.perform(get("/employees/name/{name}", name))
         .andExpect(status().isNotFound())
         .andExpect(content().string(expected));
   }
 
-  @Test
+  @ParameterizedTest
+  @MethodSource("newEmployeeParameters")
   @DisplayName("Add new employee returns 201 response")
-  void newEmployeeTest() throws Exception {
-    String name = "Walter";
-    String jsonContent = String.format("""
-        {
-          "name":"%s"
-        }""", name);
-
-    String result = mockMvc.perform(post("/employees/")
+  void newEmployeeTest(String nif, String jsonContent, String expected, EmployeeEntity entityExpected) throws Exception {
+    mockMvc.perform(post("/employees/")
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonContent))
         .andExpect(status().isCreated())
-        .andReturn()
-        .getResponse()
-        .getContentAsString();
+        .andExpect(content().json(expected, false));
 
-    Integer number = JsonPath.read(result, "$.number");
-    String expected = String.format("""
-        {"number":%d,"name":"%s"}""", number.longValue(), name);
+    Optional<EmployeeEntity> fetchExpected = Optional.of(entityExpected);
+    Optional<EmployeeEntity> fetchResult = repository.findById(nif);
 
-    Optional<EmployeeEntity> fetchExpected = Optional.of(new EmployeeEntity(number.longValue(), name));
-    Optional<EmployeeEntity> fetchResult = repository.findById(number.longValue());
-
-    Assertions.assertEquals(expected, result);
     Assertions.assertEquals(fetchExpected, fetchResult);
   }
 
-  @Test
-  @DisplayName("Add new employee with name null returns 201 response")
-  void newEmployeeNameNullTest() throws Exception {
-    String jsonContent = """
-        {
-          "name":null
-        }""";
+  private static Stream<Arguments> newEmployeeParameters() {
+    return Stream.of(
+        Arguments.of(
+            "45134320V",
+            """
+                {
+                       "nif": "45134320V",
+                       "name": "Walter",
+                       "surname": "Martín Lopes",
+                       "birthYear": 1998,
+                       "gender": "Male",
+                       "personalPhone": "+34722748406",
+                       "email": "wmlopes0@gmail.com"
+                      }""",
+            """
+                {
+                       "nif": "45134320V",
+                       "completeName": "Martín Lopes, Walter",
+                       "birthYear": 1998,
+                       "age":26,
+                       "adult":true,
+                       "gender": "Male",
+                       "phones": [
+                           {
+                               "number": "+34722748406",
+                               "type": "PERSONAL"
+                           }
+                       ],
+                       "email": "wmlopes0@gmail.com"
+                      }""",
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("wmlopes0@gmail.com")
+        )
+    );
+  }
 
-    String result = mockMvc.perform(post("/employees/")
+  @ParameterizedTest
+  @MethodSource("newEmployeeInvalidParameters")
+  @DisplayName("Creating an employee with invalid parameters should return HTTP 400 BadRequest")
+  void newEmployeeInvalidParametersTest(String jsonContent, String expected) throws Exception {
+    mockMvc.perform(post("/employees/")
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonContent))
-        .andExpect(status().isCreated())
-        .andReturn()
-        .getResponse()
-        .getContentAsString();
-
-    Integer number = JsonPath.read(result, "$.number");
-    String expected = String.format("""
-        {"number":%d,"name":null}""", number.longValue());
-
-    Optional<EmployeeEntity> fetchExpected = Optional.of(new EmployeeEntity(number.longValue(), null));
-    Optional<EmployeeEntity> fetchResult = repository.findById(number.longValue());
-
-    Assertions.assertEquals(expected, result);
-    Assertions.assertEquals(fetchExpected, fetchResult);
+        .andExpect(status().isBadRequest())
+        .andExpect(content().json(expected, false));
   }
 
-  @Test
+  private static Stream<Arguments> newEmployeeInvalidParameters() {
+    return Stream.of(
+        Arguments.of(
+            """
+                {
+                       "nif": "451343260V",
+                       "name": "",
+                       "birthYear": 2025,
+                       "gender": "Binary",
+                       "personalPhone": "722748406",
+                       "email": "wmlopes0.gmail.com"
+                      }""",
+            """
+                {
+                       "nif": "Invalid NIF",
+                       "name": "Name cannot be empty",
+                       "birthYear": "Invalid year of birth",
+                       "gender": "Gender must be either 'Male' or 'Female'",
+                       "personalPhone": "Invalid phone format",
+                       "email": "Invalid email format"
+                      }"""
+
+        ),
+        Arguments.of(
+            """
+                {
+                       "surname": "Martín Lopes",
+                       "companyPhone": "+34722748406",
+                       "email": "wmlopes0@gmail.com"
+                      }""",
+            """
+                {
+                       "nif": "NIF cannot be null",
+                       "name": "Name cannot be null",
+                       "birthYear": "Birth year cannot be null",
+                       "gender": "Gender cannot be null",
+                       "personalPhone": "Personal phone cannot be null"
+                      }"""
+
+        )
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("updateEmployeeByIdParameters")
   @DisplayName("Update employee by ID successfully returns 200 code response")
-  void updateEmployeeByIdTest() throws Exception {
-    Long id = repository.save(new EmployeeEntity().setNumber(1L).setName("Walter")).getNumber();
-    String newName = "ChangedName";
-    String jsonContent = String.format("""
-        {
-          "name":"%s"
-        }""", newName);
+  void updateEmployeeByIdTest(String nif, EmployeeEntity employeeEntity, String jsonContent, String expected, EmployeeEntity entityExpected)
+      throws Exception {
+    repository.save(employeeEntity);
 
-    String expected = String.format("""
-        {
-          "number":%d,
-          "name":"%s"
-        }""", id, newName);
-
-    mockMvc.perform(put("/employees/{id}", id)
+    mockMvc.perform(put("/employees/{nif}", nif)
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonContent))
         .andExpect(status().isOk())
-        .andExpect(content().json(expected, true));
+        .andExpect(content().json(expected, false));
 
-    Optional<EmployeeEntity> fetchExpected = Optional.of(new EmployeeEntity(id, newName));
-    Optional<EmployeeEntity> fetchResult = repository.findById(id);
+    Optional<EmployeeEntity> fetchExpected = Optional.of(entityExpected);
+    Optional<EmployeeEntity> fetchResult = repository.findById(nif);
 
     Assertions.assertEquals(fetchExpected, fetchResult);
   }
 
-  @Test
-  @DisplayName("Update employee by ID with name null successfully returns 200 code response")
-  void updateEmployeeByIdNameNullTest() throws Exception {
-    Long id = repository.save(new EmployeeEntity().setNumber(1L).setName("Walter")).getNumber();
-    String jsonContent = """
-        {
-        "name":null
-        }""";
+  private static Stream<Arguments> updateEmployeeByIdParameters() {
+    return Stream.of(
+        Arguments.of(
+            "45134320V",
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("wmlopes0@gmail.com"),
+            """
+                {
+                       "name": "Walter",
+                       "surname":"Martín Lopes",
+                       "birthYear": 1998,
+                       "gender": "Male",
+                       "personalPhone": "+34722748406",
+                       "email": "walterlopesdiez@gmail.com"
+                      }""",
+            """
+                {
+                       "nif": "45134320V",
+                       "completeName": "Martín Lopes, Walter",
+                       "birthYear": 1998,
+                       "age":26,
+                       "adult":true,
+                       "gender": "Male",
+                       "phones": [
+                           {
+                               "number": "+34722748406",
+                               "type": "PERSONAL"
+                           }
+                       ],
+                       "email": "walterlopesdiez@gmail.com"
+                      }""",
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("walterlopesdiez@gmail.com")
 
-    String expected = String.format("""
-        {
-        "number":%d,
-        "name":null
-        }""", id);
+        )
+    );
+  }
 
-    mockMvc.perform(put("/employees/{id}", id)
+  @ParameterizedTest
+  @MethodSource("updateEmployeeInvalidParameters")
+  @DisplayName("Updating an employee with invalid parameters should return HTTP 400 BadRequest")
+  void updateEmployeeInvalidParametersTest(String nif, String jsonContent, String expected) throws Exception {
+    mockMvc.perform(put("/employees/{nif}", nif)
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonContent))
-        .andExpect(status().isOk())
-        .andExpect(content().json(expected, true));
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(content().json(expected, false));
+  }
 
-    Optional<EmployeeEntity> fetchExpected = Optional.of(new EmployeeEntity(id, null));
-    Optional<EmployeeEntity> fetchResult = repository.findById(id);
+  private static Stream<Arguments> updateEmployeeInvalidParameters() {
+    return Stream.of(
+        Arguments.of(
+            "45134320V",
+            """
+                {
+                       "name": "",
+                       "birthYear": 2025,
+                       "gender": "Binary",
+                       "personalPhone": "722748406",
+                       "email": "wmlopes0.gmail.com"
+                      }""",
+            """
+                {
+                       "name": "Name cannot be empty",
+                       "birthYear": "Invalid year of birth",
+                       "gender": "Gender must be either 'Male' or 'Female'",
+                       "personalPhone": "Invalid phone format",
+                       "email": "Invalid email format"
+                      }"""
 
-    Assertions.assertEquals(fetchExpected, fetchResult);
+        )
+    );
   }
 
   @Test
   @DisplayName("Update employee by ID not found returns 404 code response")
   void updateEmployeeByIdNotFoundTest() throws Exception {
-    Long id = 1L;
-    String newName = "ChangedName";
-    String jsonContent = String.format("""
+    String nif = "45134320V";
+    String jsonContent = """
         {
-        "name":"%s"
-        }""", newName);
+               "name": "Walter",
+               "surname": "Martín Lopes",
+               "birthYear": 1998,
+               "gender": "Male",
+               "personalPhone": "+34722748406",
+               "email": "walterlopesdiez@gmail.com"
+              }""";
 
-    String expected = "";
-
-    mockMvc.perform(put("/employees/{id}", id)
+    mockMvc.perform(put("/employees/{nif}", nif)
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonContent))
         .andExpect(status().isNotFound())
-        .andExpect(content().string(expected));
+        .andExpect(content().string(""));
   }
 
   @Test
   @DisplayName("Deleted employee by ID successfully returns 200 code response")
   void deleteEmployeeByIdTest() throws Exception {
-    Long id = repository.save(new EmployeeEntity().setNumber(1L).setName("Walter")).getNumber();
+    String nif = "45134320V";
 
-    mockMvc.perform(delete("/employees/{id}", id))
+    repository.save(new EmployeeEntity()
+        .setNif(nif)
+        .setName("Walter")
+        .setLastName("Martín Lopes")
+        .setBirthYear(1998)
+        .setGender(Gender.MALE.getCode())
+        .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+        .setEmail("wmlopes0@gmail.com")
+    );
+
+    mockMvc.perform(delete("/employees/{nif}", nif))
         .andExpect(status().isOk());
 
     Optional<EmployeeEntity> fetchExpected = Optional.empty();
-    Optional<EmployeeEntity> fetchResult = repository.findById(id);
+    Optional<EmployeeEntity> fetchResult = repository.findById(nif);
 
     Assertions.assertEquals(fetchExpected, fetchResult);
+  }
+
+  @ParameterizedTest
+  @CsvSource(value = {
+      "45134320Z",
+      "4513"
+  }, nullValues = "null")
+  @DisplayName("Invalid NIF should result in HTTP 500 InternalServerError")
+  void deleteEmployeeByIdInvalidTest(String nif) throws Exception {
+    String jsonContent = String.format("""
+        {
+         "nif": "%s"
+        }""", nif);
+    String expected = """
+        {
+         "nif":"Invalid NIF"
+        }
+        """;
+
+    mockMvc.perform(delete("/employees/{nif}", nif)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(jsonContent))
+        .andExpect(status().isBadRequest())
+        .andExpect(content().json(expected, false));
   }
 
   @Test
   @DisplayName("Delete employee by ID failed returns 404 code response.")
   void deleteEmployeeByIdNotFoundTest() throws Exception {
-    Long id = 1L;
-    mockMvc.perform(delete("/employees/{id}", id))
+    String nif = "45134320V";
+    mockMvc.perform(delete("/employees/{nif}", nif))
         .andExpect(status().isNotFound());
-  }
-
-  @Test
-  @DisplayName("Response for DeleteEmployeeById with null ID should be Internal Server Error")
-  void deleteEmployeeByIdErrorTest() throws Exception {
-    Long id = null;
-    mockMvc.perform(delete("/employees/{id}", id))
-        .andExpect(status().isMethodNotAllowed());
   }
 }

@@ -18,7 +18,7 @@ public class EmployeeUpdateHandlerImpl implements EmployeeUpdateHandler {
   @Override
   public Employee updateEmployee(EmployeeUpdateCmd employeeUpdateCmd) {
     return repositoryService.updateEmployeeById(
-        mapper.mapToEmployeeUpdateVO(employeeUpdateCmd)
+        mapper.mapToEmployeeVO(employeeUpdateCmd)
     );
   }
 }

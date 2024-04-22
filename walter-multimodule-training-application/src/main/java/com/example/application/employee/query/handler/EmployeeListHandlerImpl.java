@@ -15,8 +15,6 @@ public class EmployeeListHandlerImpl implements EmployeeListHandler {
 
   @Override
   public List<Employee> listEmployees() {
-
     return repositoryService.listEmployees();
-
   }
 }
