@@ -7,7 +7,9 @@ import com.example.application.company.query.dto.CompanyByIdQuery;
 import com.example.contract.company.dto.CompanyRequestDTO;
 import com.example.contract.company.dto.CompanyResponseDTO;
 import com.example.contract.company.dto.CompanyUpdateDTO;
+import com.example.contract.company.dto.EmployeeDTO;
 import com.example.domain.entity.Company;
+import com.example.domain.entity.Employee;
 
 public interface CompanyContractMapper {
 
@@ -20,4 +22,6 @@ public interface CompanyContractMapper {
   CompanyByIdQuery mapToCompanyByIdQuery(String cif);
 
   CompanyResponseDTO mapToCompanyResponseDTO(Company company);
+
+  EmployeeDTO mapToEmployeeDTO(Employee employee);
 }
