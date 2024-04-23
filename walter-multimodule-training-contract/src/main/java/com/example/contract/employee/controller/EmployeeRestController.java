@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.application.employee.cmd.dto.EmployeeCreateCmd;
+import com.example.application.employee.cmd.handler.AddEmployeeToCompanyHandler;
 import com.example.application.employee.cmd.handler.EmployeeCreateHandler;
 import com.example.application.employee.cmd.handler.EmployeeDeleteHandler;
 import com.example.application.employee.cmd.handler.EmployeeUpdateHandler;
+import com.example.application.employee.cmd.handler.RemoveEmployeeFromCompanyHandler;
 import com.example.application.employee.query.handler.EmployeeGetByIdHandler;
 import com.example.application.employee.query.handler.EmployeeGetByNameHandler;
 import com.example.application.employee.query.handler.EmployeeListHandler;
@@ -53,6 +55,9 @@ public class EmployeeRestController {
 
   private final EmployeeListHandler employeeListHandler;
 
+  private final AddEmployeeToCompanyHandler addEmployeeToCompanyHandler;
+
+  private final RemoveEmployeeFromCompanyHandler removeEmployeeFromCompanyHandler;
 
   private final EmployeeContractMapper mapper;
 
@@ -123,4 +128,20 @@ public class EmployeeRestController {
         ? ResponseEntity.ok().build()
         : ResponseEntity.notFound().build();
   }
+
+//  @Operation(summary = "More information...", description = "This endpoint add Employee to Company")
+//  @ApiResponse(responseCode = "200", description = "Successful operation")
+//  @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
+//  @DeleteMapping("/{nif}")
+//  public ResponseEntity<Object> addEmployeeToCompany(@PathVariable("nif") @ValidNIF String nif) {
+//    return null;
+//  }
+//
+//  @Operation(summary = "More information...", description = "This endpoint remove Employee from Company")
+//  @ApiResponse(responseCode = "200", description = "Successful operation")
+//  @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
+//  @DeleteMapping("/{nif}")
+//  public ResponseEntity<Object> removeEmployeeFromCompany(@PathVariable("nif") @ValidNIF String nif) {
+//    return null;
+//  }
 }
