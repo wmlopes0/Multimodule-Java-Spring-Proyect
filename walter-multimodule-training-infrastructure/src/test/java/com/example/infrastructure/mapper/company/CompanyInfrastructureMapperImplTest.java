@@ -9,19 +9,27 @@ import com.example.domain.entity.Gender;
 import com.example.domain.entity.PhoneType;
 import com.example.domain.vo.company.CompanyCreateVO;
 import com.example.domain.vo.company.CompanyUpdateVO;
+import com.example.infrastructure.config.TestConfig;
 import com.example.infrastructure.entity.CompanyEntity;
 import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.entity.PhoneEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = TestConfig.class)
 class CompanyInfrastructureMapperImplTest {
 
-  private final CompanyInfrastructureMapper companyInfrastructureMapper = new CompanyInfrastructureMapperImpl();
+  @Autowired
+  private CompanyInfrastructureMapper companyInfrastructureMapper;
 
   @ParameterizedTest
   @MethodSource("listEmployeesParameters")
