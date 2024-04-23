@@ -14,6 +14,7 @@ import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.entity.PhoneEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -57,19 +58,16 @@ class CompanyInfrastructureMapperImplTest {
     Assertions.assertEquals(expected, result);
   }
 
-  @ParameterizedTest
-  @MethodSource("listEmployeesParameters")
+  @Test
   @DisplayName("Mapping CompanyUpdateVO to CompanyEntity correctly")
-  void mapComanyUpdateVOToEntityTest(List<EmployeeEntity> employeeEntities, List<Employee> employees) {
+  void mapComanyUpdateVOToEntityTest() {
     CompanyUpdateVO companyUpdateVO = CompanyUpdateVO.builder()
         .cif("V33778580")
         .name("Company S.L")
-        .employees(employees)
         .build();
     CompanyEntity expected = new CompanyEntity()
         .setCif("V33778580")
-        .setName("Company S.L")
-        .setEmployees(employeeEntities);
+        .setName("Company S.L");
 
     CompanyEntity result = companyInfrastructureMapper.mapToEntity(companyUpdateVO);
     Assertions.assertEquals(expected, result);

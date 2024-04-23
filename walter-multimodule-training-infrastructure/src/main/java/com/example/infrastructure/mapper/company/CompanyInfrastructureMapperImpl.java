@@ -50,10 +50,6 @@ public class CompanyInfrastructureMapperImpl implements CompanyInfrastructureMap
   public CompanyEntity mapToEntity(CompanyUpdateVO companyUpdateVO) {
     return new CompanyEntity()
         .setCif(companyUpdateVO.getCif())
-        .setName(companyUpdateVO.getName())
-        .setEmployees(
-            companyUpdateVO.getEmployees().stream()
-                .map(employeeMapper::mapDomainToEntity)
-                .toList());
+        .setName(companyUpdateVO.getName());
   }
 }
