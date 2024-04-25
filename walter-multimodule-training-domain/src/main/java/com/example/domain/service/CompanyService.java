@@ -12,7 +12,7 @@ public interface CompanyService {
 
   Company updateCompany(CompanyUpdateVO companyUpdateVO);
 
-  Company deleteCompany(String cif);
+  boolean deleteCompany(String cif);
 
   Company getCompany(String cif);
 
