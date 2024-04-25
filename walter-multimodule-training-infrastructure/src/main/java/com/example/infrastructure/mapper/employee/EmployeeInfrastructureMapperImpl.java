@@ -26,6 +26,7 @@ public class EmployeeInfrastructureMapperImpl implements EmployeeInfrastructureM
         .setGender(mapToGender(employeeEntity.getGender()))
         .setCompanyPhone(extractPhoneWithTypeOfList(employeeEntity.getPhones(), PhoneType.COMPANY))
         .setPersonalPhone(extractPhoneWithTypeOfList(employeeEntity.getPhones(), PhoneType.PERSONAL))
+        .setCompany(employeeEntity.getCompany())
         .setEmail(employeeEntity.getEmail());
   }
 
@@ -62,6 +63,7 @@ public class EmployeeInfrastructureMapperImpl implements EmployeeInfrastructureM
         .setBirthYear(employeeVO.getBirthYear())
         .setGender(employeeVO.getGender().getCode())
         .setPhones(phones)
+        .setCompany(employeeVO.getCompany())
         .setEmail(employeeVO.getEmail());
   }
 
@@ -85,6 +87,7 @@ public class EmployeeInfrastructureMapperImpl implements EmployeeInfrastructureM
         .setBirthYear(employee.getBirthYear())
         .setGender(employee.getGender().getCode())
         .setPhones(phones)
+        .setCompany(employee.getCompany())
         .setEmail(employee.getEmail());
   }
 

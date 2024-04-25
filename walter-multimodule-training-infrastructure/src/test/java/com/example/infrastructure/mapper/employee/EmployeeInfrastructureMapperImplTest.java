@@ -34,6 +34,7 @@ class EmployeeInfrastructureMapperImplTest {
         .setBirthYear(1998)
         .setGender(Gender.MALE.getCode())
         .setPhones(phones)
+        .setCompany("H91313551")
         .setEmail("wmlopes0@gmail.com");
 
     Employee expected = new Employee()
@@ -44,6 +45,7 @@ class EmployeeInfrastructureMapperImplTest {
         .setGender(Gender.MALE)
         .setCompanyPhone(expectedCompanyPhone)
         .setPersonalPhone(expectedPersonalPhone)
+        .setCompany("H91313551")
         .setEmail("wmlopes0@gmail.com");
 
     Employee result = employeeInfrastructureMapper.mapToDomain(employeeEntity);
@@ -63,6 +65,7 @@ class EmployeeInfrastructureMapperImplTest {
         .setGender(Gender.MALE)
         .setCompanyPhone(companyPhone)
         .setPersonalPhone(personalPhone)
+        .setCompany("H91313551")
         .setEmail("wmlopes0@gmail.com");
 
     EmployeeEntity expected = new EmployeeEntity()
@@ -72,6 +75,7 @@ class EmployeeInfrastructureMapperImplTest {
         .setBirthYear(1998)
         .setGender(Gender.MALE.getCode())
         .setPhones(expectedPhones)
+        .setCompany("H91313551")
         .setEmail("wmlopes0@gmail.com");
 
     EmployeeEntity result = employeeInfrastructureMapper.mapDomainToEntity(employee);
@@ -141,6 +145,7 @@ class EmployeeInfrastructureMapperImplTest {
                 .gender(Gender.MALE)
                 .personalPhone("+34722748406")
                 .companyPhone("+34676615106")
+                .company("H91313551")
                 .email("wmlopes0@gmail.com").build(),
             new EmployeeEntity()
                 .setNif("45134320V")
@@ -151,6 +156,7 @@ class EmployeeInfrastructureMapperImplTest {
                 .setPhones(List.of(
                     new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
                     new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                .setCompany("H91313551")
                 .setEmail("wmlopes0@gmail.com")
         ),
         Arguments.of(
@@ -160,6 +166,7 @@ class EmployeeInfrastructureMapperImplTest {
                 .birthYear(1998)
                 .gender(Gender.MALE)
                 .companyPhone("+34676615106")
+                .company("H91313551")
                 .email("wmlopes0@gmail.com").build(),
             new EmployeeEntity()
                 .setNif("45134320V")
@@ -168,6 +175,7 @@ class EmployeeInfrastructureMapperImplTest {
                 .setGender(Gender.MALE.getCode())
                 .setPhones(List.of(
                     new PhoneEntity("+34", "676615106", PhoneType.COMPANY)))
+                .setCompany("H91313551")
                 .setEmail("wmlopes0@gmail.com")
         )
     );

@@ -35,6 +35,8 @@ public class EmployeeEntity {
   @Size(min = 1, message = "Phone list cannot be empty")
   private List<PhoneEntity> phones;
 
+  private String company;
+
   @NotNull(message = "Email cannot be null")
   private String email;
 }

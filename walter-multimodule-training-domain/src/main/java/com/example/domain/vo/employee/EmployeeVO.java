@@ -22,5 +22,7 @@ public class EmployeeVO {
 
   String personalPhone;
 
+  String company;
+
   String email;
 }
