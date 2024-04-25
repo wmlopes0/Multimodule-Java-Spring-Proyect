@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.domain.entity.Company;
+import com.example.domain.entity.Employee;
 import com.example.domain.exception.CompanyNotFoundException;
 import com.example.domain.service.CompanyService;
 import com.example.domain.service.EmployeeService;
@@ -31,6 +32,20 @@ public class CompanyRepositoryServiceImpl implements CompanyService {
   private final EmployeeInfrastructureMapper employeeMapper;
 
   private final CompanyInfrastructureMapper companyMapper;
+
+  @Override
+  public List<Company> getCompanies() {
+    return companyRepository.findAll().stream()
+        .map(companyMapper::mapToDomain)
+        .toList();
+  }
+
+  @Override
+  public Company getCompany(String cif) {
+    return companyRepository.findById(cif)
+        .map(companyMapper::mapToDomain)
+        .orElse(null);
+  }
 
   @Override
   public Company createCompany(CompanyCreateVO companyCreateVO) {
@@ -61,27 +76,14 @@ public class CompanyRepositoryServiceImpl implements CompanyService {
   }
 
   @Override
-  public Company getCompany(String cif) {
-    return companyRepository.findById(cif)
-        .map(companyMapper::mapToDomain)
-        .orElse(null);
-  }
-
-  @Override
-  public List<Company> getCompanies() {
-    return companyRepository.findAll().stream()
-        .map(companyMapper::mapToDomain)
-        .toList();
-  }
-
-  @Override
   @Transactional
   public Company addEmployeeToCompany(String nif, String cif) {
     EmployeeNifVO employeeNifVO = EmployeeNifVO.builder().nif(nif).build();
-    EmployeeEntity employee = employeeMapper.mapDomainToEntity(employeeService.getEmployeeById(employeeNifVO));
+    Employee employee = employeeService.getEmployeeById(employeeNifVO);
     if (employee == null) {
       return null;
     }
+
     CompanyEntity company = companyRepository.findById(cif).orElse(null);
     if (company == null) {
       return null;
@@ -92,14 +94,14 @@ public class CompanyRepositoryServiceImpl implements CompanyService {
         .company(cif)
         .build();
 
-    employee = employeeMapper.mapDomainToEntity(employeeService.updateEmployeeById(employeeUpdated));
+    EmployeeEntity employeeEntity = employeeMapper.mapDomainToEntity(employeeService.updateEmployeeById(employeeUpdated));
 
     List<EmployeeEntity> employees = company.getEmployees();
     if (employees == null) {
       employees = new ArrayList<>();
     }
 
-    employees.add(employee);
+    employees.add(employeeEntity);
     company.setEmployees(employees);
     companyRepository.save(company);
     return companyMapper.mapToDomain(company);
