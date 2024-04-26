@@ -122,7 +122,7 @@ public class CompanyRepositoryServiceImpl implements CompanyService {
     }
 
     List<EmployeeEntity> employees = new ArrayList<>(company.getEmployees());
-    boolean isRemoved = employees != null && employees.removeIf(e -> e.getNif().equals(nif));
+    boolean isRemoved = employees.removeIf(e -> e.getNif().equals(nif));
 
     if (isRemoved) {
       company.setEmployees(employees);
