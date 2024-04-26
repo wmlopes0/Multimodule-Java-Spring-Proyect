@@ -31,7 +31,7 @@ class EmployeeCreateHandlerImplTest {
 
   @Test
   @DisplayName("Add new Employee successfully")
-  void addEmployee() {
+  void addEmployeeTest() {
     EmployeeCreateCmd employeeCreateCmd = new EmployeeCreateCmd()
         .setNif("45134320V")
         .setName("Walter")
