@@ -645,21 +645,137 @@ class CompanyRepositoryServiceImplTest {
   @Test
   @DisplayName("Fail to add an employee to a non-existing company")
   void addEmployeeToCompanyNotFoundTest() {
+    String nif = "45134320V";
+    String cif = "Q4947066I";
+    Employee employee = new Employee()
+        .setNif("45134320V")
+        .setName("Walter")
+        .setSurname("Martín Lopes")
+        .setBirthYear(1998)
+        .setGender(Gender.MALE)
+        .setCompanyPhone("+34676615106")
+        .setPersonalPhone("+34722748406")
+        .setCompany(null)
+        .setEmail("wmlopes0@gmail.com");
 
+    EmployeeNifVO employeeNifVO = EmployeeNifVO.builder().nif("45134320V").build();
+    Mockito.when(employeeService.getEmployeeById(employeeNifVO)).thenReturn(employee);
+    Mockito.when(repository.findById(cif)).thenReturn(Optional.empty());
+
+    Company result = service.addEmployeeToCompany(nif, cif);
+    Assertions.assertNull(result);
+    Mockito.verify(employeeService, Mockito.times(1)).getEmployeeById(employeeNifVO);
+    Mockito.verify(repository, times(1)).findById(cif);
+    Mockito.verify(employeeMapper, never()).mapDomainToEntity(any(Employee.class));
+    Mockito.verify(employeeService, never()).updateEmployeeById(any(EmployeeVO.class));
+    Mockito.verify(repository, never()).save(any(CompanyEntity.class));
+    Mockito.verify(companyMapper, never()).mapToDomain(any(CompanyEntity.class));
   }
 
-  @Test
+  @ParameterizedTest
+  @MethodSource("removeEmployeeFromCompanyParameters")
   @DisplayName("Remove an employee from a company successfully")
-  void removeEmployeeFromCompanyTest() {
+  void removeEmployeeFromCompanyTest(String nif, String cif, Employee employee, CompanyEntity companyEntity) {
+    EmployeeNifVO employeeNifVO = EmployeeNifVO.builder().nif(nif).build();
+
+    Mockito.when(employeeService.getEmployeeById(employeeNifVO)).thenReturn(employee);
+    Mockito.when(repository.findById(cif)).thenReturn(Optional.of(companyEntity));
+    Mockito.when(repository.save(companyEntity)).thenReturn(companyEntity);
+
+    boolean result = service.removeEmployeeFromCompany(nif, cif);
+    Assertions.assertTrue(result);
+
+    Mockito.verify(employeeService, Mockito.times(1)).getEmployeeById(employeeNifVO);
+    Mockito.verify(repository, Mockito.times(1)).findById(cif);
+    Mockito.verify(repository, Mockito.times(1)).save(companyEntity);
+  }
+
+  private static Stream<Arguments> removeEmployeeFromCompanyParameters() {
+    return Stream.of(
+        Arguments.of(
+            "45134320V",
+            "Q4947066I",
+            new Employee()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setSurname("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE)
+                .setCompanyPhone("+34676615106")
+                .setPersonalPhone("+34722748406")
+                .setCompany("Q4947066I")
+                .setEmail("wmlopes0@gmail.com"),
+            new CompanyEntity()
+                .setCif("Q4947066I")
+                .setName("Company1 S.L")
+                .setEmployees(List.of(
+                    new EmployeeEntity()
+                        .setNif("45134320V")
+                        .setName("Walter")
+                        .setLastName("Martín Lopes")
+                        .setBirthYear(1998)
+                        .setGender(Gender.MALE.getCode())
+                        .setPhones(List.of(
+                            new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
+                            new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                        .setCompany("Q4947066I")
+                        .setEmail("wmlopes0@gmail.com"),
+                    new EmployeeEntity()
+                        .setNif("45132337N")
+                        .setName("Raquel")
+                        .setLastName("Barbero Sánchez")
+                        .setBirthYear(1996)
+                        .setGender(Gender.FEMALE.getCode())
+                        .setPhones(List.of(
+                            new PhoneEntity("+34", "676615106", PhoneType.PERSONAL)))
+                        .setCompany("Q4947066I")
+                        .setEmail("raquelbarberosanchez90@gmail.com")
+                ))
+        ));
   }
 
   @Test
   @DisplayName("Fail to remove a non-existing employee from a company")
   void removeEmployeeNotFoundFromCompanyTest() {
+    String nif = "45134320V";
+    String cif = "Q4947066I";
+    EmployeeNifVO employeeNifVO = EmployeeNifVO.builder().nif(nif).build();
+
+    Mockito.when(employeeService.getEmployeeById(employeeNifVO)).thenReturn(null);
+
+    boolean result = service.removeEmployeeFromCompany(nif, cif);
+    Assertions.assertFalse(result);
+
+    Mockito.verify(employeeService, Mockito.times(1)).getEmployeeById(employeeNifVO);
+    Mockito.verify(repository, Mockito.never()).findById(cif);
+    Mockito.verify(repository, Mockito.never()).save(any(CompanyEntity.class));
   }
 
   @Test
   @DisplayName("Fail to remove an employee from a non-existing company")
   void removeEmployeeFromCompanyNotFoundTest() {
+    String nif = "45134320V";
+    String cif = "Q4947066I";
+    Employee employee = new Employee()
+        .setNif("45134320V")
+        .setName("Walter")
+        .setSurname("Martín Lopes")
+        .setBirthYear(1998)
+        .setGender(Gender.MALE)
+        .setCompanyPhone("+34676615106")
+        .setPersonalPhone("+34722748406")
+        .setCompany("Q4947066I")
+        .setEmail("wmlopes0@gmail.com");
+    EmployeeNifVO employeeNifVO = EmployeeNifVO.builder().nif(nif).build();
+
+    Mockito.when(employeeService.getEmployeeById(employeeNifVO)).thenReturn(employee);
+    Mockito.when(repository.findById(cif)).thenReturn(Optional.empty());
+
+    boolean result = service.removeEmployeeFromCompany(nif, cif);
+    Assertions.assertFalse(result);
+
+    Mockito.verify(employeeService, Mockito.times(1)).getEmployeeById(employeeNifVO);
+    Mockito.verify(repository, Mockito.times(1)).findById(cif);
+    Mockito.verify(repository, Mockito.never()).save(any(CompanyEntity.class));
   }
 }

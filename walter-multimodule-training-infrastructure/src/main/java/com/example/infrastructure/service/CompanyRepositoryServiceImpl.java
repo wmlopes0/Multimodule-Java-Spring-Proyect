@@ -109,31 +109,27 @@ public class CompanyRepositoryServiceImpl implements CompanyService {
   }
 
   @Override
-  public Company removeEmployeeFromCompany(String nif, String cif) {
+  public boolean removeEmployeeFromCompany(String nif, String cif) {
     EmployeeNifVO employeeNifVO = EmployeeNifVO.builder().nif(nif).build();
-    EmployeeEntity employee = employeeMapper.mapDomainToEntity(employeeService.getEmployeeById(employeeNifVO));
+    Employee employee = employeeService.getEmployeeById(employeeNifVO);
     if (employee == null) {
-      return null;
+      return false;
     }
 
     CompanyEntity company = companyRepository.findById(cif).orElse(null);
     if (company == null) {
-      return null;
+      return false;
     }
 
-    EmployeeVO employeeUpdatedVO = EmployeeVO.builder()
-        .nif(nif)
-        .company(null)
-        .build();
-    employeeService.updateEmployeeById(employeeUpdatedVO);
+    List<EmployeeEntity> employees = new ArrayList<>(company.getEmployees());
+    boolean isRemoved = employees != null && employees.removeIf(e -> e.getNif().equals(nif));
 
-    List<EmployeeEntity> employees = company.getEmployees();
-    if (employees != null) {
-      employees.removeIf(e -> e.getNif().equals(nif));
+    if (isRemoved) {
       company.setEmployees(employees);
       companyRepository.save(company);
+      return true;
     }
 
-    return companyMapper.mapToDomain(company);
+    return false;
   }
 }

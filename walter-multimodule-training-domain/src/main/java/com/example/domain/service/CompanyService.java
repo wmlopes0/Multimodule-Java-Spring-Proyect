@@ -20,5 +20,5 @@ public interface CompanyService {
 
   Company addEmployeeToCompany(String nif, String cif);
 
-  Company removeEmployeeFromCompany(String nif, String cif);
+  boolean removeEmployeeFromCompany(String nif, String cif);
 }
