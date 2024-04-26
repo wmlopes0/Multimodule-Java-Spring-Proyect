@@ -12,6 +12,7 @@ import com.example.application.employee.cmd.handler.RemoveEmployeeFromCompanyHan
 import com.example.application.employee.query.handler.EmployeeGetByIdHandler;
 import com.example.application.employee.query.handler.EmployeeGetByNameHandler;
 import com.example.application.employee.query.handler.EmployeeListHandler;
+import com.example.contract.employee.dto.CompanyDTO;
 import com.example.contract.employee.dto.EmployeeRequestDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
 import com.example.contract.employee.dto.EmployeeUpdateDTO;
@@ -129,19 +130,19 @@ public class EmployeeRestController {
         : ResponseEntity.notFound().build();
   }
 
-//  @Operation(summary = "More information...", description = "This endpoint add Employee to Company")
-//  @ApiResponse(responseCode = "200", description = "Successful operation")
-//  @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
-//  @DeleteMapping("/{nif}")
-//  public ResponseEntity<Object> addEmployeeToCompany(@PathVariable("nif") @ValidNIF String nif) {
-//    return null;
-//  }
-//
-//  @Operation(summary = "More information...", description = "This endpoint remove Employee from Company")
-//  @ApiResponse(responseCode = "200", description = "Successful operation")
-//  @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
-//  @DeleteMapping("/{nif}")
-//  public ResponseEntity<Object> removeEmployeeFromCompany(@PathVariable("nif") @ValidNIF String nif) {
-//    return null;
-//  }
+  @Operation(summary = "More information...", description = "This endpoint add Employee to Company")
+  @ApiResponse(responseCode = "200", description = "Successful operation")
+  @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
+  @PutMapping("/addToCompany/{nif}")
+  public ResponseEntity<Object> addEmployeeToCompany(@PathVariable("nif") @ValidNIF String nif, @RequestBody CompanyDTO companyDto) {
+    return null;
+  }
+
+  @Operation(summary = "More information...", description = "This endpoint remove Employee from Company")
+  @ApiResponse(responseCode = "200", description = "Successful operation")
+  @ApiResponse(responseCode = "404", description = "Bad request due to id not found")
+  @PutMapping("/removeToCompany/{nif}")
+  public ResponseEntity<Object> removeEmployeeFromCompany(@PathVariable("nif") @ValidNIF String nif, @RequestBody CompanyDTO companyDto) {
+    return null;
+  }
 }

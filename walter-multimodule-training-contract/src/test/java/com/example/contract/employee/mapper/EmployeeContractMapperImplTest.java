@@ -2,11 +2,14 @@ package com.example.contract.employee.mapper;
 
 import java.util.List;
 
+import com.example.application.employee.cmd.dto.AddEmployeeToCompanyCmd;
 import com.example.application.employee.cmd.dto.EmployeeCreateCmd;
 import com.example.application.employee.cmd.dto.EmployeeDeleteCmd;
 import com.example.application.employee.cmd.dto.EmployeeUpdateCmd;
+import com.example.application.employee.cmd.dto.RemoveEmployeeFromCompanyCmd;
 import com.example.application.employee.query.dto.EmployeeByIdQuery;
 import com.example.application.employee.query.dto.EmployeeByNameQuery;
+import com.example.contract.employee.dto.CompanyDTO;
 import com.example.contract.employee.dto.EmployeeRequestDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
 import com.example.contract.employee.dto.EmployeeUpdateDTO;
@@ -127,6 +130,30 @@ class EmployeeContractMapperImplTest {
         .setEmail("wmlopes0@gmail.com");
 
     EmployeeResponseDTO result = mapper.mapToResponseDTO(employee);
+    Assertions.assertEquals(expected, result);
+  }
+
+  @Test
+  @DisplayName("Mapping NIF and CompanyDTO to AddEmployeeToCompanyCmd correctly")
+  void mapToAddEmployeeToCompanyCmdTest() {
+    String nif = "45134320V";
+    CompanyDTO companyDTO = new CompanyDTO("P5745796B");
+
+    AddEmployeeToCompanyCmd expected = new AddEmployeeToCompanyCmd("45134320V", "P5745796B");
+    AddEmployeeToCompanyCmd result = mapper.mapToAddEmployeeToCompanyCmd(nif, companyDTO);
+
+    Assertions.assertEquals(expected, result);
+  }
+
+  @Test
+  @DisplayName("Mapping NIF and CompanyDTO from RemoveEmployeeToCompanyCmd correctly")
+  void mapToRemoveEmployeeFromCompanyCmdTest() {
+    String nif = "45134320V";
+    CompanyDTO companyDTO = new CompanyDTO("P5745796B");
+
+    RemoveEmployeeFromCompanyCmd expected = new RemoveEmployeeFromCompanyCmd("45134320V", "P5745796B");
+    RemoveEmployeeFromCompanyCmd result = mapper.removeEmployeeFromCompanyCmd(nif, companyDTO);
+
     Assertions.assertEquals(expected, result);
   }
 }
