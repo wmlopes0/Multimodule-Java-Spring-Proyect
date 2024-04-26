@@ -1,6 +1,7 @@
 package com.example.application.company.cmd.handler;
 
 import com.example.application.company.cmd.dto.CompanyDeleteCmd;
+import com.example.domain.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -8,8 +9,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CompanyDeleteHandlerImpl implements CompanyDeleteHandler {
 
+  private final CompanyService service;
+
   @Override
   public boolean deleteCompany(CompanyDeleteCmd companyDeleteCmd) {
-    return false;
+    return service.deleteCompany(companyDeleteCmd.getCif());
   }
 }
