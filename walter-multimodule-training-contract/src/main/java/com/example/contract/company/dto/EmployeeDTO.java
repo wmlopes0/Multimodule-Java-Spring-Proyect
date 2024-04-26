@@ -29,6 +29,8 @@ public class EmployeeDTO {
 
   private String companyPhone;
 
+  private String company;
+
   private String email;
 
 }

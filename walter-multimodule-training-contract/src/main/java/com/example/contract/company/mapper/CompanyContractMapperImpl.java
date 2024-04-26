@@ -45,7 +45,7 @@ public class CompanyContractMapperImpl implements CompanyContractMapper {
         .setCif(company.getCif())
         .setName(company.getName())
         .setEmployees(company.getEmployees().stream()
-            .map(employee -> mapToEmployeeDTO(employee))
+            .map(this::mapToEmployeeDTO)
             .toList());
   }
 
@@ -59,6 +59,7 @@ public class CompanyContractMapperImpl implements CompanyContractMapper {
         .setGender(employee.getGender().name())
         .setCompanyPhone(employee.getCompanyPhone())
         .setPersonalPhone(employee.getPersonalPhone())
+        .setCompany(employee.getCompany())
         .setEmail(employee.getEmail());
   }
 

@@ -97,6 +97,7 @@ class CompanyContractMapperImplTest {
                     .setGender(Gender.MALE)
                     .setCompanyPhone("+34676615106")
                     .setPersonalPhone("+34722748406")
+                    .setCompany("V33778580")
                     .setEmail("wmlopes0@gmail.com"),
                 new Employee()
                     .setNif("4513233YN")
@@ -106,6 +107,7 @@ class CompanyContractMapperImplTest {
                     .setGender(Gender.FEMALE)
                     .setCompanyPhone("+34722748406")
                     .setPersonalPhone("+34676615106")
+                    .setCompany("V33778580")
                     .setEmail("raquelbarberosanchez90@gmail.com")),
             List.of(new EmployeeDTO()
                     .setNif("45134320V")
@@ -115,6 +117,7 @@ class CompanyContractMapperImplTest {
                     .setGender(Gender.MALE.name())
                     .setCompanyPhone("+34676615106")
                     .setPersonalPhone("+34722748406")
+                    .setCompany("V33778580")
                     .setEmail("wmlopes0@gmail.com"),
                 new EmployeeDTO()
                     .setNif("4513233YN")
@@ -124,6 +127,7 @@ class CompanyContractMapperImplTest {
                     .setGender(Gender.FEMALE.name())
                     .setCompanyPhone("+34722748406")
                     .setPersonalPhone("+34676615106")
+                    .setCompany("V33778580")
                     .setEmail("raquelbarberosanchez90@gmail.com"))
         )
     );
@@ -140,6 +144,7 @@ class CompanyContractMapperImplTest {
         .setGender(Gender.MALE)
         .setCompanyPhone("+34676615106")
         .setPersonalPhone("+34722748406")
+        .setCompany("V33778580")
         .setEmail("wmlopes0@gmail.com");
     EmployeeDTO expected = new EmployeeDTO()
         .setNif("45134320V")
@@ -149,6 +154,7 @@ class CompanyContractMapperImplTest {
         .setGender(Gender.MALE.name())
         .setCompanyPhone("+34676615106")
         .setPersonalPhone("+34722748406")
+        .setCompany("V33778580")
         .setEmail("wmlopes0@gmail.com");
     EmployeeDTO result = mapper.mapToEmployeeDTO(employee);
     Assertions.assertEquals(expected, result);
