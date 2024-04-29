@@ -27,14 +27,14 @@ public class GlobalExceptionHandler {
       Exception ex) {
     Map<String, String> errors = new HashMap<>();
 
-    if (ex instanceof MethodArgumentNotValidException methodArgEx) {  // Uso de pattern matching
+    if (ex instanceof MethodArgumentNotValidException methodArgEx) {
       BindingResult bindingResult = methodArgEx.getBindingResult();
       bindingResult.getAllErrors().forEach(error -> {
         String fieldName = ((FieldError) error).getField();
         String errorMessage = error.getDefaultMessage();
         errors.put(fieldName, errorMessage);
       });
-    } else if (ex instanceof HandlerMethodValidationException handlerMethodEx) {  // Uso de pattern matching
+    } else if (ex instanceof HandlerMethodValidationException handlerMethodEx) {
       List<ParameterValidationResult> validationResults = handlerMethodEx.getAllValidationResults();
       for (ParameterValidationResult validationResult : validationResults) {
         validationResult.getResolvableErrors().forEach(error -> {

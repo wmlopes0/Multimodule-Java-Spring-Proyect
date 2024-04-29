@@ -5,14 +5,19 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.example.boot.app.App;
+import com.example.contract.company.dto.CompanyResponseDTO;
+import com.example.contract.company.dto.EmployeeDTO;
+import com.example.contract.employee.dto.CompanyDTO;
 import com.example.contract.employee.dto.EmployeeRequestDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
 import com.example.contract.employee.dto.EmployeeUpdateDTO;
 import com.example.contract.employee.dto.PhoneDTO;
 import com.example.domain.entity.Gender;
 import com.example.domain.entity.PhoneType;
+import com.example.infrastructure.entity.CompanyEntity;
 import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.entity.PhoneEntity;
+import com.example.infrastructure.repository.CompanyRepository;
 import com.example.infrastructure.repository.EmployeeRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,19 +38,22 @@ class EmployeeRestControllerTestIT {
   private EmployeeRestController controller;
 
   @Autowired
-  private EmployeeRepository repository;
+  private EmployeeRepository employeeRepository;
+
+  @Autowired
+  private CompanyRepository companyRepository;
 
   @BeforeEach
   void init() {
-    repository.deleteAll();
+    employeeRepository.deleteAll();
   }
 
   @ParameterizedTest
   @MethodSource("listEmployeesParameters")
   @DisplayName("List employees return correctly list")
   void listEmployeesTest(EmployeeEntity employee1, EmployeeEntity employee2, List<EmployeeResponseDTO> employeeResponseDTOS) {
-    repository.save(employee1);
-    repository.save(employee2);
+    employeeRepository.save(employee1);
+    employeeRepository.save(employee2);
     ResponseEntity<List<EmployeeResponseDTO>> expected = ResponseEntity.ok(employeeResponseDTOS);
 
     ResponseEntity<List<EmployeeResponseDTO>> result = controller.listEmployees();
@@ -111,7 +119,7 @@ class EmployeeRestControllerTestIT {
   @MethodSource("getEmployeeByIdParameters")
   @DisplayName("Get employee by NIF returns employee and 200 response correctly")
   void getEmployeeByIdTest(String nif, EmployeeEntity employeeEntity, EmployeeResponseDTO employeeResponseDTO) {
-    repository.save(employeeEntity);
+    employeeRepository.save(employeeEntity);
 
     ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.ok(employeeResponseDTO);
     ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeById(nif);
@@ -160,7 +168,7 @@ class EmployeeRestControllerTestIT {
   @MethodSource("getEmployeeByNameParameters")
   @DisplayName("Get employee by name returns employee and 200 response correctly")
   void getEmployeeByNameTest(String name, EmployeeEntity employeeEntity, EmployeeResponseDTO employeeResponseDTO) {
-    repository.save(employeeEntity);
+    employeeRepository.save(employeeEntity);
 
     ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.ok(employeeResponseDTO);
     ResponseEntity<EmployeeResponseDTO> result = controller.getEmployeeByName(name);
@@ -219,7 +227,7 @@ class EmployeeRestControllerTestIT {
     Assertions.assertEquals(expected.getBody(), result.getBody());
 
     Optional<EmployeeEntity> fetchExpected = Optional.of(entityExpected);
-    Optional<EmployeeEntity> fetchResult = repository.findById(employeeRequestDTO.getNif());
+    Optional<EmployeeEntity> fetchResult = employeeRepository.findById(employeeRequestDTO.getNif());
 
     Assertions.assertEquals(fetchExpected, fetchResult);
   }
@@ -262,7 +270,7 @@ class EmployeeRestControllerTestIT {
   @DisplayName("Update employee by NIF successfully returns 200 code response")
   void updateEmployeeByIdTest(EmployeeEntity employeeEntity, String nif, EmployeeUpdateDTO employeeUpdateDTO,
       EmployeeResponseDTO employeeResponseDTO, EmployeeEntity entityExpected) {
-    repository.save(employeeEntity);
+    employeeRepository.save(employeeEntity);
 
     ResponseEntity<EmployeeResponseDTO> expected = ResponseEntity.ok(employeeResponseDTO);
     ResponseEntity<EmployeeResponseDTO> result = controller.updateEmployeeById(nif, employeeUpdateDTO);
@@ -271,7 +279,7 @@ class EmployeeRestControllerTestIT {
     Assertions.assertEquals(expected.getBody(), result.getBody());
 
     Optional<EmployeeEntity> fetchExpected = Optional.of(entityExpected);
-    Optional<EmployeeEntity> fetchResult = repository.findById(nif);
+    Optional<EmployeeEntity> fetchResult = employeeRepository.findById(nif);
 
     Assertions.assertEquals(fetchExpected, fetchResult);
   }
@@ -322,6 +330,131 @@ class EmployeeRestControllerTestIT {
     );
   }
 
+  @ParameterizedTest
+  @MethodSource("addEmployeeToCompanyTest")
+  @DisplayName("Add employee to company successfully returns 200 code response")
+  void addEmployeeToCompany(EmployeeEntity employeeEntity, CompanyEntity companyEntity, String nif, CompanyDTO companyDTO,
+      CompanyResponseDTO companyResponseDTO, EmployeeEntity employeeEntityExpected, CompanyEntity companyEntityExpected) {
+    employeeRepository.save(employeeEntity);
+    companyRepository.save(companyEntity);
+
+    ResponseEntity<CompanyResponseDTO> expected = ResponseEntity.ok(companyResponseDTO);
+    ResponseEntity<CompanyResponseDTO> result = controller.addEmployeeToCompany(nif, companyDTO);
+
+    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
+    System.out.println(expected.getBody());
+    System.out.println(result.getBody());
+    Assertions.assertEquals(expected.getBody(), result.getBody());
+
+    Optional<EmployeeEntity> employeeFetchExpected = Optional.of(employeeEntityExpected);
+    Optional<EmployeeEntity> employeeFetchResult = employeeRepository.findById(nif);
+
+    Assertions.assertEquals(employeeFetchExpected, employeeFetchResult);
+
+    Optional<CompanyEntity> companyFetchExpected = Optional.of(companyEntityExpected);
+    Optional<CompanyEntity> companyFetchResult = companyRepository.findById(companyDTO.getCif());
+
+    Assertions.assertEquals(companyFetchExpected, companyFetchResult);
+  }
+
+  private static Stream<Arguments> addEmployeeToCompanyTest() {
+    return Stream.of(
+        Arguments.of(
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setCompany(null)
+                .setPhones(List.of(
+                    new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("wmlopes0@gmail.com"),
+            new CompanyEntity()
+                .setCif("B86017472")
+                .setName("Company2 S.L")
+                .setEmployees(List.of(
+                        new EmployeeEntity()
+                            .setNif("27748713H")
+                            .setName("Manolo")
+                            .setLastName("Martín Lopes")
+                            .setBirthYear(1998)
+                            .setGender(Gender.MALE.getCode())
+                            .setPhones(List.of(
+                                new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
+                                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                            .setCompany("B86017472")
+                            .setEmail("manolo@gmail.com")
+                    )
+                ),
+            "45134320V",
+            new CompanyDTO("B86017472"),
+            new CompanyResponseDTO()
+                .setCif("B86017472")
+                .setName("Company2 S.L")
+                .setEmployees(List.of(
+                        new EmployeeDTO()
+                            .setNif("27748713H")
+                            .setName("Manolo")
+                            .setSurname("Martín Lopes")
+                            .setBirthYear(1998)
+                            .setGender("MALE")
+                            .setPersonalPhone("+34722748406")
+                            .setCompanyPhone("+34676615106")
+                            .setCompany("B86017472")
+                            .setEmail("manolo@gmail.com"),
+                        new EmployeeDTO()
+                            .setNif("45134320V")
+                            .setName("Walter")
+                            .setSurname("Martín Lopes")
+                            .setBirthYear(1998)
+                            .setGender("MALE")
+                            .setPersonalPhone("+34722748406")
+                            .setCompany("B86017472")
+                            .setEmail("wmlopes0@gmail.com")
+                    )
+                ),
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setCompany("B86017472")
+                .setPhones(List.of(
+                    new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("wmlopes0@gmail.com"),
+            new CompanyEntity()
+                .setCif("B86017472")
+                .setName("Company2 S.L")
+                .setEmployees(List.of(
+                        new EmployeeEntity()
+                            .setNif("27748713H")
+                            .setName("Manolo")
+                            .setLastName("Martín Lopes")
+                            .setBirthYear(1998)
+                            .setGender(Gender.MALE.getCode())
+                            .setPhones(List.of(
+                                new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
+                                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                            .setCompany("B86017472")
+                            .setEmail("manolo@gmail.com"),
+                        new EmployeeEntity()
+                            .setNif("45134320V")
+                            .setName("Walter")
+                            .setLastName("Martín Lopes")
+                            .setBirthYear(1998)
+                            .setGender(Gender.MALE.getCode())
+                            .setPhones(List.of(
+                                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                            .setCompany("B86017472")
+                            .setEmail("wmlopes0@gmail.com")
+                    )
+                )
+        )
+    );
+  }
+
   @Test
   @DisplayName("Deleted employee by NIF successfully returns 200 code response")
   void deleteEmployeeByIdTest() {
@@ -336,14 +469,14 @@ class EmployeeRestControllerTestIT {
             new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
         .setEmail("wmlopes0@gmail.com");
 
-    repository.save(employeeEntity);
+    employeeRepository.save(employeeEntity);
 
     ResponseEntity<Object> deleteExpected = ResponseEntity.ok().build();
     ResponseEntity<Object> deleteResult = controller.deleteEmployeeById(nif);
 
     Assertions.assertEquals(deleteExpected.getStatusCode(), deleteResult.getStatusCode());
 
-    Optional<EmployeeEntity> fetchResult = repository.findById(employeeEntity.getNif());
+    Optional<EmployeeEntity> fetchResult = employeeRepository.findById(employeeEntity.getNif());
     Assertions.assertTrue(fetchResult.isEmpty());
   }
 

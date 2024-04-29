@@ -14,9 +14,9 @@ import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.entity.PhoneEntity;
 import com.example.infrastructure.mapper.employee.EmployeeInfrastructureMapper;
 import com.example.infrastructure.repository.EmployeeRepository;
-import com.jayway.jsonpath.Criteria;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.CriteriaDefinition;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -82,7 +82,7 @@ public class EmployeeRepositoryServiceImpl implements EmployeeService {
   @Override
   @Transactional
   public void dissociateEmployeesFromCompany(String companyId) {
-    CriteriaDefinition criteriaDefinition = (CriteriaDefinition) Criteria.where("company").is(companyId);
+    CriteriaDefinition criteriaDefinition = Criteria.where("company").is(companyId);
     Query query = new Query(criteriaDefinition);
     Update update = new Update().set("company", null);
     mongoTemplate.updateMulti(query, update, EmployeeEntity.class);
