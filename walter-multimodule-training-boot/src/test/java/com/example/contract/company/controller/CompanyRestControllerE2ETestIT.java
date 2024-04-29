@@ -13,7 +13,6 @@ import java.util.stream.Stream;
 
 import com.example.boot.app.App;
 import com.example.infrastructure.entity.CompanyEntity;
-import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.repository.CompanyRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

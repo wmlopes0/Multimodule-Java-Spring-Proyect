@@ -512,10 +512,9 @@ class EmployeeRestControllerE2ETestIT {
                "cif": "B86017472"
               }""";
 
-    mockMvc.perform(put("/addToCompany/{nif}", nif)
+    mockMvc.perform(put("/employees/addToCompany/{nif}", nif)
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonContent))
-        .andDo(print())
         .andExpect(status().isOk())
         .andExpect(content().json(expected, false));
 
@@ -552,16 +551,16 @@ class EmployeeRestControllerE2ETestIT {
                   "cif": "B86017472",
                   "name": "Company2 S.L",
                   "employees":[
-                  {
-                  "nif": "45134320V",
-                  "name": "Walter",
-                  "surname":"Martín Lopes"
-                  "birthYear":"1998",
-                  "gender": "MALE",
-                  "personalPhone": "+34722748406,",
-                  "company": "B86017472",
-                  "email": "wmlopes0@gmail.com"
-                  }
+                    {
+                    "nif": "45134320V",
+                    "name": "Walter",
+                    "surname":"Martín Lopes",
+                    "birthYear": 1998,
+                    "gender": "MALE",
+                    "personalPhone": "+34722748406",
+                    "company": "B86017472",
+                    "email": "wmlopes0@gmail.com"
+                    }
                   ]
                 }
                 """,
@@ -609,10 +608,9 @@ class EmployeeRestControllerE2ETestIT {
                "cif": "B86017472"
               }""";
 
-    mockMvc.perform(put("/removeToCompany/{nif}", nif)
+    mockMvc.perform(put("/employees/removeToCompany/{nif}", nif)
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonContent))
-        .andDo(print())
         .andExpect(status().isOk());
 
     Optional<EmployeeEntity> fetchEmployeeExpected = Optional.of(employeeEntityExpected);
