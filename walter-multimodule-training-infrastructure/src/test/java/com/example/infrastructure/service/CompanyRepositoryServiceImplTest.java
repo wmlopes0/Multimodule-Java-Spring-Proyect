@@ -675,11 +675,16 @@ class CompanyRepositoryServiceImplTest {
   @ParameterizedTest
   @MethodSource("removeEmployeeFromCompanyParameters")
   @DisplayName("Remove an employee from a company successfully")
-  void removeEmployeeFromCompanyTest(String nif, String cif, Employee employee, CompanyEntity companyEntity) {
+  void removeEmployeeFromCompanyTest(String nif, String cif, Employee employee, Employee employeeChanged, CompanyEntity companyEntity) {
     EmployeeNifVO employeeNifVO = EmployeeNifVO.builder().nif(nif).build();
+    EmployeeVO employeeUpdate = EmployeeVO.builder()
+        .nif(nif)
+        .company(null)
+        .build();
 
     Mockito.when(employeeService.getEmployeeById(employeeNifVO)).thenReturn(employee);
     Mockito.when(repository.findById(cif)).thenReturn(Optional.of(companyEntity));
+    Mockito.when(employeeService.removeCompanyFromEmployee(employeeUpdate)).thenReturn(employeeChanged);
     Mockito.when(repository.save(companyEntity)).thenReturn(companyEntity);
 
     boolean result = service.removeEmployeeFromCompany(nif, cif);
@@ -687,6 +692,7 @@ class CompanyRepositoryServiceImplTest {
 
     Mockito.verify(employeeService, Mockito.times(1)).getEmployeeById(employeeNifVO);
     Mockito.verify(repository, Mockito.times(1)).findById(cif);
+    Mockito.verify(employeeService, Mockito.times(1)).removeCompanyFromEmployee(employeeUpdate);
     Mockito.verify(repository, Mockito.times(1)).save(companyEntity);
   }
 
@@ -704,6 +710,16 @@ class CompanyRepositoryServiceImplTest {
                 .setCompanyPhone("+34676615106")
                 .setPersonalPhone("+34722748406")
                 .setCompany("Q4947066I")
+                .setEmail("wmlopes0@gmail.com"),
+            new Employee()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setSurname("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE)
+                .setCompanyPhone("+34676615106")
+                .setPersonalPhone("+34722748406")
+                .setCompany(null)
                 .setEmail("wmlopes0@gmail.com"),
             new CompanyEntity()
                 .setCif("Q4947066I")
