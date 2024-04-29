@@ -19,10 +19,18 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 public class SpringConfig {
 
   @Bean
-  public GroupedOpenApi publicApi() {
+  public GroupedOpenApi employeeApi() {
     return GroupedOpenApi.builder()
         .group("springdoc")
         .packagesToScan("com.example.contract.employee.controller")
+        .build();
+  }
+
+  @Bean
+  public GroupedOpenApi companyApi() {
+    return GroupedOpenApi.builder()
+        .group("springdoc")
+        .packagesToScan("com.example.contract.company.controller")
         .build();
   }
 }

@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -40,8 +41,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-@OpenAPIDefinition(info = @Info(title = "Employees API", version = "1.0",
+@OpenAPIDefinition(info = @Info(title = "Walter's API", version = "1.0",
     description = "This is my first API with Spring Boot, a simple example with crud operations and documentation with Swagger"))
+@Tag(name = "Employee Management", description = "Handling of employee data")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/employees")

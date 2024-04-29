@@ -14,10 +14,9 @@ import com.example.contract.company.dto.CompanyResponseDTO;
 import com.example.contract.company.dto.CompanyUpdateDTO;
 import com.example.contract.company.mapper.CompanyContractMapper;
 import com.example.domain.entity.Company;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-@OpenAPIDefinition(info = @Info(title = "Employees API", version = "1.0",
-    description = "API for managing company data within our system. Supports CRUD operations (Create, Read, Update, Delete) for "
-        + "companies, integrated with Swagger for easier navigation and testing."))
+@Tag(name = "Company Management", description = "Handling of company data")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/companies")
