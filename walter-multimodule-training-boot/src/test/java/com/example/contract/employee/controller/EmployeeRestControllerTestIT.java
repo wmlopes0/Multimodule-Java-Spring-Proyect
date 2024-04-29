@@ -342,8 +342,6 @@ class EmployeeRestControllerTestIT {
     ResponseEntity<CompanyResponseDTO> result = controller.addEmployeeToCompany(nif, companyDTO);
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
-    System.out.println(expected.getBody());
-    System.out.println(result.getBody());
     Assertions.assertEquals(expected.getBody(), result.getBody());
 
     Optional<EmployeeEntity> employeeFetchExpected = Optional.of(employeeEntityExpected);
@@ -451,6 +449,79 @@ class EmployeeRestControllerTestIT {
                             .setEmail("wmlopes0@gmail.com")
                     )
                 )
+        )
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("removeEmployeeFromCompanyParameters")
+  @DisplayName("Remove employee from company successfully returns 200 code response")
+  void removeEmployeeFromCompany(EmployeeEntity employeeEntity, CompanyEntity companyEntity, String nif, CompanyDTO companyDTO,
+      EmployeeEntity employeeEntityExpected, CompanyEntity companyEntityExpected) {
+    employeeRepository.save(employeeEntity);
+    companyRepository.save(companyEntity);
+
+    ResponseEntity<Object> expected = ResponseEntity.ok().build();
+    ResponseEntity<Object> result = controller.removeEmployeeFromCompany(nif, companyDTO);
+
+    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
+
+    Optional<EmployeeEntity> employeeFetchExpected = Optional.of(employeeEntityExpected);
+    Optional<EmployeeEntity> employeeFetchResult = employeeRepository.findById(nif);
+
+    Assertions.assertEquals(employeeFetchExpected, employeeFetchResult);
+
+    Optional<CompanyEntity> companyFetchExpected = Optional.of(companyEntityExpected);
+    Optional<CompanyEntity> companyFetchResult = companyRepository.findById(companyDTO.getCif());
+
+    Assertions.assertEquals(companyFetchExpected, companyFetchResult);
+  }
+
+  private static Stream<Arguments> removeEmployeeFromCompanyParameters() {
+    return Stream.of(
+        Arguments.of(
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setCompany("B86017472")
+                .setPhones(List.of(
+                    new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("wmlopes0@gmail.com"),
+            new CompanyEntity()
+                .setCif("B86017472")
+                .setName("Company2 S.L")
+                .setEmployees(List.of(
+                        new EmployeeEntity()
+                            .setNif("45134320V")
+                            .setName("Walter")
+                            .setLastName("Martín Lopes")
+                            .setBirthYear(1998)
+                            .setGender(Gender.MALE.getCode())
+                            .setCompany("B86017472")
+                            .setPhones(List.of(
+                                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                            .setEmail("wmlopes0@gmail.com")
+                    )
+                ),
+            "45134320V",
+            new CompanyDTO("B86017472"),
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setCompany(null)
+                .setPhones(List.of(
+                    new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("wmlopes0@gmail.com"),
+            new CompanyEntity()
+                .setCif("B86017472")
+                .setName("Company2 S.L")
+                .setEmployees(List.of())
         )
     );
   }

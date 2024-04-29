@@ -121,6 +121,13 @@ public class CompanyRepositoryServiceImpl implements CompanyService {
       return false;
     }
 
+    EmployeeVO employeeUpdate = EmployeeVO.builder()
+        .nif(nif)
+        .company(null)
+        .build();
+
+    employeeService.removeCompanyFromEmployee(employeeUpdate);
+
     List<EmployeeEntity> employees = new ArrayList<>(company.getEmployees());
     boolean isRemoved = employees.removeIf(e -> e.getNif().equals(nif));
 

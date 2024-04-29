@@ -2,6 +2,7 @@ package com.example.infrastructure.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.example.domain.entity.Employee;
 import com.example.domain.entity.PhoneType;
@@ -88,6 +89,38 @@ public class EmployeeRepositoryServiceImpl implements EmployeeService {
     mongoTemplate.updateMulti(query, update, EmployeeEntity.class);
   }
 
+  @Override
+  public Employee removeCompanyFromEmployee(EmployeeVO employeeVO) {
+    Optional<EmployeeEntity> existingEmployee = repository.findById(employeeVO.getNif());
+    if (existingEmployee.isPresent()) {
+      updateCompanyDetails(existingEmployee.get(), employeeVO);
+      return mapper.mapToDomain(repository.save(existingEmployee.get()));
+    }
+    return null;
+  }
+
+  private void updateCompanyDetails(EmployeeEntity existingEmployee, EmployeeVO employeeVO) {
+    if (employeeVO.getName() != null) {
+      existingEmployee.setName(employeeVO.getName());
+    }
+    if (employeeVO.getSurname() != null) {
+      existingEmployee.setLastName(employeeVO.getSurname());
+    }
+    if (employeeVO.getBirthYear() != 0) {
+      existingEmployee.setBirthYear(employeeVO.getBirthYear());
+    }
+    if (employeeVO.getGender() != null) {
+      existingEmployee.setGender(employeeVO.getGender().getCode());
+    }
+    updatePhones(existingEmployee, employeeVO);
+    if (employeeVO.getCompany() == null) {
+      existingEmployee.setCompany(null);
+    }
+    if (employeeVO.getEmail() != null) {
+      existingEmployee.setEmail(employeeVO.getEmail());
+    }
+  }
+
   private void updateEmployeeDetails(EmployeeEntity existingEmployee, EmployeeVO employeeVO) {
     if (employeeVO.getName() != null) {
       existingEmployee.setName(employeeVO.getName());
@@ -102,6 +135,9 @@ public class EmployeeRepositoryServiceImpl implements EmployeeService {
       existingEmployee.setGender(employeeVO.getGender().getCode());
     }
     updatePhones(existingEmployee, employeeVO);
+    if (employeeVO.getCompany() != null) {
+      existingEmployee.setCompany(employeeVO.getCompany());
+    }
     if (employeeVO.getEmail() != null) {
       existingEmployee.setEmail(employeeVO.getEmail());
     }

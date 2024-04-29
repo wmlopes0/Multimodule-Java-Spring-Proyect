@@ -22,4 +22,6 @@ public interface EmployeeService {
   boolean deleteEmployeeById(EmployeeNifVO employeeNifVO);
 
   void dissociateEmployeesFromCompany(String companyId);
+
+  Employee removeCompanyFromEmployee(EmployeeVO employeeVO);
 }
