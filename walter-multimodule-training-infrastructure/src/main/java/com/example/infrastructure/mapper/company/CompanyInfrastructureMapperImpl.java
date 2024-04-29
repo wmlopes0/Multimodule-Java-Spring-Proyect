@@ -9,15 +9,13 @@ import com.example.domain.vo.company.CompanyCreateVO;
 import com.example.domain.vo.company.CompanyUpdateVO;
 import com.example.infrastructure.entity.CompanyEntity;
 import com.example.infrastructure.mapper.employee.EmployeeInfrastructureMapper;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Component
 public class CompanyInfrastructureMapperImpl implements CompanyInfrastructureMapper {
 
+  @Autowired
   private EmployeeInfrastructureMapper employeeMapper;
 
   @Override
