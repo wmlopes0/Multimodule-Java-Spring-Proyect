@@ -60,6 +60,23 @@ class EmployeeRepositoryServiceImplTest {
     Mockito.verify(employeeInfrastructureMapper, atLeastOnce()).mapToDomain(any(EmployeeEntity.class));
   }
 
+  @ParameterizedTest
+  @MethodSource("listEmployeesParameters")
+  @DisplayName("Retrieve and map employees by company ID successfully")
+  void findEmployeesByCompanyId(EmployeeEntity employeeEntity1, EmployeeEntity employeeEntity2, Employee employee1, Employee employee2) {
+    String cif = "Q4947066I";
+    Mockito.when(repository.findByCompany(cif)).thenReturn(List.of(employeeEntity1, employeeEntity2));
+    Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity1)).thenReturn(employee1);
+    Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity2)).thenReturn(employee2);
+
+    List<Employee> result = service.findEmployeesByCompanyId(cif);
+    List<Employee> expected = List.of(employee1, employee2);
+
+    Assertions.assertEquals(expected, result);
+    Mockito.verify(repository, times(1)).findByCompany(cif);
+    Mockito.verify(employeeInfrastructureMapper, atLeastOnce()).mapToDomain(any(EmployeeEntity.class));
+  }
+
   private static Stream<Arguments> listEmployeesParameters() {
     return Stream.of(
         Arguments.of(
@@ -69,6 +86,7 @@ class EmployeeRepositoryServiceImplTest {
                 .setBirthYear(1998)
                 .setGender(Gender.MALE.getCode())
                 .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                .setCompany("Q4947066I")
                 .setEmail("wmlopes0@gmail.com"),
             new EmployeeEntity()
                 .setNif("45132337N")
@@ -76,6 +94,7 @@ class EmployeeRepositoryServiceImplTest {
                 .setBirthYear(1996)
                 .setGender(Gender.FEMALE.getCode())
                 .setPhones(List.of(new PhoneEntity("+34", "676615106", PhoneType.PERSONAL)))
+                .setCompany("Q4947066I")
                 .setEmail("raquelbarberosanchez90@gmail.com"),
             new Employee()
                 .setNif("45134320V")
@@ -83,6 +102,7 @@ class EmployeeRepositoryServiceImplTest {
                 .setBirthYear(1998)
                 .setGender(Gender.MALE)
                 .setPersonalPhone("+34722748406")
+                .setCompany("Q4947066I")
                 .setEmail("wmlopes0@gmail.com"),
             new Employee()
                 .setNif("45132337N")
@@ -90,6 +110,7 @@ class EmployeeRepositoryServiceImplTest {
                 .setBirthYear(1996)
                 .setGender(Gender.FEMALE)
                 .setPersonalPhone("+34676615106")
+                .setCompany("Q4947066I")
                 .setEmail("raquelbarberosanchez90@gmail.com")
         )
     );

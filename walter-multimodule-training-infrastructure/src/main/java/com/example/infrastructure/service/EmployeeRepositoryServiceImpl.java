@@ -42,6 +42,14 @@ public class EmployeeRepositoryServiceImpl implements EmployeeService {
   }
 
   @Override
+  public List<Employee> findEmployeesByCompanyId(String cif) {
+    List<EmployeeEntity> employeeEntities = repository.findByCompany(cif);
+    return employeeEntities.stream()
+        .map(mapper::mapToDomain)
+        .toList();
+  }
+
+  @Override
   public Employee getEmployeeById(EmployeeNifVO employee) {
     return repository.findById(employee.getNif())
         .map(mapper::mapToDomain)
@@ -93,32 +101,9 @@ public class EmployeeRepositoryServiceImpl implements EmployeeService {
   public Employee removeCompanyFromEmployee(EmployeeVO employeeVO) {
     Optional<EmployeeEntity> existingEmployee = repository.findById(employeeVO.getNif());
     if (existingEmployee.isPresent()) {
-      updateCompanyDetails(existingEmployee.get(), employeeVO);
-      return mapper.mapToDomain(repository.save(existingEmployee.get()));
+      return mapper.mapToDomain(repository.save(existingEmployee.get().setCompany(null)));
     }
     return null;
-  }
-
-  private void updateCompanyDetails(EmployeeEntity existingEmployee, EmployeeVO employeeVO) {
-    if (employeeVO.getName() != null) {
-      existingEmployee.setName(employeeVO.getName());
-    }
-    if (employeeVO.getSurname() != null) {
-      existingEmployee.setLastName(employeeVO.getSurname());
-    }
-    if (employeeVO.getBirthYear() != 0) {
-      existingEmployee.setBirthYear(employeeVO.getBirthYear());
-    }
-    if (employeeVO.getGender() != null) {
-      existingEmployee.setGender(employeeVO.getGender().getCode());
-    }
-    updatePhones(existingEmployee, employeeVO);
-    if (employeeVO.getCompany() == null) {
-      existingEmployee.setCompany(null);
-    }
-    if (employeeVO.getEmail() != null) {
-      existingEmployee.setEmail(employeeVO.getEmail());
-    }
   }
 
   private void updateEmployeeDetails(EmployeeEntity existingEmployee, EmployeeVO employeeVO) {

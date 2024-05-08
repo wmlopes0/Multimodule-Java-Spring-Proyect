@@ -5,7 +5,6 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -59,10 +58,13 @@ class CompanyRepositoryServiceImplTest {
   @ParameterizedTest
   @MethodSource("listCompaniesParameters")
   @DisplayName("Retrieve all companies successfully")
-  void getCompaniesTest(CompanyEntity companyEntity1, CompanyEntity companyEntity2, Company company1, Company company2) {
+  void getCompaniesTest(CompanyEntity companyEntity1, CompanyEntity companyEntity2, Company company1, Company company2,
+      List<Employee> listEmployee1, List<Employee> listEmployee2) {
     Mockito.when(repository.findAll()).thenReturn(List.of(companyEntity1, companyEntity2));
     Mockito.when(companyMapper.mapToDomain(companyEntity1)).thenReturn(company1);
     Mockito.when(companyMapper.mapToDomain(companyEntity2)).thenReturn(company2);
+    Mockito.when(employeeService.findEmployeesByCompanyId(company1.getCif())).thenReturn(listEmployee1);
+    Mockito.when(employeeService.findEmployeesByCompanyId(company2.getCif())).thenReturn(listEmployee2);
 
     List<Company> result = service.getCompanies();
     List<Company> expected = List.of(company1, company2);
@@ -70,6 +72,8 @@ class CompanyRepositoryServiceImplTest {
     Assertions.assertEquals(expected, result);
     Mockito.verify(repository, times(1)).findAll();
     Mockito.verify(companyMapper, atLeastOnce()).mapToDomain(companyEntity1);
+    Mockito.verify(employeeService, times(1)).findEmployeesByCompanyId(company1.getCif());
+    Mockito.verify(employeeService, times(1)).findEmployeesByCompanyId(company2.getCif());
   }
 
   private static Stream<Arguments> listCompaniesParameters() {
@@ -77,56 +81,10 @@ class CompanyRepositoryServiceImplTest {
         Arguments.of(
             new CompanyEntity()
                 .setCif("Q4947066I")
-                .setName("Company1 S.L")
-                .setEmployees(List.of(
-                    new EmployeeEntity()
-                        .setNif("45134320V")
-                        .setName("Walter")
-                        .setLastName("Martín Lopes")
-                        .setBirthYear(1998)
-                        .setGender(Gender.MALE.getCode())
-                        .setPhones(List.of(
-                            new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
-                            new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                        .setCompany("Q4947066I")
-                        .setEmail("wmlopes0@gmail.com"),
-                    new EmployeeEntity()
-                        .setNif("45132337N")
-                        .setName("Raquel")
-                        .setLastName("Barbero Sánchez")
-                        .setBirthYear(1996)
-                        .setGender(Gender.FEMALE.getCode())
-                        .setPhones(List.of(
-                            new PhoneEntity("+34", "676615106", PhoneType.PERSONAL)))
-                        .setCompany("Q4947066I")
-                        .setEmail("raquelbarberosanchez90@gmail.com")
-                )),
+                .setName("Company1 S.L"),
             new CompanyEntity()
                 .setCif("B86017472")
-                .setName("Company2 S.L")
-                .setEmployees(List.of(
-                    new EmployeeEntity()
-                        .setNif("27748713H")
-                        .setName("Manolo")
-                        .setLastName("Martín Lopes")
-                        .setBirthYear(1998)
-                        .setGender(Gender.MALE.getCode())
-                        .setPhones(List.of(
-                            new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
-                            new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                        .setCompany("B86017472")
-                        .setEmail("manolo@gmail.com"),
-                    new EmployeeEntity()
-                        .setNif("83765493E")
-                        .setName("Maria")
-                        .setLastName("Barbero Sánchez")
-                        .setBirthYear(1996)
-                        .setGender(Gender.FEMALE.getCode())
-                        .setPhones(List.of(
-                            new PhoneEntity("+34", "676615106", PhoneType.PERSONAL)))
-                        .setCompany("B86017472")
-                        .setEmail("maria@gmail.com")
-                )),
+                .setName("Company2 S.L"),
             new Company()
                 .setCif("Q4947066I")
                 .setName("Company1 S.L")
@@ -174,7 +132,49 @@ class CompanyRepositoryServiceImplTest {
                         .setPersonalPhone("+34676615106")
                         .setCompany("B86017472")
                         .setEmail("maria@gmail.com")
-                ))
+                )),
+            List.of(
+                new Employee()
+                    .setNif("45134320V")
+                    .setName("Walter")
+                    .setSurname("Martín Lopes")
+                    .setBirthYear(1998)
+                    .setGender(Gender.MALE)
+                    .setCompanyPhone("+34676615106")
+                    .setPersonalPhone("+34722748406")
+                    .setCompany("Q4947066I")
+                    .setEmail("wmlopes0@gmail.com"),
+                new Employee()
+                    .setNif("45132337N")
+                    .setName("Raquel")
+                    .setSurname("Barbero Sánchez")
+                    .setBirthYear(1996)
+                    .setGender(Gender.FEMALE)
+                    .setPersonalPhone("+34676615106")
+                    .setCompany("Q4947066I")
+                    .setEmail("raquelbarberosanchez90@gmail.com")
+            ),
+            List.of(
+                new Employee()
+                    .setNif("27748713H")
+                    .setName("Manolo")
+                    .setSurname("Martín Lopes")
+                    .setBirthYear(1998)
+                    .setGender(Gender.MALE)
+                    .setCompanyPhone("+34676615106")
+                    .setPersonalPhone("+34722748406")
+                    .setCompany("B86017472")
+                    .setEmail("manolo@gmail.com"),
+                new Employee()
+                    .setNif("83765493E")
+                    .setName("Maria")
+                    .setSurname("Barbero Sánchez")
+                    .setBirthYear(1996)
+                    .setGender(Gender.FEMALE)
+                    .setPersonalPhone("+34676615106")
+                    .setCompany("B86017472")
+                    .setEmail("maria@gmail.com")
+            )
         )
     );
   }
@@ -195,15 +195,17 @@ class CompanyRepositoryServiceImplTest {
   @ParameterizedTest
   @MethodSource("getCompanyParameters")
   @DisplayName("Retrieve a company successfully")
-  void getCompanyTest(String cif, CompanyEntity companyEntity, Company company) {
+  void getCompanyTest(String cif, CompanyEntity companyEntity, Company company, List<Employee> listEmployee) {
     Mockito.when(repository.findById(cif)).thenReturn(Optional.of(companyEntity));
     Mockito.when(companyMapper.mapToDomain(companyEntity)).thenReturn(company);
+    Mockito.when(employeeService.findEmployeesByCompanyId(company.getCif())).thenReturn(listEmployee);
 
     Company result = service.getCompany(cif);
 
     Assertions.assertEquals(company, result);
     Mockito.verify(repository, times(1)).findById(cif);
     Mockito.verify(companyMapper, times(1)).mapToDomain(companyEntity);
+    Mockito.verify(employeeService, times(1)).findEmployeesByCompanyId(company.getCif());
   }
 
   private static Stream<Arguments> getCompanyParameters() {
@@ -212,30 +214,7 @@ class CompanyRepositoryServiceImplTest {
             "Q4947066I",
             new CompanyEntity()
                 .setCif("Q4947066I")
-                .setName("Company1 S.L")
-                .setEmployees(List.of(
-                    new EmployeeEntity()
-                        .setNif("45134320V")
-                        .setName("Walter")
-                        .setLastName("Martín Lopes")
-                        .setBirthYear(1998)
-                        .setGender(Gender.MALE.getCode())
-                        .setPhones(List.of(
-                            new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
-                            new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                        .setCompany("Q4947066I")
-                        .setEmail("wmlopes0@gmail.com"),
-                    new EmployeeEntity()
-                        .setNif("45132337N")
-                        .setName("Raquel")
-                        .setLastName("Barbero Sánchez")
-                        .setBirthYear(1996)
-                        .setGender(Gender.FEMALE.getCode())
-                        .setPhones(List.of(
-                            new PhoneEntity("+34", "676615106", PhoneType.PERSONAL)))
-                        .setCompany("Q4947066I")
-                        .setEmail("raquelbarberosanchez90@gmail.com")
-                )),
+                .setName("Company1 S.L"),
             new Company()
                 .setCif("Q4947066I")
                 .setName("Company1 S.L")
@@ -259,7 +238,28 @@ class CompanyRepositoryServiceImplTest {
                         .setPersonalPhone("+34676615106")
                         .setCompany("Q4947066I")
                         .setEmail("raquelbarberosanchez90@gmail.com")
-                ))
+                )),
+            List.of(
+                new Employee()
+                    .setNif("45134320V")
+                    .setName("Walter")
+                    .setSurname("Martín Lopes")
+                    .setBirthYear(1998)
+                    .setGender(Gender.MALE)
+                    .setCompanyPhone("+34676615106")
+                    .setPersonalPhone("+34722748406")
+                    .setCompany("Q4947066I")
+                    .setEmail("wmlopes0@gmail.com"),
+                new Employee()
+                    .setNif("45132337N")
+                    .setName("Raquel")
+                    .setSurname("Barbero Sánchez")
+                    .setBirthYear(1996)
+                    .setGender(Gender.FEMALE)
+                    .setPersonalPhone("+34676615106")
+                    .setCompany("Q4947066I")
+                    .setEmail("raquelbarberosanchez90@gmail.com")
+            )
         )
     );
   }
@@ -297,77 +297,14 @@ class CompanyRepositoryServiceImplTest {
             CompanyCreateVO.builder()
                 .cif("Q4947066I")
                 .name("Company1 S.L")
-                .employees(List.of(
-                    new Employee()
-                        .setNif("45134320V")
-                        .setName("Walter")
-                        .setSurname("Martín Lopes")
-                        .setBirthYear(1998)
-                        .setGender(Gender.MALE)
-                        .setCompanyPhone("+34676615106")
-                        .setPersonalPhone("+34722748406")
-                        .setCompany("Q4947066I")
-                        .setEmail("wmlopes0@gmail.com"),
-                    new Employee()
-                        .setNif("45132337N")
-                        .setName("Raquel")
-                        .setSurname("Barbero Sánchez")
-                        .setBirthYear(1996)
-                        .setGender(Gender.FEMALE)
-                        .setPersonalPhone("+34676615106")
-                        .setCompany("Q4947066I")
-                        .setEmail("raquelbarberosanchez90@gmail.com")
-                )).build(),
+                .build(),
             new CompanyEntity()
                 .setCif("Q4947066I")
-                .setName("Company1 S.L")
-                .setEmployees(List.of(
-                    new EmployeeEntity()
-                        .setNif("45134320V")
-                        .setName("Walter")
-                        .setLastName("Martín Lopes")
-                        .setBirthYear(1998)
-                        .setGender(Gender.MALE.getCode())
-                        .setPhones(List.of(
-                            new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
-                            new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                        .setCompany("Q4947066I")
-                        .setEmail("wmlopes0@gmail.com"),
-                    new EmployeeEntity()
-                        .setNif("45132337N")
-                        .setName("Raquel")
-                        .setLastName("Barbero Sánchez")
-                        .setBirthYear(1996)
-                        .setGender(Gender.FEMALE.getCode())
-                        .setPhones(List.of(
-                            new PhoneEntity("+34", "676615106", PhoneType.PERSONAL)))
-                        .setCompany("Q4947066I")
-                        .setEmail("raquelbarberosanchez90@gmail.com")
-                )),
+                .setName("Company1 S.L"),
             new Company()
                 .setCif("Q4947066I")
                 .setName("Company1 S.L")
-                .setEmployees(List.of(
-                    new Employee()
-                        .setNif("45134320V")
-                        .setName("Walter")
-                        .setSurname("Martín Lopes")
-                        .setBirthYear(1998)
-                        .setGender(Gender.MALE)
-                        .setCompanyPhone("+34676615106")
-                        .setPersonalPhone("+34722748406")
-                        .setCompany("Q4947066I")
-                        .setEmail("wmlopes0@gmail.com"),
-                    new Employee()
-                        .setNif("45132337N")
-                        .setName("Raquel")
-                        .setSurname("Barbero Sánchez")
-                        .setBirthYear(1996)
-                        .setGender(Gender.FEMALE)
-                        .setPersonalPhone("+34676615106")
-                        .setCompany("Q4947066I")
-                        .setEmail("raquelbarberosanchez90@gmail.com")
-                ))
+                .setEmployees(List.of())
         )
     );
   }
@@ -398,54 +335,11 @@ class CompanyRepositoryServiceImplTest {
                 .build(),
             new CompanyEntity()
                 .setCif("Q4947066I")
-                .setName("Company1 S.L")
-                .setEmployees(List.of(
-                    new EmployeeEntity()
-                        .setNif("45134320V")
-                        .setName("Walter")
-                        .setLastName("Martín Lopes")
-                        .setBirthYear(1998)
-                        .setGender(Gender.MALE.getCode())
-                        .setPhones(List.of(
-                            new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
-                            new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                        .setCompany("Q4947066I")
-                        .setEmail("wmlopes0@gmail.com"),
-                    new EmployeeEntity()
-                        .setNif("45132337N")
-                        .setName("Raquel")
-                        .setLastName("Barbero Sánchez")
-                        .setBirthYear(1996)
-                        .setGender(Gender.FEMALE.getCode())
-                        .setPhones(List.of(
-                            new PhoneEntity("+34", "676615106", PhoneType.PERSONAL)))
-                        .setCompany("Q4947066I")
-                        .setEmail("raquelbarberosanchez90@gmail.com")
-                )),
+                .setName("Company1 S.L"),
             new Company()
                 .setCif("Q4947066I")
                 .setName("Company1 S.L")
-                .setEmployees(List.of(
-                    new Employee()
-                        .setNif("45134320V")
-                        .setName("Walter")
-                        .setSurname("Martín Lopes")
-                        .setBirthYear(1998)
-                        .setGender(Gender.MALE)
-                        .setCompanyPhone("+34676615106")
-                        .setPersonalPhone("+34722748406")
-                        .setCompany("Q4947066I")
-                        .setEmail("wmlopes0@gmail.com"),
-                    new Employee()
-                        .setNif("45132337N")
-                        .setName("Raquel")
-                        .setSurname("Barbero Sánchez")
-                        .setBirthYear(1996)
-                        .setGender(Gender.FEMALE)
-                        .setPersonalPhone("+34676615106")
-                        .setCompany("Q4947066I")
-                        .setEmail("raquelbarberosanchez90@gmail.com")
-                ))
+                .setEmployees(List.of())
         )
     );
   }
@@ -474,29 +368,6 @@ class CompanyRepositoryServiceImplTest {
             new CompanyEntity()
                 .setCif("Q4947066I")
                 .setName("Company1 S.L")
-                .setEmployees(List.of(
-                    new EmployeeEntity()
-                        .setNif("45134320V")
-                        .setName("Walter")
-                        .setLastName("Martín Lopes")
-                        .setBirthYear(1998)
-                        .setGender(Gender.MALE.getCode())
-                        .setPhones(List.of(
-                            new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
-                            new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                        .setCompany("Q4947066I")
-                        .setEmail("wmlopes0@gmail.com"),
-                    new EmployeeEntity()
-                        .setNif("45132337N")
-                        .setName("Raquel")
-                        .setLastName("Barbero Sánchez")
-                        .setBirthYear(1996)
-                        .setGender(Gender.FEMALE.getCode())
-                        .setPhones(List.of(
-                            new PhoneEntity("+34", "676615106", PhoneType.PERSONAL)))
-                        .setCompany("Q4947066I")
-                        .setEmail("raquelbarberosanchez90@gmail.com")
-                ))
         )
     );
   }
@@ -547,7 +418,7 @@ class CompanyRepositoryServiceImplTest {
   @MethodSource("addEmployeeToCompanyParameters")
   @DisplayName("Add an employee to a company successfully")
   void addEmployeeToCompanyTest(String nif, String cif, EmployeeNifVO employeeNifVO, Employee employee, EmployeeEntity employeeEntity,
-      CompanyEntity companyEntity, Company company) {
+      CompanyEntity companyEntity, Company company, List<Employee> listEmployees) {
 
     Mockito.when(employeeService.getEmployeeById(employeeNifVO)).thenReturn(employee);
     Mockito.when(repository.findById(cif)).thenReturn(Optional.of(companyEntity));
@@ -560,21 +431,17 @@ class CompanyRepositoryServiceImplTest {
     employee.setCompany(cif);
 
     Mockito.when(employeeService.updateEmployeeById(employeeUpdated)).thenReturn(employee);
-    Mockito.when(employeeMapper.mapDomainToEntity(employee)).thenReturn(employeeEntity);
-
-    companyEntity.getEmployees().add(employeeEntity);
-    Mockito.when(repository.save(companyEntity)).thenReturn(companyEntity);
+    Mockito.when(employeeService.findEmployeesByCompanyId(cif)).thenReturn(listEmployees);
     Mockito.when(companyMapper.mapToDomain(companyEntity)).thenReturn(company);
 
     Company result = service.addEmployeeToCompany(nif, cif);
 
     Assertions.assertEquals(company, result);
     Mockito.verify(employeeService, Mockito.times(1)).getEmployeeById(employeeNifVO);
-    Mockito.verify(employeeMapper, Mockito.times(1)).mapDomainToEntity(employee);
     Mockito.verify(repository, Mockito.times(1)).findById(cif);
+    Mockito.verify(companyMapper, times(1)).mapToDomain(companyEntity);
     Mockito.verify(employeeService, Mockito.times(1)).updateEmployeeById(employeeUpdated);
-    Mockito.verify(repository, Mockito.times(1)).save(companyEntity);
-    Mockito.verify(companyMapper, Mockito.times(1)).mapToDomain(companyEntity);
+    Mockito.verify(employeeService, Mockito.times(1)).findEmployeesByCompanyId(cif);
   }
 
   private static Stream<Arguments> addEmployeeToCompanyParameters() {
@@ -606,8 +473,7 @@ class CompanyRepositoryServiceImplTest {
                 .setEmail("wmlopes0@gmail.com"),
             new CompanyEntity()
                 .setCif("Q4947066I")
-                .setName("Company1 S.L")
-                .setEmployees(new ArrayList<>()),
+                .setName("Company1 S.L"),
             new Company()
                 .setCif("Q4947066I")
                 .setName("Company1 S.L")
@@ -622,7 +488,18 @@ class CompanyRepositoryServiceImplTest {
                         .setPersonalPhone("+34722748406")
                         .setCompany("Q4947066I")
                         .setEmail("wmlopes0@gmail.com"))
-                ))
+                ),
+            List.of(
+                new Employee()
+                    .setNif("45134320V")
+                    .setName("Walter")
+                    .setSurname("Martín Lopes")
+                    .setBirthYear(1998)
+                    .setGender(Gender.MALE)
+                    .setCompanyPhone("+34676615106")
+                    .setPersonalPhone("+34722748406")
+                    .setCompany("Q4947066I")
+                    .setEmail("wmlopes0@gmail.com")))
     );
   }
 
@@ -685,7 +562,6 @@ class CompanyRepositoryServiceImplTest {
     Mockito.when(employeeService.getEmployeeById(employeeNifVO)).thenReturn(employee);
     Mockito.when(repository.findById(cif)).thenReturn(Optional.of(companyEntity));
     Mockito.when(employeeService.removeCompanyFromEmployee(employeeUpdate)).thenReturn(employeeChanged);
-    Mockito.when(repository.save(companyEntity)).thenReturn(companyEntity);
 
     boolean result = service.removeEmployeeFromCompany(nif, cif);
     Assertions.assertTrue(result);
@@ -693,7 +569,6 @@ class CompanyRepositoryServiceImplTest {
     Mockito.verify(employeeService, Mockito.times(1)).getEmployeeById(employeeNifVO);
     Mockito.verify(repository, Mockito.times(1)).findById(cif);
     Mockito.verify(employeeService, Mockito.times(1)).removeCompanyFromEmployee(employeeUpdate);
-    Mockito.verify(repository, Mockito.times(1)).save(companyEntity);
   }
 
   private static Stream<Arguments> removeEmployeeFromCompanyParameters() {
@@ -724,29 +599,6 @@ class CompanyRepositoryServiceImplTest {
             new CompanyEntity()
                 .setCif("Q4947066I")
                 .setName("Company1 S.L")
-                .setEmployees(List.of(
-                    new EmployeeEntity()
-                        .setNif("45134320V")
-                        .setName("Walter")
-                        .setLastName("Martín Lopes")
-                        .setBirthYear(1998)
-                        .setGender(Gender.MALE.getCode())
-                        .setPhones(List.of(
-                            new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
-                            new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                        .setCompany("Q4947066I")
-                        .setEmail("wmlopes0@gmail.com"),
-                    new EmployeeEntity()
-                        .setNif("45132337N")
-                        .setName("Raquel")
-                        .setLastName("Barbero Sánchez")
-                        .setBirthYear(1996)
-                        .setGender(Gender.FEMALE.getCode())
-                        .setPhones(List.of(
-                            new PhoneEntity("+34", "676615106", PhoneType.PERSONAL)))
-                        .setCompany("Q4947066I")
-                        .setEmail("raquelbarberosanchez90@gmail.com")
-                ))
         ));
   }
 

@@ -1,7 +1,5 @@
 package com.example.infrastructure.entity;
 
-import java.util.List;
-
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +20,4 @@ public class CompanyEntity {
 
   @NotNull(message = "Name cannot be null")
   private String name;
-
-  private List<EmployeeEntity> employees;
 }

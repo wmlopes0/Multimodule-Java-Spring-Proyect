@@ -1,6 +1,5 @@
 package com.example.infrastructure.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.example.domain.entity.Company;
@@ -13,9 +12,7 @@ import com.example.domain.vo.company.CompanyUpdateVO;
 import com.example.domain.vo.employee.EmployeeNifVO;
 import com.example.domain.vo.employee.EmployeeVO;
 import com.example.infrastructure.entity.CompanyEntity;
-import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.mapper.company.CompanyInfrastructureMapper;
-import com.example.infrastructure.mapper.employee.EmployeeInfrastructureMapper;
 import com.example.infrastructure.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,22 +26,31 @@ public class CompanyRepositoryServiceImpl implements CompanyService {
 
   private final EmployeeService employeeService;
 
-  private final EmployeeInfrastructureMapper employeeMapper;
-
   private final CompanyInfrastructureMapper companyMapper;
 
   @Override
   public List<Company> getCompanies() {
-    return companyRepository.findAll().stream()
+    List<Company> companies = companyRepository.findAll().stream()
         .map(companyMapper::mapToDomain)
         .toList();
+
+    companies.forEach(company -> {
+      List<Employee> employees = employeeService.findEmployeesByCompanyId(company.getCif());
+      company.setEmployees(employees);
+    });
+    return companies;
   }
 
   @Override
   public Company getCompany(String cif) {
-    return companyRepository.findById(cif)
-        .map(companyMapper::mapToDomain)
-        .orElse(null);
+    CompanyEntity companyEntity = companyRepository.findById(cif).orElse(null);
+    if (companyEntity == null) {
+      return null;
+    }
+    Company company = companyMapper.mapToDomain(companyEntity);
+    List<Employee> employees = employeeService.findEmployeesByCompanyId(cif);
+    company.setEmployees(employees);
+    return company;
   }
 
   @Override
@@ -84,8 +90,8 @@ public class CompanyRepositoryServiceImpl implements CompanyService {
       return null;
     }
 
-    CompanyEntity company = companyRepository.findById(cif).orElse(null);
-    if (company == null) {
+    CompanyEntity companyEntity = companyRepository.findById(cif).orElse(null);
+    if (companyEntity == null) {
       return null;
     }
 
@@ -94,18 +100,12 @@ public class CompanyRepositoryServiceImpl implements CompanyService {
         .company(cif)
         .build();
 
-    EmployeeEntity employeeEntity = employeeMapper.mapDomainToEntity(employeeService.updateEmployeeById(employeeUpdated));
+    employeeService.updateEmployeeById(employeeUpdated);
 
-    List<EmployeeEntity> employees = company.getEmployees();
-    if (employees == null) {
-      employees = new ArrayList<>();
-    }
-
-    employees.add(employeeEntity);
+    Company company = companyMapper.mapToDomain(companyEntity);
+    List<Employee> employees = employeeService.findEmployeesByCompanyId(cif);
     company.setEmployees(employees);
-    companyRepository.save(company);
-    return companyMapper.mapToDomain(company);
-
+    return company;
   }
 
   @Override
@@ -128,15 +128,6 @@ public class CompanyRepositoryServiceImpl implements CompanyService {
 
     employeeService.removeCompanyFromEmployee(employeeUpdate);
 
-    List<EmployeeEntity> employees = new ArrayList<>(company.getEmployees());
-    boolean isRemoved = employees.removeIf(e -> e.getNif().equals(nif));
-
-    if (isRemoved) {
-      company.setEmployees(employees);
-      companyRepository.save(company);
-      return true;
-    }
-
-    return false;
+    return true;
   }
 }

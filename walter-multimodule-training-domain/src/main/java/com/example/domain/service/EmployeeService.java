@@ -11,6 +11,8 @@ public interface EmployeeService {
 
   List<Employee> listEmployees();
 
+  List<Employee> findEmployeesByCompanyId(String cif);
+
   Employee getEmployeeById(EmployeeNifVO employeeNifVO);
 
   Employee getEmployeeByName(EmployeeNameVO employeeNameVO);
