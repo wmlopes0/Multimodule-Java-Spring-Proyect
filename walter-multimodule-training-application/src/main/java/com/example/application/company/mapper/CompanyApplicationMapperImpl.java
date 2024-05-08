@@ -1,7 +1,5 @@
 package com.example.application.company.mapper;
 
-import java.util.ArrayList;
-
 import com.example.application.company.cmd.dto.CompanyCreateCmd;
 import com.example.application.company.cmd.dto.CompanyUpdateCmd;
 import com.example.domain.vo.company.CompanyCreateVO;
@@ -16,7 +14,6 @@ public class CompanyApplicationMapperImpl implements CompanyApplicationMapper {
     return CompanyCreateVO.builder()
         .cif(companyCreateCmd.getCif())
         .name(companyCreateCmd.getName())
-        .employees(new ArrayList<>())
         .build();
   }
 

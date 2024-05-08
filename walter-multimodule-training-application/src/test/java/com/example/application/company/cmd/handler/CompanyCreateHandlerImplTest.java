@@ -52,7 +52,6 @@ class CompanyCreateHandlerImplTest {
             CompanyCreateVO.builder()
                 .cif("Q4947066I")
                 .name("Company1 S.L")
-                .employees(new ArrayList<>())
                 .build(),
             new Company()
                 .setCif("Q4947066I")

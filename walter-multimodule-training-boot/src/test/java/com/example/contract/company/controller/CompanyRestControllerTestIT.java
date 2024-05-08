@@ -9,12 +9,8 @@ import com.example.contract.company.dto.CompanyRequestDTO;
 import com.example.contract.company.dto.CompanyResponseDTO;
 import com.example.contract.company.dto.CompanyUpdateDTO;
 import com.example.contract.company.dto.EmployeeDTO;
-import com.example.domain.entity.Gender;
-import com.example.domain.entity.PhoneType;
 import com.example.domain.exception.CompanyNotFoundException;
 import com.example.infrastructure.entity.CompanyEntity;
-import com.example.infrastructure.entity.EmployeeEntity;
-import com.example.infrastructure.entity.PhoneEntity;
 import com.example.infrastructure.repository.CompanyRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,37 +57,10 @@ class CompanyRestControllerTestIT {
         Arguments.of(
             new CompanyEntity()
                 .setCif("B86017472")
-                .setName("Company1 S.L")
-                .setEmployees(List.of(
-                        new EmployeeEntity()
-                            .setNif("27748713H")
-                            .setName("Manolo")
-                            .setLastName("Martín Lopes")
-                            .setBirthYear(1998)
-                            .setGender(Gender.MALE.getCode())
-                            .setPhones(List.of(
-                                new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
-                                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                            .setCompany("B86017472")
-                            .setEmail("manolo@gmail.com")
-                    )
-                ),
+                .setName("Company1 S.L"),
             new CompanyEntity()
                 .setCif("U52304771")
-                .setName("Company2 S.L")
-                .setEmployees(List.of(
-                        new EmployeeEntity()
-                            .setNif("45134320V")
-                            .setName("Walter")
-                            .setLastName("Martín Lopes")
-                            .setBirthYear(1998)
-                            .setGender(Gender.MALE.getCode())
-                            .setPhones(List.of(
-                                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                            .setCompany("U52304771")
-                            .setEmail("wmlopes0@gmail.com")
-                    )
-                ),
+                .setName("Company2 S.L"),
             List.of(
                 new CompanyResponseDTO()
                     .setCif("B86017472")
@@ -156,21 +125,7 @@ class CompanyRestControllerTestIT {
             "B86017472",
             new CompanyEntity()
                 .setCif("B86017472")
-                .setName("Company1 S.L")
-                .setEmployees(List.of(
-                        new EmployeeEntity()
-                            .setNif("27748713H")
-                            .setName("Manolo")
-                            .setLastName("Martín Lopes")
-                            .setBirthYear(1998)
-                            .setGender(Gender.MALE.getCode())
-                            .setPhones(List.of(
-                                new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
-                                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                            .setCompany("B86017472")
-                            .setEmail("manolo@gmail.com")
-                    )
-                ),
+                .setName("Company1 S.L"),
             new CompanyResponseDTO()
                 .setCif("B86017472")
                 .setName("Company1 S.L")
@@ -231,7 +186,6 @@ class CompanyRestControllerTestIT {
             new CompanyEntity()
                 .setCif("U52304771")
                 .setName("Company2 S.L")
-                .setEmployees(List.of())
         )
     );
   }
@@ -260,21 +214,7 @@ class CompanyRestControllerTestIT {
         Arguments.of(
             new CompanyEntity()
                 .setCif("B86017472")
-                .setName("Company1 S.L")
-                .setEmployees(List.of(
-                        new EmployeeEntity()
-                            .setNif("27748713H")
-                            .setName("Manolo")
-                            .setLastName("Martín Lopes")
-                            .setBirthYear(1998)
-                            .setGender(Gender.MALE.getCode())
-                            .setPhones(List.of(
-                                new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
-                                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                            .setCompany("B86017472")
-                            .setEmail("manolo@gmail.com")
-                    )
-                ),
+                .setName("Company1 S.L"),
             "B86017472",
             new CompanyUpdateDTO()
                 .setName("CompanyNameChanged"),
@@ -297,20 +237,6 @@ class CompanyRestControllerTestIT {
             new CompanyEntity()
                 .setCif("B86017472")
                 .setName("CompanyNameChanged")
-                .setEmployees(List.of(
-                        new EmployeeEntity()
-                            .setNif("27748713H")
-                            .setName("Manolo")
-                            .setLastName("Martín Lopes")
-                            .setBirthYear(1998)
-                            .setGender(Gender.MALE.getCode())
-                            .setPhones(List.of(
-                                new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
-                                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                            .setCompany("B86017472")
-                            .setEmail("manolo@gmail.com")
-                    )
-                )
         )
     );
   }
@@ -348,20 +274,6 @@ class CompanyRestControllerTestIT {
             new CompanyEntity()
                 .setCif("B86017472")
                 .setName("Company1 S.L")
-                .setEmployees(List.of(
-                        new EmployeeEntity()
-                            .setNif("27748713H")
-                            .setName("Manolo")
-                            .setLastName("Martín Lopes")
-                            .setBirthYear(1998)
-                            .setGender(Gender.MALE.getCode())
-                            .setPhones(List.of(
-                                new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
-                                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                            .setCompany("B86017472")
-                            .setEmail("manolo@gmail.com")
-                    )
-                )
         )
     );
   }

@@ -370,21 +370,7 @@ class EmployeeRestControllerTestIT {
                 .setEmail("wmlopes0@gmail.com"),
             new CompanyEntity()
                 .setCif("B86017472")
-                .setName("Company2 S.L")
-                .setEmployees(List.of(
-                        new EmployeeEntity()
-                            .setNif("27748713H")
-                            .setName("Manolo")
-                            .setLastName("Martín Lopes")
-                            .setBirthYear(1998)
-                            .setGender(Gender.MALE.getCode())
-                            .setPhones(List.of(
-                                new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
-                                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                            .setCompany("B86017472")
-                            .setEmail("manolo@gmail.com")
-                    )
-                ),
+                .setName("Company2 S.L"),
             "45134320V",
             new CompanyDTO("B86017472"),
             new CompanyResponseDTO()
@@ -425,30 +411,6 @@ class EmployeeRestControllerTestIT {
             new CompanyEntity()
                 .setCif("B86017472")
                 .setName("Company2 S.L")
-                .setEmployees(List.of(
-                        new EmployeeEntity()
-                            .setNif("27748713H")
-                            .setName("Manolo")
-                            .setLastName("Martín Lopes")
-                            .setBirthYear(1998)
-                            .setGender(Gender.MALE.getCode())
-                            .setPhones(List.of(
-                                new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
-                                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                            .setCompany("B86017472")
-                            .setEmail("manolo@gmail.com"),
-                        new EmployeeEntity()
-                            .setNif("45134320V")
-                            .setName("Walter")
-                            .setLastName("Martín Lopes")
-                            .setBirthYear(1998)
-                            .setGender(Gender.MALE.getCode())
-                            .setPhones(List.of(
-                                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                            .setCompany("B86017472")
-                            .setEmail("wmlopes0@gmail.com")
-                    )
-                )
         )
     );
   }
@@ -492,20 +454,7 @@ class EmployeeRestControllerTestIT {
                 .setEmail("wmlopes0@gmail.com"),
             new CompanyEntity()
                 .setCif("B86017472")
-                .setName("Company2 S.L")
-                .setEmployees(List.of(
-                        new EmployeeEntity()
-                            .setNif("45134320V")
-                            .setName("Walter")
-                            .setLastName("Martín Lopes")
-                            .setBirthYear(1998)
-                            .setGender(Gender.MALE.getCode())
-                            .setCompany("B86017472")
-                            .setPhones(List.of(
-                                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                            .setEmail("wmlopes0@gmail.com")
-                    )
-                ),
+                .setName("Company2 S.L"),
             "45134320V",
             new CompanyDTO("B86017472"),
             new EmployeeEntity()
@@ -521,7 +470,6 @@ class EmployeeRestControllerTestIT {
             new CompanyEntity()
                 .setCif("B86017472")
                 .setName("Company2 S.L")
-                .setEmployees(List.of())
         )
     );
   }

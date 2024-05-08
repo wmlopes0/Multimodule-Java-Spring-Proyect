@@ -544,8 +544,7 @@ class EmployeeRestControllerE2ETestIT {
                 .setEmail("wmlopes0@gmail.com"),
             new CompanyEntity()
                 .setCif("B86017472")
-                .setName("Company2 S.L")
-                .setEmployees(List.of()),
+                .setName("Company2 S.L"),
             """
                 {
                   "cif": "B86017472",
@@ -577,19 +576,6 @@ class EmployeeRestControllerE2ETestIT {
             new CompanyEntity()
                 .setCif("B86017472")
                 .setName("Company2 S.L")
-                .setEmployees(List.of(
-                        new EmployeeEntity()
-                            .setNif("45134320V")
-                            .setName("Walter")
-                            .setLastName("Martín Lopes")
-                            .setBirthYear(1998)
-                            .setGender(Gender.MALE.getCode())
-                            .setCompany("B86017472")
-                            .setPhones(List.of(
-                                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                            .setEmail("wmlopes0@gmail.com")
-                    )
-                )
         )
     );
   }
@@ -639,20 +625,7 @@ class EmployeeRestControllerE2ETestIT {
                 .setEmail("wmlopes0@gmail.com"),
             new CompanyEntity()
                 .setCif("B86017472")
-                .setName("Company2 S.L")
-                .setEmployees(List.of(
-                        new EmployeeEntity()
-                            .setNif("45134320V")
-                            .setName("Walter")
-                            .setLastName("Martín Lopes")
-                            .setBirthYear(1998)
-                            .setGender(Gender.MALE.getCode())
-                            .setCompany("B86017472")
-                            .setPhones(List.of(
-                                new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
-                            .setEmail("wmlopes0@gmail.com")
-                    )
-                ),
+                .setName("Company2 S.L"),
             new EmployeeEntity()
                 .setNif("45134320V")
                 .setName("Walter")
@@ -665,8 +638,7 @@ class EmployeeRestControllerE2ETestIT {
                 .setEmail("wmlopes0@gmail.com"),
             new CompanyEntity()
                 .setCif("B86017472")
-                .setName("Company2 S.L")
-                .setEmployees(List.of()))
+                .setName("Company2 S.L"))
     );
   }
 

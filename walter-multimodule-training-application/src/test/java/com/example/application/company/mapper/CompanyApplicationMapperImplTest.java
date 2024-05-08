@@ -23,7 +23,6 @@ class CompanyApplicationMapperImplTest {
     CompanyCreateVO expected = CompanyCreateVO.builder()
         .cif("V33778580")
         .name("Company S.L")
-        .employees(new ArrayList<>())
         .build();
     CompanyCreateVO result = mapper.mapToCompanyCreateVO(companyCreateCmd);
     Assertions.assertEquals(expected, result);

@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -58,12 +57,10 @@ class CompanyRestControllerE2ETestIT {
         Arguments.of(
             new CompanyEntity()
                 .setCif("B86017472")
-                .setName("Company1 S.L")
-                .setEmployees(List.of()),
+                .setName("Company1 S.L"),
             new CompanyEntity()
                 .setCif("U52304771")
-                .setName("Company2 S.L")
-                .setEmployees(List.of()),
+                .setName("Company2 S.L"),
             """
                 [
                   {
@@ -108,8 +105,7 @@ class CompanyRestControllerE2ETestIT {
             "B86017472",
             new CompanyEntity()
                 .setCif("B86017472")
-                .setName("Company1 S.L")
-                .setEmployees(List.of()),
+                .setName("Company1 S.L"),
             """
                 {
                     "cif": "B86017472",
@@ -167,7 +163,6 @@ class CompanyRestControllerE2ETestIT {
             new CompanyEntity()
                 .setCif("B86017472")
                 .setName("Company1 S.L")
-                .setEmployees(List.of())
         )
     );
   }
@@ -197,8 +192,7 @@ class CompanyRestControllerE2ETestIT {
             "B86017472",
             new CompanyEntity()
                 .setCif("B86017472")
-                .setName("Company1 S.L")
-                .setEmployees(List.of()),
+                .setName("Company1 S.L"),
             """
                 {
                   "cif": "B86017472",
@@ -215,7 +209,6 @@ class CompanyRestControllerE2ETestIT {
             new CompanyEntity()
                 .setCif("B86017472")
                 .setName("Company Name Changed")
-                .setEmployees(List.of())
         )
     );
   }
@@ -249,8 +242,7 @@ class CompanyRestControllerE2ETestIT {
     String cif = "B86017472";
     companyRepository.save(new CompanyEntity()
         .setCif("B86017472")
-        .setName("Company")
-        .setEmployees(List.of()));
+        .setName("Company"));
 
     mockMvc.perform(delete("/companies/{cif}", cif))
         .andExpect(status().isOk());
