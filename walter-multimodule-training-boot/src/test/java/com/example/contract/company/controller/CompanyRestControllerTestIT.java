@@ -9,9 +9,14 @@ import com.example.contract.company.dto.CompanyRequestDTO;
 import com.example.contract.company.dto.CompanyResponseDTO;
 import com.example.contract.company.dto.CompanyUpdateDTO;
 import com.example.contract.company.dto.EmployeeDTO;
+import com.example.domain.entity.Gender;
+import com.example.domain.entity.PhoneType;
 import com.example.domain.exception.CompanyNotFoundException;
 import com.example.infrastructure.entity.CompanyEntity;
+import com.example.infrastructure.entity.EmployeeEntity;
+import com.example.infrastructure.entity.PhoneEntity;
 import com.example.infrastructure.repository.CompanyRepository;
+import com.example.infrastructure.repository.EmployeeRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,19 +36,23 @@ class CompanyRestControllerTestIT {
   private CompanyRestController controller;
 
   @Autowired
-  private CompanyRepository repository;
+  private CompanyRepository companyRepository;
+
+  @Autowired
+  private EmployeeRepository employeeRepository;
 
   @BeforeEach
   void init() {
-    repository.deleteAll();
+    companyRepository.deleteAll();
+    employeeRepository.deleteAll();
   }
 
   @ParameterizedTest
   @MethodSource("listCompaniesParameters")
   @DisplayName("List companies return correctly list")
   void listCompaniesTest(CompanyEntity companyEntity1, CompanyEntity companyEntity2, List<CompanyResponseDTO> listCompanies) {
-    repository.save(companyEntity1);
-    repository.save(companyEntity2);
+    companyRepository.save(companyEntity1);
+    companyRepository.save(companyEntity2);
 
     ResponseEntity<List<CompanyResponseDTO>> expected = ResponseEntity.ok(listCompanies);
     ResponseEntity<List<CompanyResponseDTO>> result = controller.listCompanies();
@@ -65,34 +74,12 @@ class CompanyRestControllerTestIT {
                 new CompanyResponseDTO()
                     .setCif("B86017472")
                     .setName("Company1 S.L")
-                    .setEmployees(List.of(
-                            new EmployeeDTO()
-                                .setNif("27748713H")
-                                .setName("Manolo")
-                                .setSurname("Martín Lopes")
-                                .setBirthYear(1998)
-                                .setGender("MALE")
-                                .setCompanyPhone("+34676615106")
-                                .setPersonalPhone("+34722748406")
-                                .setCompany("B86017472")
-                                .setEmail("manolo@gmail.com")
-                        )
+                    .setEmployees(List.of()
                     ),
                 new CompanyResponseDTO()
                     .setCif("U52304771")
                     .setName("Company2 S.L")
-                    .setEmployees(List.of(
-                            new EmployeeDTO()
-                                .setNif("45134320V")
-                                .setName("Walter")
-                                .setSurname("Martín Lopes")
-                                .setBirthYear(1998)
-                                .setGender("MALE")
-                                .setPersonalPhone("+34722748406")
-                                .setCompany("U52304771")
-                                .setEmail("wmlopes0@gmail.com")
-                        )
-                    )
+                    .setEmployees(List.of())
             )
         )
     );
@@ -111,7 +98,16 @@ class CompanyRestControllerTestIT {
   @MethodSource("getCompanyByIdParameters")
   @DisplayName("Get company by CIF returns company and 200 response correctly")
   void getCompanyByIdTest(String cif, CompanyEntity companyEntity, CompanyResponseDTO companyResponseDTO) {
-    repository.save(companyEntity);
+    employeeRepository.save(new EmployeeEntity()
+        .setNif("27748713H")
+        .setName("Manolo")
+        .setLastName("Martín Lopes")
+        .setBirthYear(1998)
+        .setGender(Gender.MALE.getCode())
+        .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+        .setCompany(cif)
+        .setEmail("manolo@gmail.com"));
+    companyRepository.save(companyEntity);
     ResponseEntity<CompanyResponseDTO> expected = ResponseEntity.ok(companyResponseDTO);
     ResponseEntity<CompanyResponseDTO> result = controller.getCompanyById(cif);
 
@@ -136,7 +132,6 @@ class CompanyRestControllerTestIT {
                             .setSurname("Martín Lopes")
                             .setBirthYear(1998)
                             .setGender("MALE")
-                            .setCompanyPhone("+34676615106")
                             .setPersonalPhone("+34722748406")
                             .setCompany("B86017472")
                             .setEmail("manolo@gmail.com")
@@ -168,7 +163,7 @@ class CompanyRestControllerTestIT {
     Assertions.assertEquals(expected.getBody(), result.getBody());
 
     Optional<CompanyEntity> fetchExpected = Optional.of(companyEntity);
-    Optional<CompanyEntity> fetchResult = repository.findById(companyRequestDTO.getCif());
+    Optional<CompanyEntity> fetchResult = companyRepository.findById(companyRequestDTO.getCif());
 
     Assertions.assertEquals(fetchExpected, fetchResult);
   }
@@ -195,7 +190,7 @@ class CompanyRestControllerTestIT {
   @DisplayName("Update company by CIF successfully returns 200 code response")
   void updateCompanyByIdTest(CompanyEntity companyEntity, String cif, CompanyUpdateDTO companyUpdateDTO,
       CompanyResponseDTO companyResponseDTO, CompanyEntity entityExpected) {
-    repository.save(companyEntity);
+    companyRepository.save(companyEntity);
 
     ResponseEntity<CompanyResponseDTO> expected = ResponseEntity.ok(companyResponseDTO);
     ResponseEntity<CompanyResponseDTO> result = controller.updateCompanyById(cif, companyUpdateDTO);
@@ -204,7 +199,7 @@ class CompanyRestControllerTestIT {
     Assertions.assertEquals(expected.getBody(), result.getBody());
 
     Optional<CompanyEntity> fetchExpected = Optional.of(entityExpected);
-    Optional<CompanyEntity> fetchResult = repository.findById(cif);
+    Optional<CompanyEntity> fetchResult = companyRepository.findById(cif);
 
     Assertions.assertEquals(fetchExpected, fetchResult);
   }
@@ -221,19 +216,7 @@ class CompanyRestControllerTestIT {
             new CompanyResponseDTO()
                 .setCif("B86017472")
                 .setName("CompanyNameChanged")
-                .setEmployees(List.of(
-                        new EmployeeDTO()
-                            .setNif("27748713H")
-                            .setName("Manolo")
-                            .setSurname("Martín Lopes")
-                            .setBirthYear(1998)
-                            .setGender("MALE")
-                            .setCompanyPhone("+34676615106")
-                            .setPersonalPhone("+34722748406")
-                            .setCompany("B86017472")
-                            .setEmail("manolo@gmail.com")
-                    )
-                ),
+                .setEmployees(List.of()),
             new CompanyEntity()
                 .setCif("B86017472")
                 .setName("CompanyNameChanged")
@@ -256,14 +239,14 @@ class CompanyRestControllerTestIT {
   @MethodSource("deleteCompanyByIdTest")
   @DisplayName("Deleted employee by CIF successfully returns 200 code response")
   void deleteCompanyByIdTest(String cif, CompanyEntity companyEntity) {
-    repository.save(companyEntity);
+    companyRepository.save(companyEntity);
 
     ResponseEntity<Object> deleteExpected = ResponseEntity.ok().build();
     ResponseEntity<Object> deleteResult = controller.deleteCompanyById(cif);
 
     Assertions.assertEquals(deleteExpected.getStatusCode(), deleteResult.getStatusCode());
 
-    Optional<CompanyEntity> fetchResult = repository.findById(cif);
+    Optional<CompanyEntity> fetchResult = companyRepository.findById(cif);
     Assertions.assertTrue(fetchResult.isEmpty());
   }
 

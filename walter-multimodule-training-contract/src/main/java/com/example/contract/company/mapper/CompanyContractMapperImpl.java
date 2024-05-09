@@ -1,5 +1,8 @@
 package com.example.contract.company.mapper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.example.application.company.cmd.dto.CompanyCreateCmd;
 import com.example.application.company.cmd.dto.CompanyDeleteCmd;
 import com.example.application.company.cmd.dto.CompanyUpdateCmd;
@@ -41,12 +44,19 @@ public class CompanyContractMapperImpl implements CompanyContractMapper {
 
   @Override
   public CompanyResponseDTO mapToCompanyResponseDTO(Company company) {
+    List<EmployeeDTO> employeeDTOs;
+    if (company.getEmployees() == null) {
+      employeeDTOs = new ArrayList<>();  // Retorna una lista vacía si los empleados son null
+    } else {
+      employeeDTOs = company.getEmployees().stream()
+          .map(this::mapToEmployeeDTO)
+          .toList();
+    }
+
     return new CompanyResponseDTO()
         .setCif(company.getCif())
         .setName(company.getName())
-        .setEmployees(company.getEmployees().stream()
-            .map(this::mapToEmployeeDTO)
-            .toList());
+        .setEmployees(employeeDTOs);
   }
 
   @Override

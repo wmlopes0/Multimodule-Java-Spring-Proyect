@@ -100,10 +100,7 @@ public class EmployeeRepositoryServiceImpl implements EmployeeService {
   @Override
   public Employee removeCompanyFromEmployee(EmployeeVO employeeVO) {
     Optional<EmployeeEntity> existingEmployee = repository.findById(employeeVO.getNif());
-    if (existingEmployee.isPresent()) {
-      return mapper.mapToDomain(repository.save(existingEmployee.get().setCompany(null)));
-    }
-    return null;
+    return existingEmployee.map(employeeEntity -> mapper.mapToDomain(repository.save(employeeEntity.setCompany(null)))).orElse(null);
   }
 
   private void updateEmployeeDetails(EmployeeEntity existingEmployee, EmployeeVO employeeVO) {
