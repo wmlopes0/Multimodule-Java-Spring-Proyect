@@ -61,14 +61,20 @@ public class CompanyRepositoryServiceImpl implements CompanyService {
 
   @Override
   public Company updateCompany(CompanyUpdateVO companyUpdateVO) {
-    return companyMapper.mapToDomain(companyRepository.findById(companyUpdateVO.getCif())
+    CompanyEntity updatedCompany = companyRepository.findById(companyUpdateVO.getCif())
         .map(existingCompany -> {
-          if (existingCompany.getName() != null) {
+          if (companyUpdateVO.getName() != null) {
             existingCompany.setName(companyUpdateVO.getName());
           }
           return companyRepository.save(existingCompany);
-        }).orElseThrow(() -> new CompanyNotFoundException("No company found with that ID."))
-    );
+        }).orElseThrow(() -> new CompanyNotFoundException("No company found with that ID."));
+
+    List<Employee> employees = employeeService.findEmployeesByCompanyId(companyUpdateVO.getCif());
+
+    Company companyWithEmployees = companyMapper.mapToDomain(updatedCompany);
+    companyWithEmployees.setEmployees(employees);
+
+    return companyWithEmployees;
   }
 
   @Override

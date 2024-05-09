@@ -312,17 +312,20 @@ class CompanyRepositoryServiceImplTest {
   @ParameterizedTest
   @MethodSource("updateCompanyParameters")
   @DisplayName("Update a company successfully")
-  void updateCompanyTest(CompanyUpdateVO companyUpdateVO, CompanyEntity companyEntity, Company company) {
+  void updateCompanyTest(CompanyUpdateVO companyUpdateVO, CompanyEntity companyEntity, Company company, Company expected,
+      List<Employee> listEmployee) {
     Mockito.when(repository.findById(companyUpdateVO.getCif())).thenReturn(Optional.of(companyEntity));
 
     Mockito.when(repository.save(companyEntity)).thenReturn(companyEntity);
+    Mockito.when(employeeService.findEmployeesByCompanyId(companyUpdateVO.getCif())).thenReturn(listEmployee);
     Mockito.when(companyMapper.mapToDomain(companyEntity)).thenReturn(company);
 
     Company result = service.updateCompany(companyUpdateVO);
 
-    Assertions.assertEquals(company, result);
+    Assertions.assertEquals(expected, result);
     Mockito.verify(repository, Mockito.times(1)).findById(companyUpdateVO.getCif());
     Mockito.verify(repository, Mockito.times(1)).save(companyEntity);
+    Mockito.verify(employeeService, Mockito.times(1)).findEmployeesByCompanyId(companyUpdateVO.getCif());
     Mockito.verify(companyMapper, Mockito.times(1)).mapToDomain(companyEntity);
   }
 
@@ -339,7 +342,50 @@ class CompanyRepositoryServiceImplTest {
             new Company()
                 .setCif("Q4947066I")
                 .setName("Company1 S.L")
-                .setEmployees(List.of())
+                .setEmployees(List.of()),
+            new Company()
+                .setCif("Q4947066I")
+                .setName("Company1 S.L")
+                .setEmployees(List.of(new Employee()
+                        .setNif("45134320V")
+                        .setName("Walter")
+                        .setSurname("Martín Lopes")
+                        .setBirthYear(1998)
+                        .setGender(Gender.MALE)
+                        .setCompanyPhone("+34676615106")
+                        .setPersonalPhone("+34722748406")
+                        .setCompany("Q4947066I")
+                        .setEmail("wmlopes0@gmail.com"),
+                    new Employee()
+                        .setNif("45132337N")
+                        .setName("Raquel")
+                        .setSurname("Barbero Sánchez")
+                        .setBirthYear(1996)
+                        .setGender(Gender.FEMALE)
+                        .setPersonalPhone("+34676615106")
+                        .setCompany("Q4947066I")
+                        .setEmail("raquelbarberosanchez90@gmail.com"))),
+            List.of(
+                new Employee()
+                    .setNif("45134320V")
+                    .setName("Walter")
+                    .setSurname("Martín Lopes")
+                    .setBirthYear(1998)
+                    .setGender(Gender.MALE)
+                    .setCompanyPhone("+34676615106")
+                    .setPersonalPhone("+34722748406")
+                    .setCompany("Q4947066I")
+                    .setEmail("wmlopes0@gmail.com"),
+                new Employee()
+                    .setNif("45132337N")
+                    .setName("Raquel")
+                    .setSurname("Barbero Sánchez")
+                    .setBirthYear(1996)
+                    .setGender(Gender.FEMALE)
+                    .setPersonalPhone("+34676615106")
+                    .setCompany("Q4947066I")
+                    .setEmail("raquelbarberosanchez90@gmail.com")
+            )
         )
     );
   }

@@ -7,12 +7,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.example.boot.app.App;
+import com.example.domain.entity.Gender;
+import com.example.domain.entity.PhoneType;
 import com.example.infrastructure.entity.CompanyEntity;
+import com.example.infrastructure.entity.EmployeeEntity;
+import com.example.infrastructure.entity.PhoneEntity;
 import com.example.infrastructure.repository.CompanyRepository;
+import com.example.infrastructure.repository.EmployeeRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,9 +42,13 @@ class CompanyRestControllerE2ETestIT {
   @Autowired
   private CompanyRepository companyRepository;
 
+  @Autowired
+  private EmployeeRepository employeeRepository;
+
   @BeforeEach
   void init() {
     companyRepository.deleteAll();
+    employeeRepository.deleteAll();
   }
 
   @ParameterizedTest
@@ -93,6 +103,15 @@ class CompanyRestControllerE2ETestIT {
   @MethodSource("getCompanyByIdParameters")
   @DisplayName("Get company by CIF returns company and 200 response correctly")
   void getCompanyByIdTest(String cif, CompanyEntity companyEntity, String expected) throws Exception {
+    employeeRepository.save(new EmployeeEntity()
+        .setNif("27748713H")
+        .setName("Manolo")
+        .setLastName("Martín Lopes")
+        .setBirthYear(1998)
+        .setGender(Gender.MALE.getCode())
+        .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+        .setCompany(cif)
+        .setEmail("manolo@gmail.com"));
     companyRepository.save(companyEntity);
     mockMvc.perform(get("/companies/{cif}", cif))
         .andExpect(status().isOk())
@@ -110,7 +129,18 @@ class CompanyRestControllerE2ETestIT {
                 {
                     "cif": "B86017472",
                     "name": "Company1 S.L",
-                    "employees": []
+                    "employees": [
+                      {
+                        "nif": "27748713H",
+                        "name": "Manolo",
+                        "surname":"Martín Lopes",
+                        "birthYear": 1998,
+                        "gender": "MALE",
+                        "personalPhone":"+34722748406",
+                        "company": "B86017472",
+                        "email": "manolo@gmail.com"
+                      }
+                    ]
                   }"""
         )
     );
@@ -170,8 +200,11 @@ class CompanyRestControllerE2ETestIT {
   @ParameterizedTest
   @MethodSource("updateCompanyByIdParameters")
   @DisplayName("Update company by CIF successfully returns 200 code response")
-  void updateCompanyByIdTest(String cif, CompanyEntity companyEntity, String jsonContent, String expected,
+  void updateCompanyByIdTest(String cif, EmployeeEntity employee1, EmployeeEntity employee2, CompanyEntity companyEntity,
+      String jsonContent, String expected,
       CompanyEntity entityExpected) throws Exception {
+    employeeRepository.save(employee1);
+    employeeRepository.save(employee2);
     companyRepository.save(companyEntity);
 
     mockMvc.perform(put("/companies/{cif}", cif)
@@ -190,6 +223,24 @@ class CompanyRestControllerE2ETestIT {
     return Stream.of(
         Arguments.of(
             "B86017472",
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setCompany("B86017472")
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("wmlopes0@gmail.com"),
+            new EmployeeEntity()
+                .setNif("45132337N")
+                .setName("Raquel")
+                .setLastName("Barbero Sánchez")
+                .setBirthYear(1996)
+                .setCompany("B86017472")
+                .setGender(Gender.FEMALE.getCode())
+                .setPhones(List.of(new PhoneEntity("+34", "676615106", PhoneType.PERSONAL)))
+                .setEmail("raquelbarberosanchez90@gmail.com"),
             new CompanyEntity()
                 .setCif("B86017472")
                 .setName("Company1 S.L"),
@@ -203,7 +254,27 @@ class CompanyRestControllerE2ETestIT {
                 {
                   "cif": "B86017472",
                   "name": "Company Name Changed",
-                  "employees": []
+                  "employees": [
+                    {
+                    "nif": "45134320V",
+                    "name": "Walter",
+                    "surname":"Martín Lopes",
+                    "birthYear": 1998,
+                    "gender": "MALE",
+                    "personalPhone":"+34722748406",
+                    "company": "B86017472",
+                    "email": "wmlopes0@gmail.com"
+                    },
+                    {
+                    "nif": "45132337N",
+                    "name": "Raquel",
+                    "surname":"Barbero Sánchez",
+                    "birthYear": 1996,
+                    "gender": "FEMALE",
+                    "personalPhone":"+34676615106",
+                    "email": "raquelbarberosanchez90@gmail.com"
+                    }
+                  ]
                 }
                 """,
             new CompanyEntity()
@@ -236,13 +307,14 @@ class CompanyRestControllerE2ETestIT {
         .andExpect(content().json(expected, false));
   }
 
-  @Test
+  @ParameterizedTest
+  @MethodSource("deleteCompanyByIdParameters")
   @DisplayName("Deleted employee by CIF successfully returns 200 code response")
-  void deleteCompanyByIdTest() throws Exception {
+  void deleteCompanyByIdTest(CompanyEntity company, EmployeeEntity employee1, EmployeeEntity employee2) throws Exception {
+    employeeRepository.save(employee1);
+    employeeRepository.save(employee2);
+    companyRepository.save(company);
     String cif = "B86017472";
-    companyRepository.save(new CompanyEntity()
-        .setCif("B86017472")
-        .setName("Company"));
 
     mockMvc.perform(delete("/companies/{cif}", cif))
         .andExpect(status().isOk());
@@ -251,6 +323,36 @@ class CompanyRestControllerE2ETestIT {
     Optional<CompanyEntity> fetchResult = companyRepository.findById(cif);
 
     Assertions.assertEquals(fetchExpected, fetchResult);
+    Assertions.assertNull(employeeRepository.findById(employee1.getNif()).get().getCompany());
+    Assertions.assertNull(employeeRepository.findById(employee2.getNif()).get().getCompany());
+  }
+
+  private static Stream<Arguments> deleteCompanyByIdParameters() {
+    return Stream.of(
+        Arguments.of(
+            new CompanyEntity()
+                .setCif("B86017472")
+                .setName("Company"),
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setCompany("B86017472")
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("wmlopes0@gmail.com"),
+            new EmployeeEntity()
+                .setNif("45132337N")
+                .setName("Raquel")
+                .setLastName("Barbero Sánchez")
+                .setBirthYear(1996)
+                .setCompany("B86017472")
+                .setGender(Gender.FEMALE.getCode())
+                .setPhones(List.of(new PhoneEntity("+34", "676615106", PhoneType.PERSONAL)))
+                .setEmail("raquelbarberosanchez90@gmail.com")
+        )
+    );
   }
 
   @Test
