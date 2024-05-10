@@ -13,12 +13,12 @@ import com.example.domain.entity.Employee;
 import com.example.domain.entity.Gender;
 import com.example.domain.entity.PhoneType;
 import com.example.domain.exception.EmployeeNotFoundException;
-import com.example.domain.vo.EmployeeNameVO;
-import com.example.domain.vo.EmployeeNifVO;
-import com.example.domain.vo.EmployeeVO;
+import com.example.domain.vo.employee.EmployeeNameVO;
+import com.example.domain.vo.employee.EmployeeNifVO;
+import com.example.domain.vo.employee.EmployeeVO;
 import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.entity.PhoneEntity;
-import com.example.infrastructure.mapper.EmployeeInfrastructureMapper;
+import com.example.infrastructure.mapper.employee.EmployeeInfrastructureMapper;
 import com.example.infrastructure.repository.EmployeeRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -60,6 +60,23 @@ class EmployeeRepositoryServiceImplTest {
     Mockito.verify(employeeInfrastructureMapper, atLeastOnce()).mapToDomain(any(EmployeeEntity.class));
   }
 
+  @ParameterizedTest
+  @MethodSource("listEmployeesParameters")
+  @DisplayName("Retrieve and map employees by company ID successfully")
+  void findEmployeesByCompanyId(EmployeeEntity employeeEntity1, EmployeeEntity employeeEntity2, Employee employee1, Employee employee2) {
+    String cif = "Q4947066I";
+    Mockito.when(repository.findByCompany(cif)).thenReturn(List.of(employeeEntity1, employeeEntity2));
+    Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity1)).thenReturn(employee1);
+    Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity2)).thenReturn(employee2);
+
+    List<Employee> result = service.findEmployeesByCompanyId(cif);
+    List<Employee> expected = List.of(employee1, employee2);
+
+    Assertions.assertEquals(expected, result);
+    Mockito.verify(repository, times(1)).findByCompany(cif);
+    Mockito.verify(employeeInfrastructureMapper, atLeastOnce()).mapToDomain(any(EmployeeEntity.class));
+  }
+
   private static Stream<Arguments> listEmployeesParameters() {
     return Stream.of(
         Arguments.of(
@@ -69,6 +86,7 @@ class EmployeeRepositoryServiceImplTest {
                 .setBirthYear(1998)
                 .setGender(Gender.MALE.getCode())
                 .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                .setCompany("Q4947066I")
                 .setEmail("wmlopes0@gmail.com"),
             new EmployeeEntity()
                 .setNif("45132337N")
@@ -76,6 +94,7 @@ class EmployeeRepositoryServiceImplTest {
                 .setBirthYear(1996)
                 .setGender(Gender.FEMALE.getCode())
                 .setPhones(List.of(new PhoneEntity("+34", "676615106", PhoneType.PERSONAL)))
+                .setCompany("Q4947066I")
                 .setEmail("raquelbarberosanchez90@gmail.com"),
             new Employee()
                 .setNif("45134320V")
@@ -83,6 +102,7 @@ class EmployeeRepositoryServiceImplTest {
                 .setBirthYear(1998)
                 .setGender(Gender.MALE)
                 .setPersonalPhone("+34722748406")
+                .setCompany("Q4947066I")
                 .setEmail("wmlopes0@gmail.com"),
             new Employee()
                 .setNif("45132337N")
@@ -90,6 +110,7 @@ class EmployeeRepositoryServiceImplTest {
                 .setBirthYear(1996)
                 .setGender(Gender.FEMALE)
                 .setPersonalPhone("+34676615106")
+                .setCompany("Q4947066I")
                 .setEmail("raquelbarberosanchez90@gmail.com")
         )
     );
@@ -406,6 +427,62 @@ class EmployeeRepositoryServiceImplTest {
     Assertions.assertFalse(result);
     Mockito.verify(repository, times(1)).existsById(employee.getNif());
     Mockito.verify(repository, never()).deleteById(any(String.class));
+  }
+
+  @ParameterizedTest
+  @MethodSource("removeCompanyFromEmployeeParameters")
+  @DisplayName("Remove Company from Employee correctly")
+  void removeCompanyFromEmployeeTest(String nif, EmployeeVO employeeVO, Optional<EmployeeEntity> existingEmployee,
+      EmployeeEntity employeeEntity, Employee employee) {
+
+    Mockito.when(repository.findById(nif)).thenReturn(existingEmployee);
+    Mockito.when(repository.save(existingEmployee.get())).thenReturn(employeeEntity);
+    Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity)).thenReturn(employee);
+
+    Employee result = service.removeCompanyFromEmployee(employeeVO);
+    Assertions.assertEquals(employee, result);
+
+    Mockito.verify(repository, times(1)).findById(nif);
+    Mockito.verify(repository, times(1)).save(existingEmployee.get());
+    Mockito.verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
+  }
+
+  private static Stream<Arguments> removeCompanyFromEmployeeParameters() {
+    return Stream.of(
+        Arguments.of(
+            "45134320V",
+            EmployeeVO.builder().nif("45134320V").company(null).build(),
+            Optional.of(
+                new EmployeeEntity()
+                    .setNif("45134320V")
+                    .setName("Walter")
+                    .setLastName("Martín Lopes")
+                    .setBirthYear(1998)
+                    .setGender(Gender.MALE.getCode())
+                    .setCompany("B86017472")
+                    .setPhones(List.of(
+                        new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                    .setEmail("wmlopes0@gmail.com")),
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setCompany(null)
+                .setPhones(List.of(
+                    new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("wmlopes0@gmail.com"),
+            new Employee()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setSurname("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE)
+                .setCompany(null)
+                .setPersonalPhone("+34722748406")
+                .setEmail("wmlopes0@gmail.com"))
+    );
   }
 
 }

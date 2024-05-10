@@ -1,4 +1,4 @@
-package com.example.infrastructure.mapper;
+package com.example.infrastructure.mapper.employee;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,9 +6,9 @@ import java.util.List;
 import com.example.domain.entity.Employee;
 import com.example.domain.entity.Gender;
 import com.example.domain.entity.PhoneType;
-import com.example.domain.vo.EmployeeNameVO;
-import com.example.domain.vo.EmployeeNifVO;
-import com.example.domain.vo.EmployeeVO;
+import com.example.domain.vo.employee.EmployeeNameVO;
+import com.example.domain.vo.employee.EmployeeNifVO;
+import com.example.domain.vo.employee.EmployeeVO;
 import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.entity.PhoneEntity;
 import org.springframework.stereotype.Component;
@@ -26,6 +26,7 @@ public class EmployeeInfrastructureMapperImpl implements EmployeeInfrastructureM
         .setGender(mapToGender(employeeEntity.getGender()))
         .setCompanyPhone(extractPhoneWithTypeOfList(employeeEntity.getPhones(), PhoneType.COMPANY))
         .setPersonalPhone(extractPhoneWithTypeOfList(employeeEntity.getPhones(), PhoneType.PERSONAL))
+        .setCompany(employeeEntity.getCompany())
         .setEmail(employeeEntity.getEmail());
   }
 
@@ -62,7 +63,32 @@ public class EmployeeInfrastructureMapperImpl implements EmployeeInfrastructureM
         .setBirthYear(employeeVO.getBirthYear())
         .setGender(employeeVO.getGender().getCode())
         .setPhones(phones)
+        .setCompany(employeeVO.getCompany())
         .setEmail(employeeVO.getEmail());
+  }
+
+  @Override
+  public EmployeeEntity mapDomainToEntity(Employee employee) {
+    List<PhoneEntity> phones = new ArrayList<>();
+    PhoneEntity personalPhone = createPhone(employee.getPersonalPhone(), PhoneType.PERSONAL);
+    if (personalPhone != null) {
+      phones.add(personalPhone);
+    }
+
+    PhoneEntity companyPhone = createPhone(employee.getCompanyPhone(), PhoneType.COMPANY);
+    if (companyPhone != null) {
+      phones.add(companyPhone);
+    }
+
+    return new EmployeeEntity()
+        .setNif(employee.getNif())
+        .setName(employee.getName())
+        .setLastName(employee.getSurname())
+        .setBirthYear(employee.getBirthYear())
+        .setGender(employee.getGender().getCode())
+        .setPhones(phones)
+        .setCompany(employee.getCompany())
+        .setEmail(employee.getEmail());
   }
 
   @Override

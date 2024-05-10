@@ -5,7 +5,7 @@ import static org.mockito.Mockito.times;
 import com.example.application.employee.cmd.dto.EmployeeDeleteCmd;
 import com.example.application.employee.mapper.EmployeeApplicationMapper;
 import com.example.domain.service.EmployeeService;
-import com.example.domain.vo.EmployeeNifVO;
+import com.example.domain.vo.employee.EmployeeNifVO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

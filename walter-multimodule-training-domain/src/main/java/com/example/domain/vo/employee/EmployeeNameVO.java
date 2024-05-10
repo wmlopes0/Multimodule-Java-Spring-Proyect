@@ -1,4 +1,4 @@
-package com.example.domain.vo;
+package com.example.domain.vo.employee;
 
 import lombok.Builder;
 import lombok.Value;
@@ -7,5 +7,5 @@ import lombok.Value;
 @Value
 public class EmployeeNameVO {
 
-  private String name;
+  String name;
 }

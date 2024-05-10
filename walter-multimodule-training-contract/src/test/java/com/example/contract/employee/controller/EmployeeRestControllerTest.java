@@ -8,22 +8,31 @@ import static org.mockito.Mockito.times;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.example.application.employee.cmd.dto.AddEmployeeToCompanyCmd;
 import com.example.application.employee.cmd.dto.EmployeeCreateCmd;
 import com.example.application.employee.cmd.dto.EmployeeDeleteCmd;
 import com.example.application.employee.cmd.dto.EmployeeUpdateCmd;
+import com.example.application.employee.cmd.dto.RemoveEmployeeFromCompanyCmd;
+import com.example.application.employee.cmd.handler.AddEmployeeToCompanyHandler;
 import com.example.application.employee.cmd.handler.EmployeeCreateHandler;
 import com.example.application.employee.cmd.handler.EmployeeDeleteHandler;
 import com.example.application.employee.cmd.handler.EmployeeUpdateHandler;
+import com.example.application.employee.cmd.handler.RemoveEmployeeFromCompanyHandler;
 import com.example.application.employee.query.dto.EmployeeByIdQuery;
 import com.example.application.employee.query.dto.EmployeeByNameQuery;
 import com.example.application.employee.query.handler.EmployeeGetByIdHandler;
 import com.example.application.employee.query.handler.EmployeeGetByNameHandler;
 import com.example.application.employee.query.handler.EmployeeListHandler;
+import com.example.contract.company.dto.CompanyResponseDTO;
+import com.example.contract.company.dto.EmployeeDTO;
+import com.example.contract.company.mapper.CompanyContractMapper;
+import com.example.contract.employee.dto.CompanyDTO;
 import com.example.contract.employee.dto.EmployeeRequestDTO;
 import com.example.contract.employee.dto.EmployeeResponseDTO;
 import com.example.contract.employee.dto.EmployeeUpdateDTO;
 import com.example.contract.employee.dto.PhoneDTO;
 import com.example.contract.employee.mapper.EmployeeContractMapper;
+import com.example.domain.entity.Company;
 import com.example.domain.entity.Employee;
 import com.example.domain.entity.Gender;
 import com.example.domain.entity.PhoneType;
@@ -65,7 +74,16 @@ class EmployeeRestControllerTest {
   private EmployeeListHandler employeeListHandler;
 
   @Mock
+  private AddEmployeeToCompanyHandler addEmployeeToCompanyHandler;
+
+  @Mock
+  private RemoveEmployeeFromCompanyHandler removeEmployeeFromCompanyHandler;
+
+  @Mock
   private EmployeeContractMapper mapper;
+
+  @Mock
+  private CompanyContractMapper companyMapper;
 
   @InjectMocks
   private EmployeeRestController controller;
@@ -424,6 +442,149 @@ class EmployeeRestControllerTest {
     Mockito.verify(mapper, times(1)).mapToEmployeeUpdateCmd(nif, employeeUpdateDTO);
     Mockito.verify(employeeUpdateHandler, times(1)).updateEmployee(employeeUpdateCmd);
     Mockito.verify(mapper, never()).mapToResponseDTO(any(Employee.class));
+  }
+
+  @ParameterizedTest
+  @MethodSource("addEmployeeToCompanyParameters")
+  @DisplayName("Add employee to company successfully returns 200 code response")
+  void addEmployeeToCompanyTest(String nif, String cif, Company company, CompanyResponseDTO companyResponseDTO) {
+    CompanyDTO companyDTO = new CompanyDTO(cif);
+    AddEmployeeToCompanyCmd addEmployeeToCompanyCmd = new AddEmployeeToCompanyCmd(nif, cif);
+
+    Mockito.when(mapper.mapToAddEmployeeToCompanyCmd(nif, companyDTO)).thenReturn(addEmployeeToCompanyCmd);
+    Mockito.when(addEmployeeToCompanyHandler.addEmployeeToCompany(addEmployeeToCompanyCmd)).thenReturn(company);
+    Mockito.when(companyMapper.mapToCompanyResponseDTO(company)).thenReturn(companyResponseDTO);
+
+    ResponseEntity<CompanyResponseDTO> expected = ResponseEntity.ok(companyResponseDTO);
+    ResponseEntity<CompanyResponseDTO> result = controller.addEmployeeToCompany(nif, companyDTO);
+
+    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
+    Assertions.assertEquals(expected.getBody(), result.getBody());
+
+    Mockito.verify(mapper, times(1)).mapToAddEmployeeToCompanyCmd(nif, companyDTO);
+    Mockito.verify(addEmployeeToCompanyHandler, times(1)).addEmployeeToCompany(addEmployeeToCompanyCmd);
+    Mockito.verify(companyMapper, times(1)).mapToCompanyResponseDTO(company);
+  }
+
+  private static Stream<Arguments> addEmployeeToCompanyParameters() {
+    return Stream.of(
+        Arguments.of(
+            "45134320V",
+            "Q4947066I",
+            new Company()
+                .setCif("Q4947066I")
+                .setName("Company1 S.L")
+                .setEmployees(List.of(
+                    new Employee()
+                        .setNif("45134320V")
+                        .setName("Walter")
+                        .setSurname("Martín Lopes")
+                        .setBirthYear(1998)
+                        .setGender(Gender.MALE)
+                        .setCompanyPhone("+34676615106")
+                        .setPersonalPhone("+34722748406")
+                        .setCompany("Q4947066I")
+                        .setEmail("wmlopes0@gmail.com"),
+                    new Employee()
+                        .setNif("45132337N")
+                        .setName("Raquel")
+                        .setSurname("Barbero Sánchez")
+                        .setBirthYear(1996)
+                        .setGender(Gender.FEMALE)
+                        .setPersonalPhone("+34676615106")
+                        .setCompany("Q4947066I")
+                        .setEmail("raquelbarberosanchez90@gmail.com")
+                )),
+            new CompanyResponseDTO()
+                .setCif("Q4947066I")
+                .setName("Company1 S.L")
+                .setEmployees(List.of(
+                    new EmployeeDTO()
+                        .setNif("45134320V")
+                        .setName("Walter")
+                        .setSurname("Martín Lopes")
+                        .setBirthYear(1998)
+                        .setGender("MALE")
+                        .setCompanyPhone("+34676615106")
+                        .setPersonalPhone("+34722748406")
+                        .setCompany("Q4947066I")
+                        .setEmail("wmlopes0@gmail.com"),
+                    new EmployeeDTO()
+                        .setNif("45132337N")
+                        .setName("Raquel")
+                        .setSurname("Barbero Sánchez")
+                        .setBirthYear(1996)
+                        .setGender("FEMALE")
+                        .setPersonalPhone("+34676615106")
+                        .setCompany("Q4947066I")
+                        .setEmail("raquelbarberosanchez90@gmail.com")
+                ))
+        )
+    );
+  }
+
+  @Test
+  @DisplayName("Add employee to company not found returns 404 code response")
+  void addEmployeeToCompanyNotFoundTest() {
+    String nif = "45134320V";
+    String cif = "Q4947066I";
+    CompanyDTO companyDTO = new CompanyDTO(cif);
+    AddEmployeeToCompanyCmd addEmployeeToCompanyCmd = new AddEmployeeToCompanyCmd(nif, cif);
+
+    Mockito.when(mapper.mapToAddEmployeeToCompanyCmd(nif, companyDTO)).thenReturn(addEmployeeToCompanyCmd);
+    Mockito.when(addEmployeeToCompanyHandler.addEmployeeToCompany(addEmployeeToCompanyCmd)).thenReturn(null);
+
+    ResponseEntity<CompanyResponseDTO> expected = ResponseEntity.notFound().build();
+    ResponseEntity<CompanyResponseDTO> result = controller.addEmployeeToCompany(nif, companyDTO);
+
+    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
+    Assertions.assertEquals(expected.getBody(), result.getBody());
+
+    Mockito.verify(mapper, times(1)).mapToAddEmployeeToCompanyCmd(nif, companyDTO);
+    Mockito.verify(addEmployeeToCompanyHandler, times(1)).addEmployeeToCompany(addEmployeeToCompanyCmd);
+    Mockito.verify(companyMapper, never()).mapToCompanyResponseDTO(any(Company.class));
+  }
+
+  @Test
+  @DisplayName("Remove employee from company successfully returns 200 code response")
+  void removeEmployeeFromCompanyTest() {
+    String nif = "45134320V";
+    String cif = "Q4947066I";
+    CompanyDTO companyDTO = new CompanyDTO(cif);
+    RemoveEmployeeFromCompanyCmd removeEmployeeFromCompanyCmd = new RemoveEmployeeFromCompanyCmd(nif, cif);
+
+    Mockito.when(mapper.removeEmployeeFromCompanyCmd(nif, companyDTO)).thenReturn(removeEmployeeFromCompanyCmd);
+    Mockito.when(removeEmployeeFromCompanyHandler.removeEmployeeFromCompany(removeEmployeeFromCompanyCmd)).thenReturn(true);
+
+    ResponseEntity<Object> expected = ResponseEntity.ok().build();
+    ResponseEntity<Object> result = controller.removeEmployeeFromCompany(nif, companyDTO);
+
+    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
+    Assertions.assertEquals(expected.getBody(), result.getBody());
+
+    Mockito.verify(mapper, times(1)).removeEmployeeFromCompanyCmd(nif, companyDTO);
+    Mockito.verify(removeEmployeeFromCompanyHandler, times(1)).removeEmployeeFromCompany(removeEmployeeFromCompanyCmd);
+  }
+
+  @Test
+  @DisplayName("Remove employee from company not found returns 404 code response")
+  void removeEmployeeFromCompanyNotFoundTest() {
+    String nif = "45134320V";
+    String cif = "Q4947066I";
+    CompanyDTO companyDTO = new CompanyDTO(cif);
+    RemoveEmployeeFromCompanyCmd removeEmployeeFromCompanyCmd = new RemoveEmployeeFromCompanyCmd(nif, cif);
+
+    Mockito.when(mapper.removeEmployeeFromCompanyCmd(nif, companyDTO)).thenReturn(removeEmployeeFromCompanyCmd);
+    Mockito.when(removeEmployeeFromCompanyHandler.removeEmployeeFromCompany(removeEmployeeFromCompanyCmd)).thenReturn(false);
+
+    ResponseEntity<Object> expected = ResponseEntity.notFound().build();
+    ResponseEntity<Object> result = controller.removeEmployeeFromCompany(nif, companyDTO);
+
+    Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
+    Assertions.assertEquals(expected.getBody(), result.getBody());
+
+    Mockito.verify(mapper, times(1)).removeEmployeeFromCompanyCmd(nif, companyDTO);
+    Mockito.verify(removeEmployeeFromCompanyHandler, times(1)).removeEmployeeFromCompany(removeEmployeeFromCompanyCmd);
   }
 
   @ParameterizedTest
