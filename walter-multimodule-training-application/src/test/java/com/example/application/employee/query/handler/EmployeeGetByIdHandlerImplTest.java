@@ -7,7 +7,7 @@ import com.example.application.employee.query.dto.EmployeeByIdQuery;
 import com.example.domain.entity.Employee;
 import com.example.domain.entity.Gender;
 import com.example.domain.service.EmployeeService;
-import com.example.domain.vo.EmployeeNifVO;
+import com.example.domain.vo.employee.EmployeeNifVO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

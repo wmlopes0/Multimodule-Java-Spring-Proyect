@@ -3,13 +3,15 @@ package com.example.domain.service;
 import java.util.List;
 
 import com.example.domain.entity.Employee;
-import com.example.domain.vo.EmployeeNameVO;
-import com.example.domain.vo.EmployeeNifVO;
-import com.example.domain.vo.EmployeeVO;
+import com.example.domain.vo.employee.EmployeeNameVO;
+import com.example.domain.vo.employee.EmployeeNifVO;
+import com.example.domain.vo.employee.EmployeeVO;
 
 public interface EmployeeService {
 
   List<Employee> listEmployees();
+
+  List<Employee> findEmployeesByCompanyId(String cif);
 
   Employee getEmployeeById(EmployeeNifVO employeeNifVO);
 
@@ -20,4 +22,8 @@ public interface EmployeeService {
   Employee updateEmployeeById(EmployeeVO employeeVO);
 
   boolean deleteEmployeeById(EmployeeNifVO employeeNifVO);
+
+  void dissociateEmployeesFromCompany(String companyId);
+
+  Employee removeCompanyFromEmployee(EmployeeVO employeeVO);
 }

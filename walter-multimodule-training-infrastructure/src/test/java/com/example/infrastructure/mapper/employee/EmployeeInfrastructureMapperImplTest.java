@@ -1,4 +1,4 @@
-package com.example.infrastructure.mapper;
+package com.example.infrastructure.mapper.employee;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -6,9 +6,9 @@ import java.util.stream.Stream;
 import com.example.domain.entity.Employee;
 import com.example.domain.entity.Gender;
 import com.example.domain.entity.PhoneType;
-import com.example.domain.vo.EmployeeNameVO;
-import com.example.domain.vo.EmployeeNifVO;
-import com.example.domain.vo.EmployeeVO;
+import com.example.domain.vo.employee.EmployeeNameVO;
+import com.example.domain.vo.employee.EmployeeNifVO;
+import com.example.domain.vo.employee.EmployeeVO;
 import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.entity.PhoneEntity;
 import org.junit.jupiter.api.Assertions;
@@ -34,6 +34,7 @@ class EmployeeInfrastructureMapperImplTest {
         .setBirthYear(1998)
         .setGender(Gender.MALE.getCode())
         .setPhones(phones)
+        .setCompany("H91313551")
         .setEmail("wmlopes0@gmail.com");
 
     Employee expected = new Employee()
@@ -44,9 +45,40 @@ class EmployeeInfrastructureMapperImplTest {
         .setGender(Gender.MALE)
         .setCompanyPhone(expectedCompanyPhone)
         .setPersonalPhone(expectedPersonalPhone)
+        .setCompany("H91313551")
         .setEmail("wmlopes0@gmail.com");
 
     Employee result = employeeInfrastructureMapper.mapToDomain(employeeEntity);
+
+    Assertions.assertEquals(expected, result);
+  }
+
+  @ParameterizedTest
+  @MethodSource("mapToDomainParameters")
+  @DisplayName("Mapping Employee to EmployeeEntity correctly")
+  void mapDomainToEntity(List<PhoneEntity> expectedPhones, String personalPhone, String companyPhone) {
+    Employee employee = new Employee()
+        .setNif("45134320V")
+        .setName("Walter")
+        .setSurname("Martín Lopes")
+        .setBirthYear(1998)
+        .setGender(Gender.MALE)
+        .setCompanyPhone(companyPhone)
+        .setPersonalPhone(personalPhone)
+        .setCompany("H91313551")
+        .setEmail("wmlopes0@gmail.com");
+
+    EmployeeEntity expected = new EmployeeEntity()
+        .setNif("45134320V")
+        .setName("Walter")
+        .setLastName("Martín Lopes")
+        .setBirthYear(1998)
+        .setGender(Gender.MALE.getCode())
+        .setPhones(expectedPhones)
+        .setCompany("H91313551")
+        .setEmail("wmlopes0@gmail.com");
+
+    EmployeeEntity result = employeeInfrastructureMapper.mapDomainToEntity(employee);
 
     Assertions.assertEquals(expected, result);
   }
@@ -113,6 +145,7 @@ class EmployeeInfrastructureMapperImplTest {
                 .gender(Gender.MALE)
                 .personalPhone("+34722748406")
                 .companyPhone("+34676615106")
+                .company("H91313551")
                 .email("wmlopes0@gmail.com").build(),
             new EmployeeEntity()
                 .setNif("45134320V")
@@ -123,6 +156,7 @@ class EmployeeInfrastructureMapperImplTest {
                 .setPhones(List.of(
                     new PhoneEntity("+34", "676615106", PhoneType.COMPANY),
                     new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                .setCompany("H91313551")
                 .setEmail("wmlopes0@gmail.com")
         ),
         Arguments.of(
@@ -132,6 +166,7 @@ class EmployeeInfrastructureMapperImplTest {
                 .birthYear(1998)
                 .gender(Gender.MALE)
                 .companyPhone("+34676615106")
+                .company("H91313551")
                 .email("wmlopes0@gmail.com").build(),
             new EmployeeEntity()
                 .setNif("45134320V")
@@ -140,6 +175,7 @@ class EmployeeInfrastructureMapperImplTest {
                 .setGender(Gender.MALE.getCode())
                 .setPhones(List.of(
                     new PhoneEntity("+34", "676615106", PhoneType.COMPANY)))
+                .setCompany("H91313551")
                 .setEmail("wmlopes0@gmail.com")
         )
     );
@@ -224,4 +260,5 @@ class EmployeeInfrastructureMapperImplTest {
         )
     );
   }
+
 }
