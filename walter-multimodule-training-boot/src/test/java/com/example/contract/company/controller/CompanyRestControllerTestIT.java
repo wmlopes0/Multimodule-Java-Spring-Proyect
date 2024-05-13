@@ -3,12 +3,7 @@ package com.example.contract.company.controller;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-
 import com.example.boot.app.App;
-import com.example.contract.company.dto.CompanyRequestDTO;
-import com.example.contract.company.dto.CompanyResponseDTO;
-import com.example.contract.company.dto.CompanyUpdateDTO;
-import com.example.contract.company.dto.EmployeeDTO;
 import com.example.domain.entity.Gender;
 import com.example.domain.entity.PhoneType;
 import com.example.domain.exception.CompanyNotFoundException;
@@ -17,6 +12,10 @@ import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.entity.PhoneEntity;
 import com.example.infrastructure.repository.CompanyRepository;
 import com.example.infrastructure.repository.EmployeeRepository;
+import org.example.rest.model.CompanyRequestDTO;
+import org.example.rest.model.CompanyResponseDTO;
+import org.example.rest.model.CompanyUpdateDTO;
+import org.example.rest.model.EmployeeDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -227,7 +226,7 @@ class CompanyRestControllerTestIT {
   @Test
   @DisplayName("Update company by CIF not found returns 404 code response")
   void updateCompanyByIdNotFoundTest() {
-    CompanyUpdateDTO companyUpdateDTO = new CompanyUpdateDTO("CompanyNameChanged");
+    CompanyUpdateDTO companyUpdateDTO = new CompanyUpdateDTO().setName("CompanyNameChanged");
     String expectedMessage = "No company found with that ID.";
     Exception exception = Assertions.assertThrows(CompanyNotFoundException.class,
         () -> controller.updateCompanyById("B86017472", companyUpdateDTO));
@@ -241,8 +240,8 @@ class CompanyRestControllerTestIT {
   void deleteCompanyByIdTest(String cif, CompanyEntity companyEntity) {
     companyRepository.save(companyEntity);
 
-    ResponseEntity<Object> deleteExpected = ResponseEntity.ok().build();
-    ResponseEntity<Object> deleteResult = controller.deleteCompanyById(cif);
+    ResponseEntity<Void> deleteExpected = ResponseEntity.ok().build();
+    ResponseEntity<Void> deleteResult = controller.deleteCompanyById(cif);
 
     Assertions.assertEquals(deleteExpected.getStatusCode(), deleteResult.getStatusCode());
 
@@ -264,8 +263,8 @@ class CompanyRestControllerTestIT {
   @Test
   @DisplayName("Deleted employee by CIF failed returns 404 code response.")
   void deleteCompanyByIdNotFoundTest() {
-    ResponseEntity<Object> expected = ResponseEntity.notFound().build();
-    ResponseEntity<Object> result = controller.deleteCompanyById("B86017472");
+    ResponseEntity<Void> expected = ResponseEntity.notFound().build();
+    ResponseEntity<Void> result = controller.deleteCompanyById("B86017472");
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Assertions.assertEquals(expected.getBody(), result.getBody());

@@ -11,13 +11,13 @@ import com.example.application.employee.cmd.dto.EmployeeUpdateCmd;
 import com.example.application.employee.cmd.dto.RemoveEmployeeFromCompanyCmd;
 import com.example.application.employee.query.dto.EmployeeByIdQuery;
 import com.example.application.employee.query.dto.EmployeeByNameQuery;
-import com.example.contract.employee.dto.CompanyDTO;
-import com.example.contract.employee.dto.EmployeeRequestDTO;
-import com.example.contract.employee.dto.EmployeeResponseDTO;
-import com.example.contract.employee.dto.EmployeeUpdateDTO;
-import com.example.contract.employee.dto.PhoneDTO;
 import com.example.domain.entity.Employee;
 import com.example.domain.entity.PhoneType;
+import org.example.rest.model.CompanyDTO;
+import org.example.rest.model.EmployeeRequestDTO;
+import org.example.rest.model.EmployeeResponseDTO;
+import org.example.rest.model.EmployeeUpdateDTO;
+import org.example.rest.model.PhoneDTO;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -73,21 +73,21 @@ public class EmployeeContractMapperImpl implements EmployeeContractMapper {
 
     List<PhoneDTO> phones = new ArrayList<>();
     if (employee.getPersonalPhone() != null) {
-      phones.add(new PhoneDTO(employee.getPersonalPhone(), PhoneType.PERSONAL.name()));
+      phones.add(new PhoneDTO().number(employee.getPersonalPhone()).type(PhoneType.PERSONAL.name()));
     }
     if (employee.getCompanyPhone() != null) {
-      phones.add(new PhoneDTO(employee.getCompanyPhone(), PhoneType.COMPANY.name()));
+      phones.add(new PhoneDTO().number(employee.getCompanyPhone()).type(PhoneType.COMPANY.name()));
     }
 
     return new EmployeeResponseDTO()
-        .setNif(employee.getNif())
-        .setCompleteName(employee.getSurname() + ", " + employee.getName())
-        .setBirthYear(employee.getBirthYear())
-        .setAge(age)
-        .setAdult(adult)
-        .setGender(gender)
-        .setPhones(phones)
-        .setEmail(employee.getEmail());
+        .nif(employee.getNif())
+        .completeName(employee.getSurname() + ", " + employee.getName())
+        .birthYear(employee.getBirthYear())
+        .age(age)
+        .adult(adult)
+        .gender(gender)
+        .phones(phones)
+        .email(employee.getEmail());
   }
 
   @Override

@@ -9,14 +9,14 @@ import com.example.application.employee.cmd.dto.EmployeeUpdateCmd;
 import com.example.application.employee.cmd.dto.RemoveEmployeeFromCompanyCmd;
 import com.example.application.employee.query.dto.EmployeeByIdQuery;
 import com.example.application.employee.query.dto.EmployeeByNameQuery;
-import com.example.contract.employee.dto.CompanyDTO;
-import com.example.contract.employee.dto.EmployeeRequestDTO;
-import com.example.contract.employee.dto.EmployeeResponseDTO;
-import com.example.contract.employee.dto.EmployeeUpdateDTO;
-import com.example.contract.employee.dto.PhoneDTO;
 import com.example.domain.entity.Employee;
 import com.example.domain.entity.Gender;
 import com.example.domain.entity.PhoneType;
+import org.example.rest.model.CompanyDTO;
+import org.example.rest.model.EmployeeRequestDTO;
+import org.example.rest.model.EmployeeResponseDTO;
+import org.example.rest.model.EmployeeUpdateDTO;
+import org.example.rest.model.PhoneDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -125,8 +125,8 @@ class EmployeeContractMapperImplTest {
         .setAdult(true)
         .setGender("Male")
         .setPhones(List.of(
-            new PhoneDTO("+34722748406", PhoneType.PERSONAL.name()),
-            new PhoneDTO("+34676615106", PhoneType.COMPANY.name())))
+            new PhoneDTO().setNumber("+34722748406").setType(PhoneType.PERSONAL.name()),
+            new PhoneDTO().setNumber("+34676615106").setType(PhoneType.COMPANY.name())))
         .setEmail("wmlopes0@gmail.com");
 
     EmployeeResponseDTO result = mapper.mapToResponseDTO(employee);

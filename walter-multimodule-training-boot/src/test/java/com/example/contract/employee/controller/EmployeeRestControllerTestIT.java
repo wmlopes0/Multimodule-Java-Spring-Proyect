@@ -5,13 +5,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.example.boot.app.App;
-import com.example.contract.company.dto.CompanyResponseDTO;
-import com.example.contract.company.dto.EmployeeDTO;
-import com.example.contract.employee.dto.CompanyDTO;
-import com.example.contract.employee.dto.EmployeeRequestDTO;
-import com.example.contract.employee.dto.EmployeeResponseDTO;
-import com.example.contract.employee.dto.EmployeeUpdateDTO;
-import com.example.contract.employee.dto.PhoneDTO;
 import com.example.domain.entity.Gender;
 import com.example.domain.entity.PhoneType;
 import com.example.infrastructure.entity.CompanyEntity;
@@ -19,6 +12,13 @@ import com.example.infrastructure.entity.EmployeeEntity;
 import com.example.infrastructure.entity.PhoneEntity;
 import com.example.infrastructure.repository.CompanyRepository;
 import com.example.infrastructure.repository.EmployeeRepository;
+import org.example.rest.model.CompanyDTO;
+import org.example.rest.model.CompanyResponseDTO;
+import org.example.rest.model.EmployeeDTO;
+import org.example.rest.model.EmployeeRequestDTO;
+import org.example.rest.model.EmployeeResponseDTO;
+import org.example.rest.model.EmployeeUpdateDTO;
+import org.example.rest.model.PhoneDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -89,7 +89,7 @@ class EmployeeRestControllerTestIT {
                     .setAdult(true)
                     .setGender("Male")
                     .setPhones(List.of(
-                        new PhoneDTO("+34722748406", PhoneType.PERSONAL.name())))
+                        new PhoneDTO().setNumber("+34722748406").setType(PhoneType.PERSONAL.name())))
                     .setEmail("wmlopes0@gmail.com"),
                 new EmployeeResponseDTO()
                     .setNif("45132337N")
@@ -99,7 +99,7 @@ class EmployeeRestControllerTestIT {
                     .setAdult(true)
                     .setGender("Female")
                     .setPhones(List.of(
-                        new PhoneDTO("+34676615106", PhoneType.PERSONAL.name())))
+                        new PhoneDTO().setNumber("+34676615106").setType(PhoneType.PERSONAL.name())))
                     .setEmail("raquelbarberosanchez90@gmail.com")
             )
         )
@@ -148,7 +148,7 @@ class EmployeeRestControllerTestIT {
                 .setAdult(true)
                 .setGender("Male")
                 .setPhones(List.of(
-                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name())))
+                    new PhoneDTO().setNumber("+34722748406").setType(PhoneType.PERSONAL.name())))
                 .setEmail("wmlopes0@gmail.com")
         )
     );
@@ -197,7 +197,7 @@ class EmployeeRestControllerTestIT {
                 .setAdult(true)
                 .setGender("Male")
                 .setPhones(List.of(
-                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name())))
+                    new PhoneDTO().setNumber("+34722748406").setType(PhoneType.PERSONAL.name())))
                 .setEmail("wmlopes0@gmail.com")
         )
     );
@@ -251,7 +251,7 @@ class EmployeeRestControllerTestIT {
                 .setAdult(true)
                 .setGender("Male")
                 .setPhones(List.of(
-                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name())))
+                    new PhoneDTO().setNumber("+34722748406").setType(PhoneType.PERSONAL.name())))
                 .setEmail("wmlopes0@gmail.com"),
             new EmployeeEntity()
                 .setNif("45134320V")
@@ -313,8 +313,8 @@ class EmployeeRestControllerTestIT {
                 .setAdult(true)
                 .setGender("Male")
                 .setPhones(List.of(
-                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name()),
-                    new PhoneDTO("+34676615106", PhoneType.COMPANY.name())))
+                    new PhoneDTO().setNumber("+34722748406").setType(PhoneType.PERSONAL.name()),
+                    new PhoneDTO().setNumber("+34676615106").setType(PhoneType.COMPANY.name())))
                 .setEmail("walterlopesdiez@gmail.com"),
             new EmployeeEntity()
                 .setNif("45134320V")

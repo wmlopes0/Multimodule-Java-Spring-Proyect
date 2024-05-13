@@ -7,12 +7,12 @@ import com.example.application.company.cmd.dto.CompanyCreateCmd;
 import com.example.application.company.cmd.dto.CompanyDeleteCmd;
 import com.example.application.company.cmd.dto.CompanyUpdateCmd;
 import com.example.application.company.query.dto.CompanyByIdQuery;
-import com.example.contract.company.dto.CompanyRequestDTO;
-import com.example.contract.company.dto.CompanyResponseDTO;
-import com.example.contract.company.dto.CompanyUpdateDTO;
-import com.example.contract.company.dto.EmployeeDTO;
 import com.example.domain.entity.Company;
 import com.example.domain.entity.Employee;
+import org.example.rest.model.CompanyRequestDTO;
+import org.example.rest.model.CompanyResponseDTO;
+import org.example.rest.model.CompanyUpdateDTO;
+import org.example.rest.model.EmployeeDTO;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -54,23 +54,23 @@ public class CompanyContractMapperImpl implements CompanyContractMapper {
     }
 
     return new CompanyResponseDTO()
-        .setCif(company.getCif())
-        .setName(company.getName())
-        .setEmployees(employeeDTOs);
+        .cif(company.getCif())
+        .name(company.getName())
+        .employees(employeeDTOs);
   }
 
   @Override
   public EmployeeDTO mapToEmployeeDTO(Employee employee) {
     return new EmployeeDTO()
-        .setNif(employee.getNif())
-        .setName(employee.getName())
-        .setSurname(employee.getSurname())
-        .setBirthYear(employee.getBirthYear())
-        .setGender(employee.getGender().name())
-        .setCompanyPhone(employee.getCompanyPhone())
-        .setPersonalPhone(employee.getPersonalPhone())
-        .setCompany(employee.getCompany())
-        .setEmail(employee.getEmail());
+        .nif(employee.getNif())
+        .name(employee.getName())
+        .surname(employee.getSurname())
+        .birthYear(employee.getBirthYear())
+        .gender(employee.getGender().name())
+        .companyPhone(employee.getCompanyPhone())
+        .personalPhone(employee.getPersonalPhone())
+        .company(employee.getCompany())
+        .email(employee.getEmail());
   }
 
 }
