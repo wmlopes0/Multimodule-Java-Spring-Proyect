@@ -188,10 +188,10 @@ class EmployeeRestControllerE2ETestIT {
 
   @ParameterizedTest
   @CsvSource(value = {
-      "45134320Z",
+      "45134320F",
       "4513",
-  }, nullValues = "null")
-  @DisplayName("Invalid NIF should result in HTTP 500 InternalServerError")
+  })
+  @DisplayName("Invalid NIF should result in HTTP 400 BadRequest")
   void getEmployeeByIdInvalidTest(String nif) throws Exception {
     String expected = """
         {
@@ -283,7 +283,7 @@ class EmployeeRestControllerE2ETestIT {
                        "name": "Walter",
                        "surname": "Martín Lopes",
                        "birthYear": 1998,
-                       "gender": "Male",
+                       "gender": "MALE",
                        "personalPhone": "+34722748406",
                        "email": "wmlopes0@gmail.com"
                       }""",
@@ -342,8 +342,7 @@ class EmployeeRestControllerE2ETestIT {
                 {
                        "nif": "Invalid NIF",
                        "name": "Name cannot be empty",
-                       "birthYear": "Invalid year of birth",
-                       "gender": "Gender must be either 'Male' or 'Female'",
+                       "gender": "Gender must be either 'MALE' or 'FEMALE'",
                        "personalPhone": "Invalid phone format",
                        "email": "Invalid email format"
                       }"""
@@ -360,7 +359,6 @@ class EmployeeRestControllerE2ETestIT {
                 {
                        "nif": "NIF cannot be null",
                        "name": "Name cannot be null",
-                       "birthYear": "Birth year cannot be null",
                        "gender": "Gender cannot be null",
                        "personalPhone": "Personal phone cannot be null"
                       }"""
@@ -405,7 +403,7 @@ class EmployeeRestControllerE2ETestIT {
                        "name": "Walter",
                        "surname":"Martín Lopes",
                        "birthYear": 1998,
-                       "gender": "Male",
+                       "gender": "MALE",
                        "personalPhone": "+34722748406",
                        "email": "walterlopesdiez@gmail.com"
                       }""",
@@ -465,8 +463,7 @@ class EmployeeRestControllerE2ETestIT {
             """
                 {
                        "name": "Name cannot be empty",
-                       "birthYear": "Invalid year of birth",
-                       "gender": "Gender must be either 'Male' or 'Female'",
+                       "gender": "Gender must be either 'MALE' or 'FEMALE'",
                        "personalPhone": "Invalid phone format",
                        "email": "Invalid email format"
                       }"""
@@ -484,7 +481,7 @@ class EmployeeRestControllerE2ETestIT {
                "name": "Walter",
                "surname": "Martín Lopes",
                "birthYear": 1998,
-               "gender": "Male",
+               "gender": "MALE",
                "personalPhone": "+34722748406",
                "email": "walterlopesdiez@gmail.com"
               }""";
@@ -671,7 +668,7 @@ class EmployeeRestControllerE2ETestIT {
       "45134320Z",
       "4513"
   }, nullValues = "null")
-  @DisplayName("Invalid NIF should result in HTTP 500 InternalServerError")
+  @DisplayName("Invalid NIF should result in HTTP 400 BadRequest")
   void deleteEmployeeByIdInvalidTest(String nif) throws Exception {
     String jsonContent = String.format("""
         {

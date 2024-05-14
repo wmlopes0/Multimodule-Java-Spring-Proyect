@@ -14,8 +14,9 @@
     <module>walter-multimodule-training-application</module>
     <module>walter-multimodule-training-contract</module>
     <module>walter-multimodule-training-boot</module>
+    <module>walter-multimodule-training-contract-api</module>
   </modules>
-  <groupId>com.example</groupId>
+  <groupId>org.example</groupId>
   <artifactId>walter-multimodule-training</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>walter-multimodule-training</name>
@@ -28,7 +29,12 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>com.example</groupId>
+        <groupId>org.openapitools</groupId>
+        <artifactId>jackson-databind-nullable</artifactId>
+        <version>0.2.3</version>
+      </dependency>
+      <dependency>
+        <groupId>org.example</groupId>
         <artifactId>walter-multimodule-training-domain</artifactId>
         <version>0.0.1-SNAPSHOT</version>
       </dependency>
@@ -41,6 +47,16 @@
         <groupId>org.example</groupId>
         <artifactId>walter-multimodule-training-contract</artifactId>
         <version>0.0.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.example</groupId>
+        <artifactId>walter-multimodule-training-contract-api</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>6.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.example</groupId>
@@ -85,6 +101,11 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.openapitools</groupId>
+          <artifactId>openapi-generator-maven-plugin</artifactId><!-- RELEASE_VERSION -->
+          <version>7.5.0</version><!-- /RELEASE_VERSION -->
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
