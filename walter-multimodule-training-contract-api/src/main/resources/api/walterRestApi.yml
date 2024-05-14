@@ -1,0 +1,532 @@
+openapi: 3.0.3
+info:
+  title: Walter's API
+  description: |-
+    This is my first API with Spring Boot, a simple example with crud operations and documentation with Swagger
+  version: 1.0.11
+servers:
+  - url: http://localhost:8080/swagger-ui/index.html
+tags:
+  - name: Employee Management
+    description: Handling of employee data
+  - name: Company Management
+    description: Handling of company data
+paths:
+  /employees/{nif}:
+    put:
+      tags:
+        - Employee Management
+      summary: Update employee
+      description: This endpoint updates information for a given employee
+      operationId: updateEmployeeById
+      parameters:
+        - name: nif
+          in: path
+          required: true
+          description: The NIF of the employee to update
+          schema:
+            type: string
+            format: validNIF
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Bad request due to id not found
+        '500':
+          description: Internal Server Error
+
+    get:
+      tags:
+        - Employee Management
+      summary: Get employee
+      description: This endpoint obtains information about an employee by their NIF
+      operationId: getEmployeeById
+      parameters:
+        - name: nif
+          in: path
+          required: true
+          description: The NIF of the employee to retrieve
+          schema:
+            type: string
+            format: validNIF
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
+        '404':
+          description: Bad request due to id not found
+        '500':
+          description: Internal Server Error
+    delete:
+      tags:
+        - Employee Management
+      summary: Delete employee
+      description: This endpoint removes a given employee from the database by their NIF
+      operationId: deleteEmployeeById
+      parameters:
+        - name: nif
+          in: path
+          required: true
+          description: The NIF of the employee to delete
+          schema:
+            type: string
+            format: validNIF
+      responses:
+        '200':
+          description: Successful operation
+        '404':
+          description: Bad request due to id not found
+        '500':
+          description: Internal Server Error
+
+  /employees/removeToCompany/{nif}:
+    put:
+      tags:
+        - Employee Management
+      summary: Remove employee from company
+      description: This endpoint removes an employee from the company
+      operationId: removeEmployeeFromCompany
+      parameters:
+        - name: nif
+          in: path
+          required: true
+          description: The NIF of the employee to be removed from the company
+          schema:
+            type: string
+            format: validNIF
+      requestBody:
+        description: Company details from which the employee will be removed
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Company'
+      responses:
+        '200':
+          description: Successful operation
+        '404':
+          description: Bad request due to id not found
+        '500':
+          description: Internal Server Error
+
+  /employees/addToCompany/{nif}:
+    put:
+      tags:
+        - Employee Management
+      summary: Add employee to the company
+      description: This endpoint adds an employee to the company
+      operationId: addEmployeeToCompany
+      parameters:
+        - name: nif
+          in: path
+          required: true
+          description: The NIF of the employee to be added to the company
+          schema:
+            type: string
+            format: validNIF
+      requestBody:
+        description: Company details to which the employee will be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Company'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyResponse'
+        '404':
+          description: Bad request due to id not found
+        '500':
+          description: Internal Server Error
+
+  /employees/:
+    get:
+      tags:
+        - Employee Management
+      summary: List all employees
+      description: This endpoint lists all employees in the database
+      operationId: listEmployees
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmployeeResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not found
+        '500':
+          description: Internal Server Error
+    post:
+      tags:
+        - Employee Management
+      summary: Add new employee
+      description: This endpoint adds an employee to the database
+      operationId: addEmployee
+      requestBody:
+        description: Employee data to add to the database
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeRequest'
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not found
+        '500':
+          description: Internal Server Error
+
+  /employees/name/{name}:
+    get:
+      tags:
+        - Employee Management
+      summary: Get employee by name
+      description: This endpoint gets information about an employee that contains that string in their name
+      operationId: getEmployeeByName
+      parameters:
+        - name: name
+          in: path
+          required: true
+          description: Part of the employee's name to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
+        '404':
+          description: Bad request due to no match found
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+
+  /companies/:
+    get:
+      tags:
+        - Company Management
+      summary: List all companies
+      description: This endpoint lists all companies in the database
+      operationId: listCompanies
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CompanyResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not found
+        '500':
+          description: Internal Server Error
+    post:
+      tags:
+        - Company Management
+      summary: Add new company
+      description: This endpoint adds a company to the database
+      operationId: newCompany
+      requestBody:
+        description: Company data to add to the database
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyRequest'
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not found
+        '500':
+          description: Internal Server Error
+
+  /companies/{cif}:
+    get:
+      tags:
+        - Company Management
+      summary: Get company by CIF
+      description: This endpoint obtains information about companies by their CIF
+      operationId: getCompanyById
+      parameters:
+        - name: cif
+          in: path
+          required: true
+          description: The CIF of the company to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyResponse'
+        '404':
+          description: Bad request due to id not found
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+    put:
+      tags:
+        - Company Management
+      summary: Update company
+      description: This endpoint updates information for a given company
+      operationId: updateCompanyById
+      parameters:
+        - name: cif
+          in: path
+          required: true
+          description: The CIF of the company to update
+          schema:
+            type: string
+      requestBody:
+        description: Company data to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyUpdate'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyResponse'
+        '404':
+          description: Bad request due to id not found
+        '500':
+          description: Internal Server Error
+    delete:
+      tags:
+        - Company Management
+      summary: Remove company
+      description: This endpoint removes a given company from the database by their CIF
+      operationId: deleteCompanyById
+      parameters:
+        - name: cif
+          in: path
+          required: true
+          description: The CIF of the company to be deleted
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+        '404':
+          description: Bad request due to CIF not found
+        '500':
+          description: Internal Server Error
+components:
+  schemas:
+    EmployeeUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          example: Walter
+        surname:
+          type: string
+        birthYear:
+          type: integer
+          format: int32
+        gender:
+          type: string
+          pattern: "^(MALE|FEMALE)$"
+        personalPhone:
+          type: string
+          pattern: "^\\+\\d{2}\\d{9}$"
+        companyPhone:
+          type: string
+          pattern: "^\\+\\d{2}\\d{9}$"
+        email:
+          type: string
+          pattern: "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"
+
+    EmployeeResponse:
+      type: object
+      properties:
+        nif:
+          type: string
+        completeName:
+          type: string
+        birthYear:
+          type: integer
+          format: int32
+        age:
+          type: integer
+          format: int32
+        adult:
+          type: boolean
+        gender:
+          type: string
+        phones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Phone'
+        email:
+          type: string
+
+    Phone:
+      type: object
+      properties:
+        number:
+          type: string
+        type:
+          type: string
+
+    Company:
+      required:
+        - cif
+      type: object
+      properties:
+        cif:
+          type: string
+
+    CompanyResponse:
+      type: object
+      properties:
+        cif:
+          type: string
+        name:
+          type: string
+        employees:
+          type: array
+          items:
+            $ref: '#/components/schemas/Employee'
+
+    Employee:
+      type: object
+      properties:
+        nif:
+          type: string
+        name:
+          type: string
+        surname:
+          type: string
+        birthYear:
+          type: integer
+          format: int32
+        gender:
+          type: string
+        personalPhone:
+          type: string
+        companyPhone:
+          type: string
+        company:
+          type: string
+        email:
+          type: string
+
+    CompanyUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+
+    EmployeeRequest:
+      required:
+        - nif
+        - name
+        - birthyear
+        - gender
+        - personalPhone
+      type: object
+      properties:
+        nif:
+          type: string
+          pattern: "(\\d{8}[A-Z])|([XYZ]\\d{7}[A-Z])"
+        name:
+          type: string
+          minLength: 1
+        surname:
+          type: string
+        birthYear:
+          type: integer
+          format: int32
+        gender:
+          type: string
+          pattern: "^(MALE|FEMALE)$"
+        personalPhone:
+          type: string
+          pattern: "^\\+\\d{2}\\d{9}$"
+          minLength: 1
+        companyPhone:
+          type: string
+          pattern: "^\\+\\d{2}\\d{9}$"
+        email:
+          type: string
+          pattern: "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"
+
+    CompanyRequest:
+      required:
+        - cif
+      type: object
+      properties:
+        cif:
+          type: string
+        name:
+          type: string
+
+    validNIF:
+      type: string
+      pattern: "(\\d{8}[A-Z])|([XYZ]\\d{7}[A-Z])"
+      description: "Valid NIF format"
+
+  requestBodies:
+    EmployeeRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EmployeeRequest'
+    CompanyRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CompanyRequest'

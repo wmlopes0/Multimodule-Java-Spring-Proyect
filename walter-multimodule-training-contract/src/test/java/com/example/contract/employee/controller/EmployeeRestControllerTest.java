@@ -23,19 +23,19 @@ import com.example.application.employee.query.dto.EmployeeByNameQuery;
 import com.example.application.employee.query.handler.EmployeeGetByIdHandler;
 import com.example.application.employee.query.handler.EmployeeGetByNameHandler;
 import com.example.application.employee.query.handler.EmployeeListHandler;
-import com.example.contract.company.dto.CompanyResponseDTO;
-import com.example.contract.company.dto.EmployeeDTO;
 import com.example.contract.company.mapper.CompanyContractMapper;
-import com.example.contract.employee.dto.CompanyDTO;
-import com.example.contract.employee.dto.EmployeeRequestDTO;
-import com.example.contract.employee.dto.EmployeeResponseDTO;
-import com.example.contract.employee.dto.EmployeeUpdateDTO;
-import com.example.contract.employee.dto.PhoneDTO;
 import com.example.contract.employee.mapper.EmployeeContractMapper;
 import com.example.domain.entity.Company;
 import com.example.domain.entity.Employee;
 import com.example.domain.entity.Gender;
 import com.example.domain.entity.PhoneType;
+import org.example.rest.model.CompanyDTO;
+import org.example.rest.model.CompanyResponseDTO;
+import org.example.rest.model.EmployeeDTO;
+import org.example.rest.model.EmployeeRequestDTO;
+import org.example.rest.model.EmployeeResponseDTO;
+import org.example.rest.model.EmployeeUpdateDTO;
+import org.example.rest.model.PhoneDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -134,7 +134,7 @@ class EmployeeRestControllerTest {
                 .setAdult(true)
                 .setGender("Male")
                 .setPhones(List.of(
-                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name())))
+                    new PhoneDTO().setNumber("+34722748406").setType(PhoneType.PERSONAL.name())))
                 .setEmail("wmlopes0@gmail.com"),
             new EmployeeResponseDTO()
                 .setNif("45132337N")
@@ -144,7 +144,7 @@ class EmployeeRestControllerTest {
                 .setAdult(true)
                 .setGender("Female")
                 .setPhones(List.of(
-                    new PhoneDTO("+34676615106", PhoneType.PERSONAL.name())))
+                    new PhoneDTO().setNumber("+34676615106").setType(PhoneType.PERSONAL.name())))
                 .setEmail("raquelbarberosanchez90@gmail.com")
         ));
   }
@@ -202,7 +202,7 @@ class EmployeeRestControllerTest {
                 .setAdult(true)
                 .setGender("Male")
                 .setPhones(List.of(
-                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name())))
+                    new PhoneDTO().setNumber("+34722748406").setType(PhoneType.PERSONAL.name())))
                 .setEmail("wmlopes0@gmail.com")
         )
     );
@@ -265,7 +265,7 @@ class EmployeeRestControllerTest {
                 .setAdult(true)
                 .setGender("Male")
                 .setPhones(List.of(
-                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name())))
+                    new PhoneDTO().setNumber("+34722748406").setType(PhoneType.PERSONAL.name())))
                 .setEmail("wmlopes0@gmail.com")
         )
     );
@@ -346,7 +346,7 @@ class EmployeeRestControllerTest {
                 .setAdult(true)
                 .setGender("Male")
                 .setPhones(List.of(
-                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name())))
+                    new PhoneDTO().setNumber("+34722748406").setType(PhoneType.PERSONAL.name())))
                 .setEmail("wmlopes0@gmail.com")
         )
     );
@@ -407,7 +407,7 @@ class EmployeeRestControllerTest {
                 .setAdult(true)
                 .setGender("Male")
                 .setPhones(List.of(
-                    new PhoneDTO("+34722748406", PhoneType.PERSONAL.name())))
+                    new PhoneDTO().setNumber("+34722748406").setType(PhoneType.PERSONAL.name())))
                 .setEmail("wmlopes0@gmail.com")
         )
     );

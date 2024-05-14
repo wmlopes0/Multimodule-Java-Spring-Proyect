@@ -18,14 +18,14 @@ import com.example.application.company.cmd.handler.CompanyUpdateHandler;
 import com.example.application.company.query.dto.CompanyByIdQuery;
 import com.example.application.company.query.handler.CompanyGetByIdHandler;
 import com.example.application.company.query.handler.CompanyListHandler;
-import com.example.contract.company.dto.CompanyRequestDTO;
-import com.example.contract.company.dto.CompanyResponseDTO;
-import com.example.contract.company.dto.CompanyUpdateDTO;
-import com.example.contract.company.dto.EmployeeDTO;
 import com.example.contract.company.mapper.CompanyContractMapper;
 import com.example.domain.entity.Company;
 import com.example.domain.entity.Employee;
 import com.example.domain.entity.Gender;
+import org.example.rest.model.CompanyRequestDTO;
+import org.example.rest.model.CompanyResponseDTO;
+import org.example.rest.model.CompanyUpdateDTO;
+import org.example.rest.model.EmployeeDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -315,7 +315,7 @@ class CompanyRestControllerTest {
     return Stream.of(
         Arguments.of(
             "V33778580",
-            new CompanyUpdateDTO("Company S.L"),
+            new CompanyUpdateDTO().setName("Company S.L"),
             new CompanyUpdateCmd().setCif("V33778580").setName("Company S.L"),
             new Company()
                 .setCif("V33778580")
@@ -333,7 +333,7 @@ class CompanyRestControllerTest {
   @DisplayName("Update company by CIF not found returns 404 code response")
   void updateCompanyByIdNotFoundTest() {
     String cif = "V33778580";
-    CompanyUpdateDTO companyUpdateDTO = new CompanyUpdateDTO("Company S.L");
+    CompanyUpdateDTO companyUpdateDTO = new CompanyUpdateDTO().name("Company S.L");
     CompanyUpdateCmd companyUpdateCmd = new CompanyUpdateCmd()
         .setCif("V33778580")
         .setName("Company S.L");
@@ -357,8 +357,8 @@ class CompanyRestControllerTest {
     Mockito.when(mapper.mapToCompanyDeleteCmd(cif)).thenReturn(companyDeleteCmd);
     Mockito.when(companyDeleteHandler.deleteCompany(companyDeleteCmd)).thenReturn(true);
 
-    ResponseEntity<Object> result = controller.deleteCompanyById(cif);
-    ResponseEntity<Object> expected = ResponseEntity.status(HttpStatus.OK).build();
+    ResponseEntity<Void> result = controller.deleteCompanyById(cif);
+    ResponseEntity<Void> expected = ResponseEntity.status(HttpStatus.OK).build();
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Mockito.verify(mapper, times(1)).mapToCompanyDeleteCmd(cif);
@@ -374,8 +374,8 @@ class CompanyRestControllerTest {
     Mockito.when(mapper.mapToCompanyDeleteCmd(cif)).thenReturn(companyDeleteCmd);
     Mockito.when(companyDeleteHandler.deleteCompany(companyDeleteCmd)).thenReturn(false);
 
-    ResponseEntity<Object> result = controller.deleteCompanyById(cif);
-    ResponseEntity<Object> expected = ResponseEntity.notFound().build();
+    ResponseEntity<Void> result = controller.deleteCompanyById(cif);
+    ResponseEntity<Void> expected = ResponseEntity.notFound().build();
 
     Assertions.assertEquals(expected.getStatusCode(), result.getStatusCode());
     Mockito.verify(mapper, times(1)).mapToCompanyDeleteCmd(cif);
