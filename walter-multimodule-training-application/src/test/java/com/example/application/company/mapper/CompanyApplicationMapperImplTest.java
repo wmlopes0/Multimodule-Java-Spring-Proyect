@@ -7,10 +7,11 @@ import com.example.domain.vo.company.CompanyUpdateVO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 
 class CompanyApplicationMapperImplTest {
 
-  private final CompanyApplicationMapper mapper = new CompanyApplicationMapperImpl();
+  private final CompanyApplicationMapper mapper = Mappers.getMapper(CompanyApplicationMapper.class);
 
   @Test
   @DisplayName("Mapping CompanyCreateCmd to CompanyCreateVO correctly")

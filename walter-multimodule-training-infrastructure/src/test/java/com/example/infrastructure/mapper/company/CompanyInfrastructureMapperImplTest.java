@@ -3,22 +3,15 @@ package com.example.infrastructure.mapper.company;
 import com.example.domain.entity.Company;
 import com.example.domain.vo.company.CompanyCreateVO;
 import com.example.domain.vo.company.CompanyUpdateVO;
-import com.example.infrastructure.config.TestConfig;
 import com.example.infrastructure.entity.CompanyEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mapstruct.factory.Mappers;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestConfig.class)
 class CompanyInfrastructureMapperImplTest {
 
-  @Autowired
-  private CompanyInfrastructureMapper companyInfrastructureMapper;
+  private final CompanyInfrastructureMapper companyInfrastructureMapper = Mappers.getMapper(CompanyInfrastructureMapper.class);
 
   @Test
   @DisplayName("Mapping CompanyEntity to Company correctly")
