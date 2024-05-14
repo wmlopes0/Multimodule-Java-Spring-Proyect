@@ -30,7 +30,7 @@ class GlobalExceptionHandlerTestIT {
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonContent))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.name").value("must not be empty"));
+        .andExpect(jsonPath("$.name").value("Name cannot be null"));
   }
 
   @Test

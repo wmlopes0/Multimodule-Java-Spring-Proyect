@@ -188,19 +188,19 @@ class EmployeeRestControllerE2ETestIT {
 
   @ParameterizedTest
   @CsvSource(value = {
-      "45134320Z",
+      "4534320F",
       "4513",
-  }, nullValues = "null")
+  })
   @DisplayName("Invalid NIF should result in HTTP 500 InternalServerError")
   void getEmployeeByIdInvalidTest(String nif) throws Exception {
     String expected = """
         {
-         "nif":"Invalid NIF"
+         "error":"Internal Server Error"
         }
         """;
 
     mockMvc.perform(get("/employees/{nif}", nif))
-        .andExpect(status().isBadRequest())
+        .andExpect(status().isInternalServerError())
         .andExpect(content().json(expected, false));
   }
 
@@ -676,14 +676,14 @@ class EmployeeRestControllerE2ETestIT {
         }""", nif);
     String expected = """
         {
-         "nif":"Invalid NIF"
+         "error":"Internal Server Error"
         }
         """;
 
     mockMvc.perform(delete("/employees/{nif}", nif)
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonContent))
-        .andExpect(status().isBadRequest())
+        .andExpect(status().isInternalServerError())
         .andExpect(content().json(expected, false));
   }
 
