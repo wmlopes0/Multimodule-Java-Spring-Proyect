@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.example.domain.exception.EmployeeNotFoundException;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @ControllerAdvice
@@ -65,6 +67,28 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.NOT_FOUND)
   public ResponseEntity<Map<String, String>> handleEmployeeNotFoundException(EmployeeNotFoundException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+  }
+
+  @ExceptionHandler(HandlerMethodValidationException.class)
+  public ResponseEntity<Map<String, String>> handleHandlerMethodValidationException(HandlerMethodValidationException ex) {
+    Map<String, String> errors = new HashMap<>();
+    for (Throwable cause = ex; cause != null; cause = cause.getCause()) {
+      if (cause instanceof ConstraintViolationException) {
+        ConstraintViolationException constraintViolationException = (ConstraintViolationException) cause;
+        for (ConstraintViolation<?> violation : constraintViolationException.getConstraintViolations()) {
+          String fieldName = violation.getPropertyPath().toString();
+          String errorMessage = violation.getMessage();
+          errors.put(fieldName, errorMessage);
+        }
+        break;
+      }
+    }
+
+    if (errors.isEmpty()) {
+      errors.put("nif", "Invalid NIF");
+    }
+
+    return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
   }
 
 }
