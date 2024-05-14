@@ -1,51 +1,53 @@
 package com.example.contract.employee.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.example.domain.exception.EmployeeNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.method.ParameterValidationResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler({MethodArgumentNotValidException.class, HandlerMethodValidationException.class})
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
-  @ResponseBody
-  public ResponseEntity<Map<String, String>> handleValidationExceptions(
-      Exception ex) {
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
     Map<String, String> errors = new HashMap<>();
-
-    if (ex instanceof MethodArgumentNotValidException methodArgEx) {
-      BindingResult bindingResult = methodArgEx.getBindingResult();
-      bindingResult.getAllErrors().forEach(error -> {
-        String fieldName = ((FieldError) error).getField();
-        String errorMessage = error.getDefaultMessage();
-        errors.put(fieldName, errorMessage);
-      });
-    } else if (ex instanceof HandlerMethodValidationException handlerMethodEx) {
-      List<ParameterValidationResult> validationResults = handlerMethodEx.getAllValidationResults();
-      for (ParameterValidationResult validationResult : validationResults) {
-        validationResult.getResolvableErrors().forEach(error -> {
-          String fieldName = validationResult.getMethodParameter().getParameterName();
-          String errorMessage = error.getDefaultMessage();
-          errors.put(fieldName != null ? fieldName : "unknown", errorMessage);
-        });
+    String msg;
+    for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+      switch (error.getField()) {
+        case "nif":
+          msg = error.getRejectedValue() == null ? "NIF cannot be null" : "Invalid NIF";
+          errors.put(error.getField(), msg);
+          break;
+        case "name":
+          msg = error.getRejectedValue() == null ? "Name cannot be null" : "Name cannot be empty";
+          errors.put(error.getField(), msg);
+          break;
+        case "email":
+          errors.put(error.getField(), "Invalid email format");
+          break;
+        case "gender":
+          msg = error.getRejectedValue() == null ? "Gender cannot be null" : "Gender must be either 'MALE' or 'FEMALE'";
+          errors.put(error.getField(), msg);
+          break;
+        case "personalPhone":
+          msg = error.getRejectedValue() == null ? "Personal phone cannot be null" : "Invalid phone format";
+          errors.put(error.getField(), msg);
+          break;
+        case "companyPhone":
+          errors.put(error.getField(), "Invalid phone format");
+          break;
+        default:
+          errors.put(error.getField(), error.getDefaultMessage());
       }
     }
-
-    return ResponseEntity.badRequest().body(errors);
+    return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(RuntimeException.class)
