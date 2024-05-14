@@ -10,7 +10,10 @@ import org.example.rest.model.CompanyRequestDTO;
 import org.example.rest.model.CompanyResponseDTO;
 import org.example.rest.model.CompanyUpdateDTO;
 import org.example.rest.model.EmployeeDTO;
+import org.mapstruct.Mapper;
+import org.mapstruct.NullValueCheckStrategy;
 
+@Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ON_IMPLICIT_CONVERSION)
 public interface CompanyContractMapper {
 
   CompanyCreateCmd mapToCompanyCreateCmd(CompanyRequestDTO companyRequestDTO);

@@ -20,10 +20,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mapstruct.factory.Mappers;
 
 class CompanyContractMapperImplTest {
 
-  private final CompanyContractMapper mapper = new CompanyContractMapperImpl();
+  private final CompanyContractMapper mapper = Mappers.getMapper(CompanyContractMapper.class);
 
   @Test
   @DisplayName("Mapping CompanyRequestDTO to CompanyCreateCmd correctly")

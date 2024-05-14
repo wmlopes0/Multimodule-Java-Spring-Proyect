@@ -16,10 +16,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mapstruct.factory.Mappers;
 
 class EmployeeApplicationMapperImplTest {
 
-  private final EmployeeApplicationMapper mapper = new EmployeeApplicationMapperImpl();
+  private final EmployeeApplicationMapper mapper = Mappers.getMapper(EmployeeApplicationMapper.class);
 
   @ParameterizedTest
   @MethodSource("createCmdToVOParameters")

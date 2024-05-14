@@ -20,10 +20,11 @@ import org.example.rest.model.PhoneDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 
 class EmployeeContractMapperImplTest {
 
-  private final EmployeeContractMapper mapper = new EmployeeContractMapperImpl();
+  private final EmployeeContractMapper mapper = Mappers.getMapper(EmployeeContractMapper.class);
 
   @Test
   @DisplayName("Mapping EmployeeRequestDTO to EmployeeCreateCmd correctly")
@@ -123,7 +124,7 @@ class EmployeeContractMapperImplTest {
         .setBirthYear(1998)
         .setAge(26)
         .setAdult(true)
-        .setGender("Male")
+        .setGender("MALE")
         .setPhones(List.of(
             new PhoneDTO().setNumber("+34722748406").setType(PhoneType.PERSONAL.name()),
             new PhoneDTO().setNumber("+34676615106").setType(PhoneType.COMPANY.name())))
