@@ -177,6 +177,25 @@ class EmployeeInfrastructureMapperImplTest {
                     new PhoneEntity("+34", "676615106", PhoneType.COMPANY)))
                 .setCompany("H91313551")
                 .setEmail("wmlopes0@gmail.com")
+        ),
+        Arguments.of(
+            EmployeeVO.builder()
+                .nif("45134320V")
+                .name("Walter")
+                .birthYear(1998)
+                .gender(Gender.MALE)
+                .personalPhone("+34676615106")
+                .company("H91313551")
+                .email("wmlopes0@gmail.com").build(),
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setPhones(List.of(
+                    new PhoneEntity("+34", "676615106", PhoneType.PERSONAL)))
+                .setCompany("H91313551")
+                .setEmail("wmlopes0@gmail.com")
         )
     );
   }
@@ -257,6 +276,16 @@ class EmployeeInfrastructureMapperImplTest {
             "+44676615106",
             PhoneType.COMPANY,
             new PhoneEntity("+44", "676615106", PhoneType.COMPANY)
+        ),
+        Arguments.of(
+            null,
+            PhoneType.COMPANY,
+            null
+        ),
+        Arguments.of(
+            "",
+            PhoneType.PERSONAL,
+            null
         )
     );
   }
