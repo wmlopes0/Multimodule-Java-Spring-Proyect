@@ -129,6 +129,10 @@ class CompanyContractMapperImplTest {
                     .setPersonalPhone("+34676615106")
                     .setCompany("V33778580")
                     .setEmail("raquelbarberosanchez90@gmail.com"))
+        ),
+        Arguments.of(
+            null,
+            List.of()
         )
     );
   }

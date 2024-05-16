@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.example.domain.exception.EmployeeNotFoundException;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,22 +71,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(HandlerMethodValidationException.class)
   public ResponseEntity<Map<String, String>> handleHandlerMethodValidationException(HandlerMethodValidationException ex) {
     Map<String, String> errors = new HashMap<>();
-    for (Throwable cause = ex; cause != null; cause = cause.getCause()) {
-      if (cause instanceof ConstraintViolationException) {
-        ConstraintViolationException constraintViolationException = (ConstraintViolationException) cause;
-        for (ConstraintViolation<?> violation : constraintViolationException.getConstraintViolations()) {
-          String fieldName = violation.getPropertyPath().toString();
-          String errorMessage = violation.getMessage();
-          errors.put(fieldName, errorMessage);
-        }
-        break;
-      }
-    }
-
-    if (errors.isEmpty()) {
-      errors.put("nif", "Invalid NIF");
-    }
-
+    errors.put("nif", "Invalid NIF");
     return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
   }
 
