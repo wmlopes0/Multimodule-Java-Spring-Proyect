@@ -2,6 +2,7 @@ package com.example.contract.globalexceptionhandler;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -126,7 +127,7 @@ class GlobalExceptionHandlerTest {
       "default,Invalid parameter"
   })
   @DisplayName("Handle HandlerMethodValidationException")
-  void handleHandlerMethodValidationException(String field, String msg) {
+  void handlerMethodValidationException(String field, String msg) {
     // Crear un mock para DefaultMessageSourceResolvable
     DefaultMessageSourceResolvable resolvable = mock(DefaultMessageSourceResolvable.class);
     when(resolvable.getCode()).thenReturn(field);
@@ -156,4 +157,34 @@ class GlobalExceptionHandlerTest {
     assertEquals(msg, body.get(field));
   }
 
+  @Test
+  @DisplayName("Test that non-resolvable arguments are correctly filtered out")
+  void testNonResolvableArgumentsAreFiltered() {
+    // Crear un objeto que no es una instancia de DefaultMessageSourceResolvable
+    Object nonResolvable = new Object();
+
+    // Crear un mock para MessageSourceResolvable que retorna un objeto no resoluble
+    MessageSourceResolvable resolvableError = mock(MessageSourceResolvable.class);
+    when(resolvableError.getArguments()).thenReturn(new Object[]{nonResolvable});
+
+    // Crear un mock para ParameterValidationResult
+    ParameterValidationResult validationResult = mock(ParameterValidationResult.class);
+    when(validationResult.getResolvableErrors()).thenReturn(List.of(resolvableError));
+
+    // Crear el HandlerMethodValidationException con una lista de resultados de validación
+    HandlerMethodValidationException ex = mock(HandlerMethodValidationException.class);
+    when(ex.getAllValidationResults()).thenReturn(List.of(validationResult));
+
+    // Invocar el método de manejo de excepciones
+    ResponseEntity<Map<String, String>> response = handler.handleHandlerMethodValidationException(ex);
+
+    // Verificar el estado de la respuesta
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+    // Verificar que el mapa de errores está vacío ya que el argumento no debería pasar el filtro
+    assertTrue(response.getBody().isEmpty());
+  }
 }
+
+
+

@@ -1,5 +1,8 @@
 package com.example.infrastructure.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -66,7 +69,7 @@ class EmployeeRepositoryServiceImplTest {
     List<Employee> result = service.listEmployees();
     List<Employee> expected = List.of(employee1, employee2);
 
-    Assertions.assertEquals(expected, result);
+    assertEquals(expected, result);
     verify(repository, times(1)).findAll();
     verify(employeeInfrastructureMapper, atLeastOnce()).mapToDomain(any(EmployeeEntity.class));
   }
@@ -83,7 +86,7 @@ class EmployeeRepositoryServiceImplTest {
     List<Employee> result = service.findEmployeesByCompanyId(cif);
     List<Employee> expected = List.of(employee1, employee2);
 
-    Assertions.assertEquals(expected, result);
+    assertEquals(expected, result);
     verify(repository, times(1)).findByCompany(cif);
     verify(employeeInfrastructureMapper, atLeastOnce()).mapToDomain(any(EmployeeEntity.class));
   }
@@ -135,7 +138,7 @@ class EmployeeRepositoryServiceImplTest {
     List<Employee> result = service.listEmployees();
     List<Employee> expected = List.of();
 
-    Assertions.assertEquals(expected, result);
+    assertEquals(expected, result);
     verify(repository, times(1)).findAll();
     verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }
@@ -157,7 +160,7 @@ class EmployeeRepositoryServiceImplTest {
     Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity)).thenReturn(employee);
     Employee result = service.getEmployeeById(employeeNifVO);
 
-    Assertions.assertEquals(employee, result);
+    assertEquals(employee, result);
     verify(repository, times(1)).findById(employeeNifVO.getNif());
     verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
   }
@@ -215,7 +218,7 @@ class EmployeeRepositoryServiceImplTest {
     Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity)).thenReturn(employee);
     Employee result = service.getEmployeeByName(employeeNameVO);
 
-    Assertions.assertEquals(employee, result);
+    assertEquals(employee, result);
     verify(repository, times(1)).findFirstByNameContainingIgnoreCase(employeeNameVO.getName());
     verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
   }
@@ -276,7 +279,7 @@ class EmployeeRepositoryServiceImplTest {
     Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity)).thenReturn(employee);
     Employee result = service.addEmployee(employeeVO);
 
-    Assertions.assertEquals(employee, result);
+    assertEquals(employee, result);
     verify(employeeInfrastructureMapper, times(1)).mapToEntity(employeeVO);
     verify(repository, times(1)).save(employeeEntity);
     verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
@@ -306,7 +309,23 @@ class EmployeeRepositoryServiceImplTest {
 
     Employee result = service.updateEmployeeById(employeeVO);
 
-    Assertions.assertEquals(employee, result);
+    assertEquals(employee, result);
+    if (employeeVO.getName() == null) {
+      assertEquals(employee.getName(), employeeEntity.getName());
+    }
+    if (employeeVO.getSurname() == null) {
+      assertEquals(employee.getSurname(), employeeEntity.getLastName());
+    }
+    if (employeeVO.getBirthYear() == 0) {
+      assertEquals(employee.getBirthYear(), employeeEntity.getBirthYear());
+    }
+    if (employeeVO.getCompany() == null) {
+      assertEquals(employee.getCompany(), employeeEntity.getCompany());
+    }
+    if (employeeVO.getEmail() == null) {
+      assertEquals(employee.getEmail(), employeeEntity.getEmail());
+    }
+
     verify(repository, times(1)).findById(employeeVO.getNif());
     verify(repository, times(1)).save(employeeEntity);
     verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
@@ -315,29 +334,42 @@ class EmployeeRepositoryServiceImplTest {
   @ParameterizedTest
   @MethodSource("addUpdateEmployeeWithPhonesParameters")
   @DisplayName("Update Employee information successfully with phones")
-  void updateEmployeeByIdWithPhonesTest(EmployeeVO employeeVO, EmployeeEntity employeeEntity, Employee employee) {
+  void updateEmployeeByIdWithPhonesTest(EmployeeVO employeeVO, EmployeeEntity employeeEntity, Employee expectedEmployee) {
     Mockito.when(repository.findById(employeeVO.getNif())).thenReturn(Optional.of(employeeEntity));
-
     Mockito.when(repository.save(employeeEntity)).thenReturn(employeeEntity);
-    Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity)).thenReturn(employee);
-    Mockito.when(employeeInfrastructureMapper.createPhone(anyString(), eq(PhoneType.COMPANY))).thenAnswer(invocation -> {
-      String phone = invocation.getArgument(0);
-      PhoneType type = invocation.getArgument(1);
-      return new PhoneEntity("+34", phone, type);
-    });
+    Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity)).thenReturn(expectedEmployee);
 
-    Mockito.when(employeeInfrastructureMapper.createPhone(anyString(), eq(PhoneType.PERSONAL))).thenAnswer(invocation -> {
-      String phone = invocation.getArgument(0);
-      PhoneType type = invocation.getArgument(1);
-      return new PhoneEntity("+34", phone, type);
-    });
+    Mockito.lenient().when(employeeInfrastructureMapper.createPhone(anyString(), eq(PhoneType.COMPANY)))
+        .thenAnswer(invocation -> {
+          String phone = invocation.getArgument(0);
+          PhoneType type = invocation.getArgument(1);
+          return new PhoneEntity("+34", phone, type);
+        });
+
+    Mockito.lenient().when(employeeInfrastructureMapper.createPhone(anyString(), eq(PhoneType.PERSONAL)))
+        .thenAnswer(invocation -> {
+          String phone = invocation.getArgument(0);
+          PhoneType type = invocation.getArgument(1);
+          return new PhoneEntity("+34", phone, type);
+        });
 
     Employee result = service.updateEmployeeById(employeeVO);
 
-    Assertions.assertEquals(employee, result);
+    assertEquals(expectedEmployee, result);
     verify(repository, times(1)).findById(employeeVO.getNif());
     verify(repository, times(1)).save(employeeEntity);
     verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
+
+    List<PhoneEntity> updatedPhones = employeeEntity.getPhones();
+    if (employeeVO.getCompanyPhone() != null) {
+      assertTrue(updatedPhones.stream().anyMatch(
+          phone -> phone.getNumber().equals(employeeVO.getCompanyPhone()) && phone.getType() == PhoneType.COMPANY));
+    }
+
+    if (employeeVO.getPersonalPhone() != null) {
+      assertTrue(updatedPhones.stream().anyMatch(
+          phone -> phone.getNumber().equals(employeeVO.getPersonalPhone()) && phone.getType() == PhoneType.PERSONAL));
+    }
   }
 
   @ParameterizedTest
@@ -444,6 +476,36 @@ class EmployeeRepositoryServiceImplTest {
                 .setBirthYear(0)
                 .setCompany(null)
                 .setCompanyPhone("+34722748406")
+        ),
+        Arguments.of(
+            EmployeeVO.builder()
+                .nif("45134320V")
+                .name(null)
+                .surname(null)
+                .birthYear(0)
+                .gender(Gender.MALE)
+                .company(null)
+                .personalPhone("+34722748406")
+                .email(null)
+                .build(),
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setLastName("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE.getCode())
+                .setCompany("Company")
+                .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
+                .setEmail("wmlopes0@gmail.com"),
+            new Employee()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setSurname("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE)
+                .setCompany("Company")
+                .setPersonalPhone("+34722748406")
+                .setEmail("wmlopes0@gmail.com")
         )
     );
   }
@@ -463,8 +525,53 @@ class EmployeeRepositoryServiceImplTest {
                 .setBirthYear(0)
                 .setCompany(null)
                 .setPhones(List.of(
-                    new PhoneEntity("+34", "722748406", PhoneType.PERSONAL),
+                    new PhoneEntity("+34", "732748406", PhoneType.PERSONAL),
+                    new PhoneEntity("+34", "636615106", PhoneType.COMPANY))),
+            new Employee()
+                .setNif("45134320V")
+                .setBirthYear(0)
+                .setCompany(null)
+                .setPersonalPhone("+34722748406")
+                .setCompanyPhone("+34676615106")
+        ),
+        Arguments.of(
+            EmployeeVO.builder()
+                .nif("45134320V")
+                .birthYear(0)
+                .company(null)
+                .personalPhone("+34722748406")
+                .companyPhone(null)
+                .build(),
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setBirthYear(0)
+                .setCompany(null)
+                .setPhones(List.of(
+                    new PhoneEntity("+34", "732748406", PhoneType.PERSONAL),
                     new PhoneEntity("+34", "676615106", PhoneType.COMPANY))),
+            new Employee()
+                .setNif("45134320V")
+                .setBirthYear(0)
+                .setCompany(null)
+                .setPersonalPhone("+34722748406")
+                .setCompanyPhone("+34676615106")
+        ),
+        Arguments.of(
+            EmployeeVO.builder()
+                .nif("45134320V")
+                .birthYear(0)
+                .company(null)
+                .personalPhone(null)
+                .companyPhone("+34676615106")
+                .build(),
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setBirthYear(0)
+                .setCompany(null)
+                .setPhones(List.of(
+                    new PhoneEntity("+34", "722748406", PhoneType.PERSONAL),
+                    new PhoneEntity("+34", "788748406", PhoneType.COMPANY)
+                )),
             new Employee()
                 .setNif("45134320V")
                 .setBirthYear(0)
@@ -506,7 +613,7 @@ class EmployeeRepositoryServiceImplTest {
 
     boolean result = service.deleteEmployeeById(employee);
 
-    Assertions.assertTrue(result);
+    assertTrue(result);
     verify(repository, times(1)).existsById(employee.getNif());
     verify(repository, times(1)).deleteById(employee.getNif());
   }
@@ -534,7 +641,7 @@ class EmployeeRepositoryServiceImplTest {
 
     boolean result = service.deleteEmployeeById(employee);
 
-    Assertions.assertFalse(result);
+    assertFalse(result);
     verify(repository, times(1)).existsById(employee.getNif());
     verify(repository, never()).deleteById(any(String.class));
   }
@@ -564,7 +671,7 @@ class EmployeeRepositoryServiceImplTest {
     Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity)).thenReturn(employee);
 
     Employee result = service.removeCompanyFromEmployee(employeeVO);
-    Assertions.assertEquals(employee, result);
+    assertEquals(employee, result);
 
     verify(repository, times(1)).findById(nif);
     verify(repository, times(1)).save(existingEmployee.get());
