@@ -1,5 +1,8 @@
 package com.example.application.employee.mapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.stream.Stream;
 
 import com.example.application.employee.cmd.dto.EmployeeCreateCmd;
@@ -11,10 +14,11 @@ import com.example.domain.entity.Gender;
 import com.example.domain.vo.employee.EmployeeNameVO;
 import com.example.domain.vo.employee.EmployeeNifVO;
 import com.example.domain.vo.employee.EmployeeVO;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class EmployeeApplicationMapperImplTest {
@@ -26,7 +30,7 @@ class EmployeeApplicationMapperImplTest {
   @DisplayName("Mapping EmployeeCreateCmd to EmployeeVO correctly")
   void mapCreateCmdToEmployeeVOTest(EmployeeVO expected, EmployeeCreateCmd employeeCreateCmd) {
     EmployeeVO result = mapper.mapToEmployeeVO(employeeCreateCmd);
-    Assertions.assertEquals(expected, result);
+    assertEquals(expected, result);
   }
 
   private static Stream<Arguments> createCmdToVOParameters() {
@@ -56,7 +60,7 @@ class EmployeeApplicationMapperImplTest {
   @DisplayName("Mapping EmployeeUpdateCmd to EmployeeVO correctly")
   void mapUpdateCmdToEmployeeVOTest(EmployeeVO expected, EmployeeUpdateCmd employeeUpdateCmd) {
     EmployeeVO result = mapper.mapToEmployeeVO(employeeUpdateCmd);
-    Assertions.assertEquals(expected, result);
+    assertEquals(expected, result);
   }
 
   private static Stream<Arguments> updateCmdToVOParameters() {
@@ -86,7 +90,7 @@ class EmployeeApplicationMapperImplTest {
   @DisplayName("Mapping EmployeeDeleteCmd to EmployeeNifVO correctly")
   void mapDeleteCmdToEmployeeNifVOTest(EmployeeNifVO expected, EmployeeDeleteCmd employeeDeleteCmd) {
     EmployeeNifVO result = mapper.mapToEmployeeNifVO(employeeDeleteCmd);
-    Assertions.assertEquals(expected, result);
+    assertEquals(expected, result);
   }
 
   private static Stream<Arguments> deleteCmdToNifVOParameters() {
@@ -106,7 +110,7 @@ class EmployeeApplicationMapperImplTest {
   @DisplayName("Mapping EmployeeByIdQuery to EmployeeNifVO correctly")
   void mapByIdQueryToEmployeeNifVOTest(EmployeeNifVO expected, EmployeeByIdQuery employeeByIdQuery) {
     EmployeeNifVO result = mapper.mapToEmployeeNifVO(employeeByIdQuery);
-    Assertions.assertEquals(expected, result);
+    assertEquals(expected, result);
   }
 
   private static Stream<Arguments> byIdQueryToNifVOParameters() {
@@ -126,7 +130,7 @@ class EmployeeApplicationMapperImplTest {
   @DisplayName("Mapping EmployeeByNameQuery to EmployeeNameVO correctly")
   void mapByNameQueryToEmployeeNameVOTest(EmployeeNameVO expected, EmployeeByNameQuery employeeByNameQuery) {
     EmployeeNameVO result = mapper.mapToEmployeeNameVO(employeeByNameQuery);
-    Assertions.assertEquals(expected, result);
+    assertEquals(expected, result);
   }
 
   private static Stream<Arguments> byNameQueryToVOParameters() {
@@ -136,6 +140,32 @@ class EmployeeApplicationMapperImplTest {
             new EmployeeByNameQuery("Walter")
         )
     );
+  }
+
+  @ParameterizedTest
+  @CsvSource(value = {
+      "invalidGender",
+      "null"
+  }, nullValues = {"null"})
+  @DisplayName("Throws IllegalArgumentException for invalid or null gender")
+  void testParseGenderWithInvalidGender(String gender) {
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+      mapper.mapToEmployeeVO(new EmployeeCreateCmd().setGender(gender));
+    });
+    assertEquals("Invalid gender provided.", exception.getMessage());
+  }
+
+  @Test
+  @DisplayName("Correctly parses valid genders 'male' and 'female'")
+  void testParseGenderWithValidGender() {
+    String male = "male";
+    String female = "female";
+
+    Gender resultMale = mapper.mapToEmployeeVO(new EmployeeCreateCmd().setGender(male)).getGender();
+    Gender resultFemale = mapper.mapToEmployeeVO(new EmployeeCreateCmd().setGender(female)).getGender();
+
+    assertEquals(Gender.MALE, resultMale);
+    assertEquals(Gender.FEMALE, resultFemale);
   }
 
 }

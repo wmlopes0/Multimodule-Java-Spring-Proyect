@@ -386,6 +386,58 @@ class CompanyRepositoryServiceImplTest {
                     .setCompany("Q4947066I")
                     .setEmail("raquelbarberosanchez90@gmail.com")
             )
+        ),
+        Arguments.of(
+            CompanyUpdateVO.builder()
+                .cif("Q4947066I")
+                .build(),
+            new CompanyEntity()
+                .setCif("Q4947066I"),
+            new Company()
+                .setCif("Q4947066I")
+                .setEmployees(List.of()),
+            new Company()
+                .setCif("Q4947066I")
+                .setEmployees(List.of(new Employee()
+                        .setNif("45134320V")
+                        .setName("Walter")
+                        .setSurname("Martín Lopes")
+                        .setBirthYear(1998)
+                        .setGender(Gender.MALE)
+                        .setCompanyPhone("+34676615106")
+                        .setPersonalPhone("+34722748406")
+                        .setCompany("Q4947066I")
+                        .setEmail("wmlopes0@gmail.com"),
+                    new Employee()
+                        .setNif("45132337N")
+                        .setName("Raquel")
+                        .setSurname("Barbero Sánchez")
+                        .setBirthYear(1996)
+                        .setGender(Gender.FEMALE)
+                        .setPersonalPhone("+34676615106")
+                        .setCompany("Q4947066I")
+                        .setEmail("raquelbarberosanchez90@gmail.com"))),
+            List.of(
+                new Employee()
+                    .setNif("45134320V")
+                    .setName("Walter")
+                    .setSurname("Martín Lopes")
+                    .setBirthYear(1998)
+                    .setGender(Gender.MALE)
+                    .setCompanyPhone("+34676615106")
+                    .setPersonalPhone("+34722748406")
+                    .setCompany("Q4947066I")
+                    .setEmail("wmlopes0@gmail.com"),
+                new Employee()
+                    .setNif("45132337N")
+                    .setName("Raquel")
+                    .setSurname("Barbero Sánchez")
+                    .setBirthYear(1996)
+                    .setGender(Gender.FEMALE)
+                    .setPersonalPhone("+34676615106")
+                    .setCompany("Q4947066I")
+                    .setEmail("raquelbarberosanchez90@gmail.com")
+            )
         )
     );
   }

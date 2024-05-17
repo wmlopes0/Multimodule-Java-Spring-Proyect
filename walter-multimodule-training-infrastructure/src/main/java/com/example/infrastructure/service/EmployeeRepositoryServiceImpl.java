@@ -127,6 +127,7 @@ public class EmployeeRepositoryServiceImpl implements EmployeeService {
 
   private void updatePhones(EmployeeEntity existingEmployee, EmployeeVO employeeVO) {
     List<PhoneEntity> updatedPhones = new ArrayList<>(existingEmployee.getPhones());
+
     if (employeeVO.getCompanyPhone() != null) {
       PhoneEntity companyPhone = mapper.createPhone(employeeVO.getCompanyPhone(), PhoneType.COMPANY);
       updatedPhones.removeIf(phone -> phone.getType() == PhoneType.COMPANY);
@@ -137,6 +138,7 @@ public class EmployeeRepositoryServiceImpl implements EmployeeService {
       updatedPhones.removeIf(phone -> phone.getType() == PhoneType.PERSONAL);
       updatedPhones.add(personalPhone);
     }
+
     existingEmployee.setPhones(updatedPhones);
   }
 }

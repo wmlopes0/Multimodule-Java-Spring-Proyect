@@ -1,6 +1,7 @@
 package com.example.contract.employee.mapper;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.example.application.employee.cmd.dto.AddEmployeeToCompanyCmd;
 import com.example.application.employee.cmd.dto.EmployeeCreateCmd;
@@ -20,6 +21,9 @@ import org.example.rest.model.PhoneDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class EmployeeContractMapperImplTest {
 
@@ -104,33 +108,79 @@ class EmployeeContractMapperImplTest {
     Assertions.assertEquals(expected, result);
   }
 
-  @Test
+  @ParameterizedTest
+  @MethodSource("mapToResponseDTOParameters")
   @DisplayName("Mapping Employee to EmployeeResponseDTO correctly")
-  void mapToResponseDTOTest() {
-    Employee employee = new Employee()
-        .setNif("45134320V")
-        .setName("Walter")
-        .setSurname("Martín Lopes")
-        .setBirthYear(1998)
-        .setGender(Gender.MALE)
-        .setPersonalPhone("+34722748406")
-        .setCompanyPhone("+34676615106")
-        .setEmail("wmlopes0@gmail.com");
-
-    EmployeeResponseDTO expected = new EmployeeResponseDTO()
-        .setNif("45134320V")
-        .setCompleteName("Martín Lopes, Walter")
-        .setBirthYear(1998)
-        .setAge(26)
-        .setAdult(true)
-        .setGender("Male")
-        .setPhones(List.of(
-            new PhoneDTO().setNumber("+34722748406").setType(PhoneType.PERSONAL.name()),
-            new PhoneDTO().setNumber("+34676615106").setType(PhoneType.COMPANY.name())))
-        .setEmail("wmlopes0@gmail.com");
-
+  void mapToResponseDTOTest(Employee employee, EmployeeResponseDTO expected) {
     EmployeeResponseDTO result = mapper.mapToResponseDTO(employee);
     Assertions.assertEquals(expected, result);
+  }
+
+  private static Stream<Arguments> mapToResponseDTOParameters() {
+    return Stream.of(
+        Arguments.of(
+            new Employee()
+                .setNif("45134320V")
+                .setName("Walter")
+                .setSurname("Martín Lopes")
+                .setBirthYear(1998)
+                .setGender(Gender.MALE)
+                .setPersonalPhone("+34722748406")
+                .setCompanyPhone("+34676615106")
+                .setEmail("wmlopes0@gmail.com"),
+            new EmployeeResponseDTO()
+                .setNif("45134320V")
+                .setCompleteName("Martín Lopes, Walter")
+                .setBirthYear(1998)
+                .setAge(26)
+                .setAdult(true)
+                .setGender("Male")
+                .setPhones(List.of(
+                    new PhoneDTO().setNumber("+34722748406").setType(PhoneType.PERSONAL.name()),
+                    new PhoneDTO().setNumber("+34676615106").setType(PhoneType.COMPANY.name())))
+                .setEmail("wmlopes0@gmail.com")
+        ),
+        Arguments.of(
+            new Employee()
+                .setNif("45132337N")
+                .setName("Raquel")
+                .setSurname("Barbero Sánchez")
+                .setBirthYear(2010)
+                .setGender(Gender.FEMALE)
+                .setPersonalPhone("+34722748406")
+                .setEmail("raquelbarberosanchez90@gmail.com"),
+            new EmployeeResponseDTO()
+                .setNif("45132337N")
+                .setCompleteName("Barbero Sánchez, Raquel")
+                .setBirthYear(2010)
+                .setAge(14)
+                .setAdult(false)
+                .setGender("Female")
+                .setPhones(List.of(
+                    new PhoneDTO().setNumber("+34722748406").setType(PhoneType.PERSONAL.name())))
+                .setEmail("raquelbarberosanchez90@gmail.com")
+        ),
+        Arguments.of(
+            new Employee()
+                .setNif("45132337N")
+                .setName("Raquel")
+                .setSurname("Barbero Sánchez")
+                .setBirthYear(2010)
+                .setGender(Gender.FEMALE)
+                .setCompanyPhone("+34722748406")
+                .setEmail("raquelbarberosanchez90@gmail.com"),
+            new EmployeeResponseDTO()
+                .setNif("45132337N")
+                .setCompleteName("Barbero Sánchez, Raquel")
+                .setBirthYear(2010)
+                .setAge(14)
+                .setAdult(false)
+                .setGender("Female")
+                .setPhones(List.of(
+                    new PhoneDTO().setNumber("+34722748406").setType(PhoneType.COMPANY.name())))
+                .setEmail("raquelbarberosanchez90@gmail.com")
+        )
+    );
   }
 
   @Test

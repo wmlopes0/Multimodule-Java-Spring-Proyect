@@ -28,6 +28,10 @@ class NifValidatorTest {
   @DisplayName("Validate correct NIE format")
   void validNieTest() {
     Assertions.assertTrue(nifValidator.isValid("Z9747924T", null));
+    Assertions.assertTrue(nifValidator.isValid("Z9813063A", null));
+    Assertions.assertTrue(nifValidator.isValid("Z0892136V", null));
+    Assertions.assertTrue(nifValidator.isValid("Y8683832N", null));
+    Assertions.assertTrue(nifValidator.isValid("X6001944W", null));
   }
 
   @Test
@@ -37,6 +41,7 @@ class NifValidatorTest {
     Assertions.assertFalse(nifValidator.isValid("1234567X", null));
     Assertions.assertFalse(nifValidator.isValid("Y12345678L", null));
     Assertions.assertFalse(nifValidator.isValid("Z123456L", null));
+    Assertions.assertFalse(nifValidator.isValid("Z9813063W", null));
   }
 
   @Test
