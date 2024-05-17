@@ -1,12 +1,13 @@
 package com.example.contract.globalexceptionhandler;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,11 +20,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.context.MessageSourceResolvable;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.method.MethodValidationResult;
+import org.springframework.validation.method.ParameterValidationResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -117,31 +120,40 @@ class GlobalExceptionHandlerTest {
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
   }
 
-  @Test
+  @ParameterizedTest
+  @CsvSource(value = {
+      "nif,Invalid NIF",
+      "default,Invalid parameter"
+  })
   @DisplayName("Handle HandlerMethodValidationException")
-  void handleHandlerMethodValidationException() {
-    // Crear un mock para ConstraintViolation
-    ConstraintViolation<?> violation = mock(ConstraintViolation.class);
+  void handleHandlerMethodValidationException(String field, String msg) {
+    // Crear un mock para DefaultMessageSourceResolvable
+    DefaultMessageSourceResolvable resolvable = mock(DefaultMessageSourceResolvable.class);
+    when(resolvable.getCode()).thenReturn(field);
+    when(resolvable.getDefaultMessage()).thenReturn(null);
 
-    // Crear un mock para Path
-    Path propertyPath = mock(Path.class);
-    when(propertyPath.toString()).thenReturn("field");
+    // Crear un mock para MessageSourceResolvable que contiene el resolvable
+    MessageSourceResolvable resolvableError = mock(MessageSourceResolvable.class);
+    when(resolvableError.getArguments()).thenReturn(new Object[]{resolvable});
 
-    // Configurar el mock de ConstraintViolation para devolver el mock de Path
-    when(violation.getPropertyPath()).thenReturn(propertyPath);
-    when(violation.getMessage()).thenReturn("must not be null");
+    // Crear un mock para ParameterValidationResult
+    ParameterValidationResult validationResult = mock(ParameterValidationResult.class);
+    when(validationResult.getResolvableErrors()).thenReturn(List.of(resolvableError));
 
-    // Crear un mock para MethodValidationResult
-    MethodValidationResult validationResult = mock(MethodValidationResult.class);
-    when(validationResult.isForReturnValue()).thenReturn(false);
+    // Crear el HandlerMethodValidationException con una lista de resultados de validación
+    HandlerMethodValidationException ex = mock(HandlerMethodValidationException.class);
+    when(ex.getAllValidationResults()).thenReturn(List.of(validationResult));
 
-    // Crear el HandlerMethodValidationException con el mock de MethodValidationResult
-    HandlerMethodValidationException ex = new HandlerMethodValidationException(validationResult);
-
+    // Invocar el método de manejo de excepciones
     ResponseEntity<Map<String, String>> response = handler.handleHandlerMethodValidationException(ex);
 
+    // Verificar el estado de la respuesta
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    assertFalse(response.getBody().containsKey("field"));
-    assertEquals("Invalid NIF", response.getBody().get("nif"));
+
+    // Verificar el contenido del cuerpo de la respuesta
+    Map<String, String> body = response.getBody();
+    assertNotNull(body);
+    assertEquals(msg, body.get(field));
   }
+
 }

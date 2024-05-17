@@ -2,9 +2,12 @@ package com.example.contract.employee.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.example.domain.exception.EmployeeNotFoundException;
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -70,9 +73,29 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(HandlerMethodValidationException.class)
   public ResponseEntity<Map<String, String>> handleHandlerMethodValidationException(HandlerMethodValidationException ex) {
-    Map<String, String> errors = new HashMap<>();
-    errors.put("nif", "Invalid NIF");
+    Map<String, String> errors = ex.getAllValidationResults().stream()
+        .flatMap(validationResult -> validationResult.getResolvableErrors().stream())
+        .flatMap(resolvableError -> Stream.of(resolvableError.getArguments()))
+        .filter(argument -> argument instanceof DefaultMessageSourceResolvable)
+        .map(argument -> (DefaultMessageSourceResolvable) argument)
+        .collect(Collectors.toMap(DefaultMessageSourceResolvable::getCode, this::getCustomMessage));
+
     return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+  }
+
+  private String getCustomMessage(DefaultMessageSourceResolvable resolvable) {
+    String code = resolvable.getCode();
+    String defaultMessage;
+
+    switch (code) {
+      case "nif":
+        defaultMessage = "Invalid NIF";
+        break;
+      default:
+        defaultMessage = "Invalid parameter";
+        break;
+    }
+    return defaultMessage;
   }
 
 }
