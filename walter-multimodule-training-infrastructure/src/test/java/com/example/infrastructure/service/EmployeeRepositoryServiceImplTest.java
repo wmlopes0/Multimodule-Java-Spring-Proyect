@@ -1,9 +1,12 @@
 package com.example.infrastructure.service;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +34,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.CriteriaDefinition;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 @ExtendWith(MockitoExtension.class)
 class EmployeeRepositoryServiceImplTest {
@@ -40,6 +48,9 @@ class EmployeeRepositoryServiceImplTest {
 
   @Mock
   private EmployeeInfrastructureMapper employeeInfrastructureMapper;
+
+  @Mock
+  private MongoTemplate mongoTemplate;
 
   @InjectMocks
   private EmployeeRepositoryServiceImpl service;
@@ -56,8 +67,8 @@ class EmployeeRepositoryServiceImplTest {
     List<Employee> expected = List.of(employee1, employee2);
 
     Assertions.assertEquals(expected, result);
-    Mockito.verify(repository, times(1)).findAll();
-    Mockito.verify(employeeInfrastructureMapper, atLeastOnce()).mapToDomain(any(EmployeeEntity.class));
+    verify(repository, times(1)).findAll();
+    verify(employeeInfrastructureMapper, atLeastOnce()).mapToDomain(any(EmployeeEntity.class));
   }
 
   @ParameterizedTest
@@ -73,8 +84,8 @@ class EmployeeRepositoryServiceImplTest {
     List<Employee> expected = List.of(employee1, employee2);
 
     Assertions.assertEquals(expected, result);
-    Mockito.verify(repository, times(1)).findByCompany(cif);
-    Mockito.verify(employeeInfrastructureMapper, atLeastOnce()).mapToDomain(any(EmployeeEntity.class));
+    verify(repository, times(1)).findByCompany(cif);
+    verify(employeeInfrastructureMapper, atLeastOnce()).mapToDomain(any(EmployeeEntity.class));
   }
 
   private static Stream<Arguments> listEmployeesParameters() {
@@ -125,8 +136,8 @@ class EmployeeRepositoryServiceImplTest {
     List<Employee> expected = List.of();
 
     Assertions.assertEquals(expected, result);
-    Mockito.verify(repository, times(1)).findAll();
-    Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
+    verify(repository, times(1)).findAll();
+    verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }
 
   @Test
@@ -134,8 +145,8 @@ class EmployeeRepositoryServiceImplTest {
   void listEmployeesErrorTest() {
     Mockito.when(repository.findAll()).thenThrow(new RuntimeException("An error occurred"));
     Assertions.assertThrows(RuntimeException.class, () -> service.listEmployees());
-    Mockito.verify(repository, times(1)).findAll();
-    Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
+    verify(repository, times(1)).findAll();
+    verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }
 
   @ParameterizedTest
@@ -147,8 +158,8 @@ class EmployeeRepositoryServiceImplTest {
     Employee result = service.getEmployeeById(employeeNifVO);
 
     Assertions.assertEquals(employee, result);
-    Mockito.verify(repository, times(1)).findById(employeeNifVO.getNif());
-    Mockito.verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
+    verify(repository, times(1)).findById(employeeNifVO.getNif());
+    verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
   }
 
   private static Stream<Arguments> getEmployeeByIdParameters() {
@@ -182,8 +193,8 @@ class EmployeeRepositoryServiceImplTest {
     Employee result = service.getEmployeeById(employee);
 
     Assertions.assertNull(result);
-    Mockito.verify(repository, times(1)).findById(employee.getNif());
-    Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
+    verify(repository, times(1)).findById(employee.getNif());
+    verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }
 
   @Test
@@ -192,8 +203,8 @@ class EmployeeRepositoryServiceImplTest {
     EmployeeNifVO employee = EmployeeNifVO.builder().nif("45134320V").build();
     Mockito.when(repository.findById(employee.getNif())).thenThrow(new RuntimeException("An error occurred"));
     Assertions.assertThrows(RuntimeException.class, () -> service.getEmployeeById(employee));
-    Mockito.verify(repository, times(1)).findById(employee.getNif());
-    Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
+    verify(repository, times(1)).findById(employee.getNif());
+    verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }
 
   @ParameterizedTest
@@ -205,8 +216,8 @@ class EmployeeRepositoryServiceImplTest {
     Employee result = service.getEmployeeByName(employeeNameVO);
 
     Assertions.assertEquals(employee, result);
-    Mockito.verify(repository, times(1)).findFirstByNameContainingIgnoreCase(employeeNameVO.getName());
-    Mockito.verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
+    verify(repository, times(1)).findFirstByNameContainingIgnoreCase(employeeNameVO.getName());
+    verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
   }
 
   private static Stream<Arguments> getEmployeeByNameParameters() {
@@ -240,8 +251,8 @@ class EmployeeRepositoryServiceImplTest {
     Employee result = service.getEmployeeByName(employeeNameVO);
 
     Assertions.assertNull(result);
-    Mockito.verify(repository, times(1)).findFirstByNameContainingIgnoreCase(employeeNameVO.getName());
-    Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
+    verify(repository, times(1)).findFirstByNameContainingIgnoreCase(employeeNameVO.getName());
+    verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }
 
   @Test
@@ -252,8 +263,8 @@ class EmployeeRepositoryServiceImplTest {
     Mockito.when(repository.findFirstByNameContainingIgnoreCase(employeeNameVO.getName()))
         .thenThrow(new RuntimeException("An error occurred"));
     Assertions.assertThrows(RuntimeException.class, () -> service.getEmployeeByName(employeeNameVO));
-    Mockito.verify(repository, times(1)).findFirstByNameContainingIgnoreCase(employeeNameVO.getName());
-    Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
+    verify(repository, times(1)).findFirstByNameContainingIgnoreCase(employeeNameVO.getName());
+    verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }
 
   @ParameterizedTest
@@ -266,9 +277,9 @@ class EmployeeRepositoryServiceImplTest {
     Employee result = service.addEmployee(employeeVO);
 
     Assertions.assertEquals(employee, result);
-    Mockito.verify(employeeInfrastructureMapper, times(1)).mapToEntity(employeeVO);
-    Mockito.verify(repository, times(1)).save(employeeEntity);
-    Mockito.verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
+    verify(employeeInfrastructureMapper, times(1)).mapToEntity(employeeVO);
+    verify(repository, times(1)).save(employeeEntity);
+    verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
   }
 
   @ParameterizedTest
@@ -279,9 +290,9 @@ class EmployeeRepositoryServiceImplTest {
     Mockito.when(repository.save(employeeEntity)).thenThrow(new RuntimeException("An error occurred"));
 
     Assertions.assertThrows(RuntimeException.class, () -> service.addEmployee(employeeVO));
-    Mockito.verify(employeeInfrastructureMapper, times(1)).mapToEntity(employeeVO);
-    Mockito.verify(repository, times(1)).save(employeeEntity);
-    Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(employeeEntity);
+    verify(employeeInfrastructureMapper, times(1)).mapToEntity(employeeVO);
+    verify(repository, times(1)).save(employeeEntity);
+    verify(employeeInfrastructureMapper, never()).mapToDomain(employeeEntity);
   }
 
   @ParameterizedTest
@@ -296,9 +307,37 @@ class EmployeeRepositoryServiceImplTest {
     Employee result = service.updateEmployeeById(employeeVO);
 
     Assertions.assertEquals(employee, result);
-    Mockito.verify(repository, times(1)).findById(employeeVO.getNif());
-    Mockito.verify(repository, times(1)).save(employeeEntity);
-    Mockito.verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
+    verify(repository, times(1)).findById(employeeVO.getNif());
+    verify(repository, times(1)).save(employeeEntity);
+    verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
+  }
+
+  @ParameterizedTest
+  @MethodSource("addUpdateEmployeeWithPhonesParameters")
+  @DisplayName("Update Employee information successfully with phones")
+  void updateEmployeeByIdWithPhonesTest(EmployeeVO employeeVO, EmployeeEntity employeeEntity, Employee employee) {
+    Mockito.when(repository.findById(employeeVO.getNif())).thenReturn(Optional.of(employeeEntity));
+
+    Mockito.when(repository.save(employeeEntity)).thenReturn(employeeEntity);
+    Mockito.when(employeeInfrastructureMapper.mapToDomain(employeeEntity)).thenReturn(employee);
+    Mockito.when(employeeInfrastructureMapper.createPhone(anyString(), eq(PhoneType.COMPANY))).thenAnswer(invocation -> {
+      String phone = invocation.getArgument(0);
+      PhoneType type = invocation.getArgument(1);
+      return new PhoneEntity("+34", phone, type);
+    });
+
+    Mockito.when(employeeInfrastructureMapper.createPhone(anyString(), eq(PhoneType.PERSONAL))).thenAnswer(invocation -> {
+      String phone = invocation.getArgument(0);
+      PhoneType type = invocation.getArgument(1);
+      return new PhoneEntity("+34", phone, type);
+    });
+
+    Employee result = service.updateEmployeeById(employeeVO);
+
+    Assertions.assertEquals(employee, result);
+    verify(repository, times(1)).findById(employeeVO.getNif());
+    verify(repository, times(1)).save(employeeEntity);
+    verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
   }
 
   @ParameterizedTest
@@ -311,9 +350,9 @@ class EmployeeRepositoryServiceImplTest {
 
     Assertions.assertThrows(RuntimeException.class, () -> service.updateEmployeeById(employeeVO));
 
-    Mockito.verify(repository, times(1)).findById(employeeVO.getNif());
-    Mockito.verify(repository, times(1)).save(employeeEntity);
-    Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(employeeEntity);
+    verify(repository, times(1)).findById(employeeVO.getNif());
+    verify(repository, times(1)).save(employeeEntity);
+    verify(employeeInfrastructureMapper, never()).mapToDomain(employeeEntity);
   }
 
   @Test
@@ -331,9 +370,9 @@ class EmployeeRepositoryServiceImplTest {
     Mockito.when(repository.findById(employeeVO.getNif())).thenReturn(Optional.empty());
     Assertions.assertThrows(EmployeeNotFoundException.class, () -> service.updateEmployeeById(employeeVO));
 
-    Mockito.verify(repository, times(1)).findById(employeeVO.getNif());
-    Mockito.verify(repository, never()).save(any(EmployeeEntity.class));
-    Mockito.verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
+    verify(repository, times(1)).findById(employeeVO.getNif());
+    verify(repository, never()).save(any(EmployeeEntity.class));
+    verify(employeeInfrastructureMapper, never()).mapToDomain(any(EmployeeEntity.class));
   }
 
   private static Stream<Arguments> addUpdateEmployeeParameters() {
@@ -342,25 +381,96 @@ class EmployeeRepositoryServiceImplTest {
             EmployeeVO.builder()
                 .nif("45134320V")
                 .name("Walter")
+                .surname("Martín Lopes")
                 .birthYear(1998)
                 .gender(Gender.MALE)
+                .company("Company")
                 .personalPhone("+34722748406")
                 .email("wmlopes0@gmail.com")
                 .build(),
             new EmployeeEntity()
                 .setNif("45134320V")
                 .setName("Walter")
+                .setLastName("Martín Lopes")
                 .setBirthYear(1998)
                 .setGender(Gender.MALE.getCode())
+                .setCompany("Company")
                 .setPhones(List.of(new PhoneEntity("+34", "722748406", PhoneType.PERSONAL)))
                 .setEmail("wmlopes0@gmail.com"),
             new Employee()
                 .setNif("45134320V")
                 .setName("Walter")
+                .setSurname("Martín Lopes")
                 .setBirthYear(1998)
                 .setGender(Gender.MALE)
+                .setCompany("Company")
                 .setPersonalPhone("+34722748406")
                 .setEmail("wmlopes0@gmail.com")
+        ),
+        Arguments.of(
+            EmployeeVO.builder()
+                .nif("45134320V")
+                .birthYear(0)
+                .company(null)
+                .personalPhone("+34722748406")
+                .build(),
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setBirthYear(0)
+                .setCompany(null)
+                .setPhones(List.of(
+                    new PhoneEntity("+34", "722748406", PhoneType.PERSONAL))),
+            new Employee()
+                .setNif("45134320V")
+                .setBirthYear(0)
+                .setCompany(null)
+                .setPersonalPhone("+34722748406")
+        ),
+        Arguments.of(
+            EmployeeVO.builder()
+                .nif("45134320V")
+                .birthYear(0)
+                .company(null)
+                .companyPhone("+34722748406")
+                .build(),
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setBirthYear(0)
+                .setCompany(null)
+                .setPhones(List.of(
+                    new PhoneEntity("+34", "722748406", PhoneType.COMPANY))),
+            new Employee()
+                .setNif("45134320V")
+                .setBirthYear(0)
+                .setCompany(null)
+                .setCompanyPhone("+34722748406")
+        )
+    );
+  }
+
+  private static Stream<Arguments> addUpdateEmployeeWithPhonesParameters() {
+    return Stream.of(
+        Arguments.of(
+            EmployeeVO.builder()
+                .nif("45134320V")
+                .birthYear(0)
+                .company(null)
+                .personalPhone("+34722748406")
+                .companyPhone("+34676615106")
+                .build(),
+            new EmployeeEntity()
+                .setNif("45134320V")
+                .setBirthYear(0)
+                .setCompany(null)
+                .setPhones(List.of(
+                    new PhoneEntity("+34", "722748406", PhoneType.PERSONAL),
+                    new PhoneEntity("+34", "676615106", PhoneType.COMPANY))),
+            new Employee()
+                .setNif("45134320V")
+                .setBirthYear(0)
+                .setCompany(null)
+                .setPersonalPhone("+34722748406")
+                .setCompanyPhone("+34676615106")
         )
     );
   }
@@ -397,8 +507,8 @@ class EmployeeRepositoryServiceImplTest {
     boolean result = service.deleteEmployeeById(employee);
 
     Assertions.assertTrue(result);
-    Mockito.verify(repository, times(1)).existsById(employee.getNif());
-    Mockito.verify(repository, times(1)).deleteById(employee.getNif());
+    verify(repository, times(1)).existsById(employee.getNif());
+    verify(repository, times(1)).deleteById(employee.getNif());
   }
 
   @Test
@@ -411,8 +521,8 @@ class EmployeeRepositoryServiceImplTest {
 
     Assertions.assertThrows(RuntimeException.class, () -> service.deleteEmployeeById(employee));
 
-    Mockito.verify(repository, times(1)).existsById(employee.getNif());
-    Mockito.verify(repository, times(1)).deleteById(employee.getNif());
+    verify(repository, times(1)).existsById(employee.getNif());
+    verify(repository, times(1)).deleteById(employee.getNif());
   }
 
   @Test
@@ -425,8 +535,22 @@ class EmployeeRepositoryServiceImplTest {
     boolean result = service.deleteEmployeeById(employee);
 
     Assertions.assertFalse(result);
-    Mockito.verify(repository, times(1)).existsById(employee.getNif());
-    Mockito.verify(repository, never()).deleteById(any(String.class));
+    verify(repository, times(1)).existsById(employee.getNif());
+    verify(repository, never()).deleteById(any(String.class));
+  }
+
+  @Test
+  @DisplayName("Dissociate employees from company by setting company field to null")
+  void testDissociateEmployeesFromCompany() {
+    String companyId = "testCompanyId";
+
+    service.dissociateEmployeesFromCompany(companyId);
+
+    CriteriaDefinition criteriaDefinition = Criteria.where("company").is(companyId);
+    Query expectedQuery = new Query(criteriaDefinition);
+    Update expectedUpdate = new Update().set("company", null);
+
+    verify(mongoTemplate, times(1)).updateMulti(eq(expectedQuery), eq(expectedUpdate), eq(EmployeeEntity.class));
   }
 
   @ParameterizedTest
@@ -442,9 +566,9 @@ class EmployeeRepositoryServiceImplTest {
     Employee result = service.removeCompanyFromEmployee(employeeVO);
     Assertions.assertEquals(employee, result);
 
-    Mockito.verify(repository, times(1)).findById(nif);
-    Mockito.verify(repository, times(1)).save(existingEmployee.get());
-    Mockito.verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
+    verify(repository, times(1)).findById(nif);
+    verify(repository, times(1)).save(existingEmployee.get());
+    verify(employeeInfrastructureMapper, times(1)).mapToDomain(employeeEntity);
   }
 
   private static Stream<Arguments> removeCompanyFromEmployeeParameters() {

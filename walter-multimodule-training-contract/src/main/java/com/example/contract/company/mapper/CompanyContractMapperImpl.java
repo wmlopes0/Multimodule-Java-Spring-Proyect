@@ -46,7 +46,7 @@ public class CompanyContractMapperImpl implements CompanyContractMapper {
   public CompanyResponseDTO mapToCompanyResponseDTO(Company company) {
     List<EmployeeDTO> employeeDTOs;
     if (company.getEmployees() == null) {
-      employeeDTOs = new ArrayList<>();  // Retorna una lista vacía si los empleados son null
+      employeeDTOs = new ArrayList<>();
     } else {
       employeeDTOs = company.getEmployees().stream()
           .map(this::mapToEmployeeDTO)
