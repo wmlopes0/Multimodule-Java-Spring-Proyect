@@ -1,2 +1,2 @@
 # Walter MultiModule Training
-Proyecto multimódulo desarrollado durante mis prácticas con Java, SpringBoot, DDD, Arquitectura Hexágonal...
+During my internship, I developed a multi-module project using Java, SpringBoot, Domain-Driven Design (DDD), and Hexagonal Architecture, among other technologies. This experience allowed me to learn advanced architectural principles and best practices in software development.
